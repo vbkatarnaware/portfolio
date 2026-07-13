@@ -54,7 +54,7 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 32px)' }}
     >
-      <div className='mb-11 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-[24px] flex justify-around items-center w-[85%] max-w-[280px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'>
+      <div className='mb-11 py-3 px-5 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-[30px] flex justify-between items-center w-[92%] max-w-[340px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'>
         
         {/* QRapid (Flagship) */}
         <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex flex-col items-center cursor-pointer relative'>

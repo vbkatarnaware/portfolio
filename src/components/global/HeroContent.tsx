@@ -57,7 +57,7 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
 
   return (
     <div 
-      className="mt-4 md:mt-20 h-[80px] md:h-[120px] max-w-[420px] relative pointer-events-auto cursor-default flex justify-center md:justify-start"
+      className="mt-4 md:mt-20 h-[80px] md:h-[120px] w-[75vw] max-w-[320px] md:max-w-[420px] relative pointer-events-auto cursor-default flex justify-center md:justify-start mx-auto md:mx-0"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
@@ -71,8 +71,8 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
             initial="enter"
             animate="center"
             exit="exit"
-            className="absolute top-0 text-3xl md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.1] tracking-tight md:left-0 text-center md:text-left"
-            style={{ letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}
+            className="absolute top-0 w-full text-2xl md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.2] tracking-tight text-center md:text-left md:left-0"
+            style={{ letterSpacing: '-0.02em' }}
           >
             {ROTATING_MESSAGES[index]}
           </motion.p>
@@ -124,9 +124,9 @@ export default function HeroContent() {
           </p>
         </div>
 
-        {/* Bottom: Philosophy -> perfectly spaced above dock */}
+        {/* Bottom: Philosophy -> perfectly spaced above dock in its own dedicated section */}
         <div 
-          className={`absolute bottom-0 w-full pb-[216px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`absolute bottom-0 w-full pb-[200px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
