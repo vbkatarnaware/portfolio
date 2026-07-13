@@ -59,7 +59,7 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         }}
       />
 
-      {/* Mobile Background — seamlessly blended into black using a CSS mask */}
+      {/* Mobile Background — unified continuous canvas */}
       <div className="absolute inset-0 md:hidden bg-black z-0 pointer-events-none">
         {/* The artwork */}
         <div
@@ -67,14 +67,18 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
           style={{ 
             backgroundImage: `url(${backgroundMap[currentBg]})`,
             opacity: phase >= 1 ? 1 : 0,
-            backgroundSize: 'auto 80vh',
-            backgroundPosition: 'center 22%',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 45%, transparent 65%)',
-            maskImage: 'linear-gradient(to bottom, black 45%, transparent 65%)'
+            backgroundSize: 'auto 100vh',
+            backgroundPosition: 'center calc(50% - 60px)',
+            // Feather the bottom edge seamlessly into the dark footer
+            WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
           }}
         />
-        {/* Subtle Top Gradient for text readability */}
-        <div className="absolute top-0 left-0 right-0 h-[20vh] bg-gradient-to-b from-black/60 to-transparent" />
+        {/* Extremely Subtle Top Gradient (10% opacity) */}
+        <div className="absolute top-0 left-0 right-0 h-[15vh] bg-gradient-to-b from-black/10 to-transparent" />
+        
+        {/* Reduced Bottom Overlay to reveal wallpaper while maintaining quote contrast */}
+        <div className="absolute bottom-0 left-0 right-0 h-[25vh] bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
       </div>
 
       {/* Hero Content Layer */}
