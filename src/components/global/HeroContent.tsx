@@ -106,9 +106,9 @@ export default function HeroContent() {
       {/* Mobile Layout — absolute positioned for precise vertical rhythm */}
       <div className="md:hidden w-full h-[100dvh] pointer-events-none relative">
         
-        {/* Top: Name */}
+        {/* Top: Name -> Role */}
         <div 
-          className={`absolute top-0 w-full pt-[env(safe-area-inset-top,40px)] mt-8 px-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
+          className={`absolute top-0 w-full pt-[env(safe-area-inset-top,40px)] mt-6 px-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
         >
           <h1 
             className="text-[2.6rem] leading-[1.08] font-bold tracking-tight text-white text-center drop-shadow-md"
@@ -116,18 +116,18 @@ export default function HeroContent() {
           >
             Vipul<br />Katarnaware.
           </h1>
-        </div>
-
-        {/* Bottom: Role + Philosophy */}
-        <div 
-          className={`absolute bottom-0 w-full pb-[180px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-        >
           <p 
-            className="text-[17px] text-white/80 font-medium tracking-tight text-center mb-10 drop-shadow-md"
-            style={{ letterSpacing: '-0.01em' }}
+            className="mt-5 text-[17px] text-white/80 font-medium tracking-tight text-center drop-shadow-md transition-all duration-600 delay-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{ letterSpacing: '-0.01em', opacity: phase >= 5 ? 1 : 0 }}
           >
             Product Manager · AI Builder · Founder
           </p>
+        </div>
+
+        {/* Bottom: Philosophy -> perfectly spaced above dock */}
+        <div 
+          className={`absolute bottom-0 w-full pb-[216px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
 

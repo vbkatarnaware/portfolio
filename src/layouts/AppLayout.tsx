@@ -67,7 +67,7 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
             backgroundImage: `url(${backgroundMap[currentBg]})`,
             opacity: phase >= 1 ? 1 : 0,
             backgroundSize: 'auto 88vh',
-            backgroundPosition: 'center 45%'
+            backgroundPosition: 'center calc(45% - 50px)'
           }}
         />
         {/* Top Gradient for text readability */}
