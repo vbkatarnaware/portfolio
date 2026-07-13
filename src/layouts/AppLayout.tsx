@@ -59,7 +59,7 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         }}
       />
 
-      {/* Mobile Background — seamlessly blended into black */}
+      {/* Mobile Background — seamlessly blended into black using a CSS mask */}
       <div className="absolute inset-0 md:hidden bg-black z-0 pointer-events-none">
         {/* The artwork */}
         <div
@@ -67,16 +67,14 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
           style={{ 
             backgroundImage: `url(${backgroundMap[currentBg]})`,
             opacity: phase >= 1 ? 1 : 0,
-            backgroundSize: 'auto 68vh',
-            backgroundPosition: 'center 30%'
+            backgroundSize: 'auto 80vh',
+            backgroundPosition: 'center 22%',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 45%, transparent 65%)',
+            maskImage: 'linear-gradient(to bottom, black 45%, transparent 65%)'
           }}
         />
-        {/* Top Gradient for text readability */}
-        <div className="absolute top-0 left-0 right-0 h-[25vh] bg-gradient-to-b from-black via-black/50 to-transparent" />
-        
-        {/* Bottom Gradient: Feathers the artwork into solid black over ~160px. 
-            Starts at 45vh, becomes solid black at 64vh (where image ends), stays solid black to 100vh. */}
-        <div className="absolute top-[45vh] bottom-0 left-0 right-0 bg-gradient-to-t from-black from-[65%] to-transparent" />
+        {/* Subtle Top Gradient for text readability */}
+        <div className="absolute top-0 left-0 right-0 h-[20vh] bg-gradient-to-b from-black/60 to-transparent" />
       </div>
 
       {/* Hero Content Layer */}

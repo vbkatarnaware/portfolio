@@ -57,7 +57,7 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
 
   return (
     <div 
-      className="mt-4 md:mt-20 h-[80px] md:h-[120px] w-[75vw] max-w-[320px] md:max-w-[420px] relative pointer-events-auto cursor-default flex justify-center md:justify-start mx-auto md:mx-0"
+      className="mt-2 md:mt-20 h-[60px] md:h-[120px] w-[75vw] max-w-[320px] md:max-w-[420px] relative pointer-events-auto cursor-default flex justify-center md:justify-start mx-auto md:mx-0"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
@@ -108,7 +108,7 @@ export default function HeroContent() {
         
         {/* Top: Name -> Role */}
         <div 
-          className={`absolute top-0 w-full pt-[env(safe-area-inset-top,40px)] mt-6 px-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
+          className={`absolute top-0 w-full pt-[max(env(safe-area-inset-top),40px)] mt-4 px-6 flex flex-col items-center gap-3 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
         >
           <h1 
             className="text-[2.6rem] leading-[1.08] font-bold tracking-tight text-white text-center drop-shadow-md"
@@ -117,7 +117,7 @@ export default function HeroContent() {
             Vipul<br />Katarnaware.
           </h1>
           <p 
-            className="mt-5 text-[17px] text-white/80 font-medium tracking-tight text-center drop-shadow-md transition-all duration-600 delay-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="text-[17px] text-white/90 font-medium tracking-tight text-center drop-shadow-md transition-all duration-600 delay-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ letterSpacing: '-0.01em', opacity: phase >= 5 ? 1 : 0 }}
           >
             Product Manager · AI Builder · Founder
@@ -126,7 +126,7 @@ export default function HeroContent() {
 
         {/* Bottom: Philosophy -> perfectly spaced above dock in its own dedicated section */}
         <div 
-          className={`absolute bottom-0 w-full pb-[200px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`absolute bottom-0 w-full pb-[160px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
