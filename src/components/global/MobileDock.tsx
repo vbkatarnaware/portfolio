@@ -52,7 +52,7 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
       initial={{ bottom: -150, opacity: 0 }}
       animate={phase >= 3 ? { bottom: 0, opacity: 1 } : { bottom: -150, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 32px)' }}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className='mb-[32px] py-3 px-5 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-[30px] flex justify-between items-center w-[92%] max-w-[340px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'>
         

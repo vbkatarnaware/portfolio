@@ -67,8 +67,8 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
           style={{ 
             backgroundImage: `url(${backgroundMap[currentBg]})`,
             opacity: phase >= 1 ? 1 : 0,
-            backgroundSize: 'auto 92vh',
-            backgroundPosition: 'center calc(50% - 60px)',
+            backgroundSize: 'auto 75vh',
+            backgroundPosition: 'center 50%',
             // Feather the bottom edge seamlessly into the dark footer
             WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 86%)',
             maskImage: 'linear-gradient(to bottom, black 70%, transparent 86%)'

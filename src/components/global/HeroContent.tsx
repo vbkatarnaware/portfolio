@@ -108,7 +108,7 @@ export default function HeroContent() {
         
         {/* Top: Name -> Role */}
         <div 
-          className={`absolute top-0 w-full pt-[max(env(safe-area-inset-top),40px)] mt-4 px-6 flex flex-col items-center gap-3 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
+          className={`absolute top-0 w-full pt-[max(env(safe-area-inset-top),40px)] mt-4 px-6 flex flex-col items-center gap-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
         >
           <h1 
             className="text-[2.6rem] leading-[1.08] font-bold tracking-tight text-white text-center drop-shadow-md"
@@ -124,9 +124,10 @@ export default function HeroContent() {
           </p>
         </div>
 
-        {/* Bottom: Philosophy -> spaced above dock */}
+        {/* Bottom: Philosophy -> mathematically locked 32px above the dock */}
         <div 
-          className={`absolute bottom-0 w-full pb-[150px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`absolute bottom-0 w-full px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ paddingBottom: 'calc(144px + env(safe-area-inset-bottom, 0px))' }}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
