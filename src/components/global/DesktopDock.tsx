@@ -1,7 +1,71 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { BsGithub } from 'react-icons/bs';
 import { IoIosMail } from 'react-icons/io';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring, useAnimation } from 'framer-motion';
+import { useStartupPhase } from '../../context/StartupContext';
+
+interface DockIconProps {
+  tooltip: string;
+  onClick?: () => void;
+  mouseX: any;
+  children: React.ReactNode;
+  isRunning?: boolean;
+  isBouncing?: boolean;
+}
+
+function DockIcon({ tooltip, onClick, mouseX, children, isRunning, isBouncing }: DockIconProps) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const distance = useTransform(mouseX, (val: number) => {
+    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+    return val - bounds.x - bounds.width / 2;
+  });
+
+  const widthSync = useTransform(distance, [-150, 0, 150], [56, 85, 56]);
+  const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
+
+  const yControls = useAnimation();
+
+  useEffect(() => {
+    if (isBouncing) {
+      yControls.start({
+        y: [0, -40, 0, -20, 0, -5, 0],
+        transition: { duration: 1.2, ease: "easeOut" }
+      });
+    }
+  }, [isBouncing, yControls]);
+
+  return (
+    <div className="relative flex flex-col items-center">
+      <motion.button
+        ref={ref}
+        style={{ width, height: width }}
+        className="relative cursor-pointer flex items-center justify-center rounded-xl overflow-hidden shadow-lg border border-white/10"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onClick={onClick}
+        whileTap={{ scale: 0.9 }}
+        animate={yControls}
+      >
+        {children}
+      </motion.button>
+      
+      {isRunning && (
+        <div className="absolute -bottom-2 w-1 h-1 rounded-full bg-white/80" />
+      )}
+
+      {hovered && (
+        <div className='absolute -top-14 left-1/2 -translate-x-1/2 pointer-events-none z-50'>
+          <div className='relative px-3 py-1 bg-[#1d1d1f]/80 backdrop-blur-sm text-white text-sm rounded-lg whitespace-nowrap border border-px border-gray-600 shadow-xl'>
+            {tooltip}
+            <div className='absolute left-1/2 -translate-x-1/2 -bottom-[5px] w-2.5 h-2.5 bg-[#1d1d1f]/80 backdrop-blur-sm rotate-45 border-b border-r border-gray-600' />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface DesktopDockProps {
   onOpenQRapid?: () => void;
@@ -9,209 +73,92 @@ interface DesktopDockProps {
 }
 
 export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockProps) {
-  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const mouseX = useMotionValue(Infinity);
+  const phase = useStartupPhase();
+  const [hasBounced, setHasBounced] = useState(false);
 
-  const handleEmailClick = () => {
-    window.location.href = 'mailto:john@johndoe.com';
-  };
+  useEffect(() => {
+    if (phase >= 4 && !hasBounced) {
+      const bouncedBefore = sessionStorage.getItem('qrapid_bounced');
+      if (!bouncedBefore) {
+        setHasBounced(true);
+        sessionStorage.setItem('qrapid_bounced', 'true');
+      }
+    }
+  }, [phase, hasBounced]);
 
-  const handleGithubClick = () => {
-    window.open('https://github.com/vbkatarnaware', '_blank');
-  };
-
-  const handleCalendarClick = () => {
-    window.open('https://calendly.com/', '_blank');
-  };
-
-  const handleLinkedinClick = () => {
-    window.open('https://linkedin.com/', '_blank');
-  };
-
-  const Tooltip = ({ text }: { text: string }) => (
-    <div className='absolute -top-14 left-1/2 -translate-x-1/2'>
-      <div className='relative px-3 py-1 bg-[#1d1d1f]/80 backdrop-blur-sm text-white text-sm rounded-lg whitespace-nowrap border border-px border-gray-600'>
-        {text}
-        <div className='absolute left-1/2 -translate-x-1/2 -bottom-[7px] w-3 h-3 bg-[#1d1d1f]/80 backdrop-blur-sm rotate-45 border-b border-r border-gray-600' />
-      </div>
-    </div>
-  );
-
-  const dockItemVariants = {
-    initial: { scale: 1, y: 0 },
-    hover: { scale: 1.2, y: -10, transition: { type: 'spring', stiffness: 400, damping: 20 } },
-    tap: { scale: 0.95 }
-  };
+  const handleEmailClick = () => window.location.href = 'mailto:john@johndoe.com';
+  const handleGithubClick = () => window.open('https://github.com/vbkatarnaware', '_blank');
+  const handleCalendarClick = () => window.open('https://calendly.com/', '_blank');
+  const handleLinkedinClick = () => window.open('https://linkedin.com/', '_blank');
 
   return (
-    <div className='fixed bottom-0 left-1/2 -translate-x-1/2 hidden md:block z-50'>
-      <div className='relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl'>
-        <div className='flex items-end space-x-4'>
-          {/* Finder */}
-          <motion.div
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={onOpenFinder}
-            onMouseEnter={() => setHoveredIcon('finder')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/finder.png' alt='Finder' className='w-full h-full object-cover' />
-            </div>
-            {hoveredIcon === 'finder' && <Tooltip text='Finder' />}
-          </motion.div>
+    <motion.div 
+      className='fixed bottom-2 left-1/2 -translate-x-1/2 hidden md:block z-50'
+      initial={{ y: 150, opacity: 0 }}
+      animate={phase >= 3 ? { y: 0, opacity: 1 } : { y: 150, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+    >
+      <div 
+        className='relative p-3 bg-[#1c1c1e]/40 border border-white/10 backdrop-blur-2xl rounded-2xl flex items-end space-x-3 shadow-2xl'
+        onMouseMove={(e) => mouseX.set(e.pageX)}
+        onMouseLeave={() => mouseX.set(Infinity)}
+      >
+        <DockIcon mouseX={mouseX} tooltip="Finder" onClick={onOpenFinder}>
+          <img src='/finder.png' alt='Finder' className='w-full h-full object-cover' />
+        </DockIcon>
 
-          {/* QRapid */}
-          <motion.div
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={onOpenQRapid}
-            onMouseEnter={() => setHoveredIcon('custom')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/custom-icon.png' alt='QRapid' className='w-full h-full object-cover' />
-            </div>
-            {hoveredIcon === 'custom' && <Tooltip text='QRapid' />}
-          </motion.div>
+        <DockIcon mouseX={mouseX} tooltip="QRapid" onClick={onOpenQRapid} isBouncing={hasBounced} isRunning={true}>
+          <img src='/custom-icon.png' alt='QRapid' className='w-full h-full object-cover' />
+        </DockIcon>
 
-          {/* CareerOS */}
-          <motion.div
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onMouseEnter={() => setHoveredIcon('careeros')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/careeros.png' alt='CareerOS' className='w-full h-full object-cover' />
-            </div>
-            {hoveredIcon === 'careeros' && <Tooltip text='CareerOS' />}
-          </motion.div>
+        <DockIcon mouseX={mouseX} tooltip="CareerOS">
+          <img src='/careeros.png' alt='CareerOS' className='w-full h-full object-cover' />
+        </DockIcon>
 
-          {/* Rizent AI */}
-          <motion.div
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onMouseEnter={() => setHoveredIcon('rizent')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/rizent.svg' alt='Rizent AI' className='w-full h-full object-cover' />
-            </div>
-            {hoveredIcon === 'rizent' && <Tooltip text='Rizent AI' />}
-          </motion.div>
+        <DockIcon mouseX={mouseX} tooltip="Rizent AI">
+          <img src='/rizent.svg' alt='Rizent AI' className='w-full h-full object-cover' />
+        </DockIcon>
 
-          {/* MoatDaily */}
-          <motion.div
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onMouseEnter={() => setHoveredIcon('moatdaily')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50'>
-              <img src='/moatdaily.png' alt='MoatDaily' className='w-full h-full object-cover' />
-            </div>
-            {hoveredIcon === 'moatdaily' && <Tooltip text='MoatDaily' />}
-          </motion.div>
+        <DockIcon mouseX={mouseX} tooltip="MoatDaily">
+          <img src='/moatdaily.png' alt='MoatDaily' className='w-full h-full object-cover bg-black' />
+        </DockIcon>
 
-          {/* Divider */}
-          <div className='flex items-center h-14'>
-            <div className='w-px h-10 bg-white/20' />
-          </div>
-
-          {/* LinkedIn */}
-          <motion.button
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={handleLinkedinClick}
-            onMouseEnter={() => setHoveredIcon('linkedin')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/linkedin.png' alt='LinkedIn' className='w-full h-full object-cover' />
-            </div>
-            {hoveredIcon === 'linkedin' && <Tooltip text='LinkedIn' />}
-          </motion.button>
-
-          {/* Github */}
-          <motion.button
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={handleGithubClick}
-            onMouseEnter={() => setHoveredIcon('github')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 bg-gradient-to-t from-[#2b2b2b] to-[#1c1c1e] border border-white/10 rounded-xl flex items-center justify-center shadow-lg'>
-              <BsGithub size={40} className='text-gray-100' />
-            </div>
-            {hoveredIcon === 'github' && <Tooltip text='My GitHub' />}
-          </motion.button>
-
-          {/* Email */}
-          <motion.button
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={handleEmailClick}
-            onMouseEnter={() => setHoveredIcon('email')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 bg-gradient-to-t from-blue-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg'>
-              <IoIosMail size={45} className='text-white' />
-            </div>
-            {hoveredIcon === 'email' && <Tooltip text='Email Me' />}
-          </motion.button>
-
-          {/* Calendar */}
-          <motion.button
-            variants={dockItemVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={handleCalendarClick}
-            onMouseEnter={() => setHoveredIcon('calendar')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
-          >
-            <div className='w-14 h-14 overflow-hidden shadow-lg relative border border-white/10 rounded-xl'>
-              <div className='absolute inset-0 bg-gradient-to-b from-white to-gray-200'></div>
-              <div className='absolute top-0 inset-x-0 h-4 bg-[#ff3b30] flex items-center justify-center'>
-                <span className='text-[10px] font-bold text-white uppercase tracking-wider'>
-                  {new Date().toLocaleString('en-US', { month: 'short' })}
-                </span>
-              </div>
-              <div className='absolute inset-0 flex items-end justify-center pb-1'>
-                <span className='text-3xl font-light text-black tracking-tighter'>
-                  {new Date().getDate()}
-                </span>
-              </div>
-            </div>
-            {hoveredIcon === 'calendar' && <Tooltip text='Book a Call' />}
-          </motion.button>
+        <div className='flex items-center h-14 mx-1'>
+          <div className='w-[1px] h-10 bg-white/20' />
         </div>
+
+        <DockIcon mouseX={mouseX} tooltip="LinkedIn" onClick={handleLinkedinClick}>
+          <img src='/linkedin.png' alt='LinkedIn' className='w-full h-full object-cover' />
+        </DockIcon>
+
+        <DockIcon mouseX={mouseX} tooltip="My GitHub" onClick={handleGithubClick}>
+          <div className='w-full h-full bg-gradient-to-t from-[#2b2b2b] to-[#1c1c1e] flex items-center justify-center'>
+            <BsGithub size="60%" className='text-gray-100' />
+          </div>
+        </DockIcon>
+
+        <DockIcon mouseX={mouseX} tooltip="Email Me" onClick={handleEmailClick}>
+          <div className='w-full h-full bg-gradient-to-t from-blue-600 to-blue-400 flex items-center justify-center'>
+            <IoIosMail size="70%" className='text-white' />
+          </div>
+        </DockIcon>
+
+        <DockIcon mouseX={mouseX} tooltip="Book a Call" onClick={handleCalendarClick}>
+          <div className='w-full h-full overflow-hidden shadow-inner bg-gradient-to-b from-white to-gray-200 relative'>
+            <div className='absolute top-0 inset-x-0 h-1/3 bg-[#ff3b30] flex items-center justify-center'>
+              <span className='text-[30%] font-bold text-white uppercase tracking-wider'>
+                {new Date().toLocaleString('en-US', { month: 'short' })}
+              </span>
+            </div>
+            <div className='absolute bottom-0 inset-x-0 h-2/3 flex items-center justify-center'>
+              <span className='text-[80%] font-light text-black tracking-tighter leading-none mt-1'>
+                {new Date().getDate()}
+              </span>
+            </div>
+          </div>
+        </DockIcon>
       </div>
-    </div>
+    </motion.div>
   );
 }

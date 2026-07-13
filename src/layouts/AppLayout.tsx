@@ -7,6 +7,7 @@ import HeroContent from '../components/global/HeroContent';
 import Window from '../components/global/Window';
 import QRapidApp from '../components/projects/QRapidApp';
 import FinderApp from '../components/projects/FinderApp';
+import { StartupProvider, useStartupPhase } from '../context/StartupContext';
 
 interface AppLayoutProps {
   initialBg: string;
@@ -14,9 +15,18 @@ interface AppLayoutProps {
 }
 
 export default function Desktop({ initialBg, backgroundMap }: AppLayoutProps) {
+  return (
+    <StartupProvider>
+      <DesktopInner initialBg={initialBg} backgroundMap={backgroundMap} />
+    </StartupProvider>
+  );
+}
+
+function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
   const [currentBg, setCurrentBg] = useState<string>(initialBg);
   const [isQRapidOpen, setIsQRapidOpen] = useState(false);
   const [isFinderOpen, setIsFinderOpen] = useState(false);
+  const phase = useStartupPhase();
 
   useEffect(() => {
     const lastBg = localStorage.getItem('lastBackground');
@@ -42,8 +52,11 @@ export default function Desktop({ initialBg, backgroundMap }: AppLayoutProps) {
     <div className='relative w-full h-screen overflow-hidden bg-black font-sans antialiased'>
       {/* Fixed Background */}
       <div
-        className='absolute inset-0 bg-cover bg-[position:92%_bottom] bg-no-repeat transition-opacity duration-1000'
-        style={{ backgroundImage: `url(${backgroundMap[currentBg]})` }}
+        className='absolute inset-0 bg-cover bg-[position:92%_bottom] bg-no-repeat transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+        style={{ 
+          backgroundImage: `url(${backgroundMap[currentBg]})`,
+          opacity: phase >= 1 ? 1 : 0
+        }}
       />
 
       {/* Hero Content Layer */}

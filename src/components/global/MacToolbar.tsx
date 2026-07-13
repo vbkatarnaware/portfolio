@@ -5,6 +5,7 @@ import {
   IoCellular,
 } from 'react-icons/io5';
 import { FaApple } from 'react-icons/fa';
+import { useStartupPhase } from '../../context/StartupContext';
 
 export default function MacToolbar() {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -48,8 +49,10 @@ export default function MacToolbar() {
     window.location.href = 'vscode:/';
   };
 
+  const phase = useStartupPhase();
+
   return (
-    <>
+    <div className={`transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 2 ? 'opacity-100' : 'opacity-0'}`}>
       <div className='sticky top-0 z-50 md:hidden bg-transparent text-white h-12 px-8 flex items-center justify-between text-base font-medium'>
         <span className='font-semibold'>
           {formatIPhoneTime(currentDateTime)}
@@ -73,6 +76,6 @@ export default function MacToolbar() {
           </span>
         </div>
       </div>
-    </>
+    </div>
   );
 }

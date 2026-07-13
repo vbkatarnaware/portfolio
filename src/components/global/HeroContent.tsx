@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useStartupPhase } from '../../context/StartupContext';
 
 const ROTATING_MESSAGES = [
   <>Everything here,<br />I built and shipped.</>,
@@ -12,18 +13,18 @@ const ROTATING_MESSAGES = [
   <>I build things<br />worth remembering.</>
 ];
 
-function RotatingSubtitle() {
+function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !isVisible) return;
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % ROTATING_MESSAGES.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [isPaused, isVisible]);
 
   const transitionEase = [0.22, 1, 0.36, 1];
 
@@ -63,35 +64,41 @@ function RotatingSubtitle() {
       onBlur={() => setIsPaused(false)}
     >
       <AnimatePresence mode="popLayout">
-        <motion.p
-          key={index}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          className="absolute top-0 left-0 text-3xl md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.1] tracking-tight"
-          style={{ letterSpacing: '-0.025em', whiteSpace: 'nowrap' }}
-        >
-          {ROTATING_MESSAGES[index]}
-        </motion.p>
+        {isVisible && (
+          <motion.p
+            key={index}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="absolute top-0 left-0 text-3xl md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.1] tracking-tight"
+            style={{ letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}
+          >
+            {ROTATING_MESSAGES[index]}
+          </motion.p>
+        )}
       </AnimatePresence>
     </div>
   );
 }
 
 export default function HeroContent() {
+  const phase = useStartupPhase();
+
   return (
     <div className="absolute inset-0 z-10 flex items-center pointer-events-none">
-      <div className="w-full max-w-7xl mx-auto px-12 md:px-24">
+      <div 
+        className={`w-full max-w-7xl mx-auto px-12 md:px-24 transition-all duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      >
         <div className="max-w-3xl">
-          <h1 className="text-5xl md:text-6xl lg:text-[4.6rem] font-bold tracking-tight text-white leading-[1.05] mb-10" style={{ letterSpacing: '-0.02em' }}>
+          <h1 className="text-5xl md:text-6xl lg:text-[4.6rem] font-bold tracking-tight text-white leading-[1.05] mb-10" style={{ letterSpacing: '-0.035em' }}>
             Vipul<br />
             Katarnaware.
           </h1>
-          <p className="text-[22px] md:text-[28px] text-white/60 font-[450] tracking-tight mb-4">
+          <p className="text-[22px] md:text-[28px] text-white/60 font-[450] tracking-tight mb-4" style={{ letterSpacing: '-0.015em' }}>
             Product Manager · Builder · Founder
           </p>
-          <RotatingSubtitle />
+          <RotatingSubtitle isVisible={phase >= 6} />
         </div>
       </div>
     </div>

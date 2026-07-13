@@ -17,11 +17,11 @@ export default function Window({ id, title, isOpen, onClose, children, width = 8
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.3, y: 300 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none"
+          exit={{ opacity: 0, scale: 0.3, y: 300 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300, mass: 0.5 }}
+          className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none origin-bottom"
         >
           <div 
             className="pointer-events-auto bg-[#1c1c1e]/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden flex flex-col"
