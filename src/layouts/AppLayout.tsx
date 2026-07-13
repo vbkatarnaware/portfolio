@@ -61,24 +61,20 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
 
       {/* Mobile Background — unified continuous canvas */}
       <div className="absolute inset-0 md:hidden bg-black z-0 pointer-events-none">
-        {/* The artwork */}
         <div
           className='absolute inset-0 bg-no-repeat transition-opacity duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
           style={{ 
             backgroundImage: `url(${backgroundMap[currentBg]})`,
             opacity: phase >= 1 ? 1 : 0,
-            backgroundSize: 'auto 75vh',
-            backgroundPosition: 'center 50%',
-            // Feather the bottom edge seamlessly into the dark footer
-            WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 86%)',
-            maskImage: 'linear-gradient(to bottom, black 70%, transparent 86%)'
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center'
           }}
         />
         {/* Extremely Subtle Top Gradient (10% opacity) */}
         <div className="absolute top-0 left-0 right-0 h-[15vh] bg-gradient-to-b from-black/10 to-transparent" />
         
-        {/* Reduced Bottom Overlay to reveal wallpaper while maintaining quote contrast */}
-        <div className="absolute bottom-0 left-0 right-0 h-[25vh] bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        {/* Shadow floor for text and dock contrast */}
+        <div className="absolute bottom-0 left-0 right-0 h-[35vh] bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       </div>
 
       {/* Hero Content Layer */}

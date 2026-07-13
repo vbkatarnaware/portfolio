@@ -57,27 +57,41 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
 
   return (
     <div 
-      className="mt-2 md:mt-20 h-[60px] md:h-[120px] w-[75vw] max-w-[320px] md:max-w-[420px] relative pointer-events-auto cursor-default flex justify-center md:justify-start mx-auto md:mx-0"
+      className="mt-2 md:mt-20 flex flex-col items-center md:items-start md:mx-0 mx-auto w-[85vw] max-w-[340px] md:max-w-[420px] relative pointer-events-auto cursor-default"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      <AnimatePresence mode="popLayout">
-        {isVisible && (
-          <motion.p
-            key={index}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className="absolute top-0 w-full text-2xl md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.2] tracking-tight text-center md:text-left md:left-0"
-            style={{ letterSpacing: '-0.02em' }}
-          >
-            {ROTATING_MESSAGES[index]}
-          </motion.p>
-        )}
-      </AnimatePresence>
+      <div className="h-[64px] md:h-[120px] w-full relative flex justify-center md:justify-start">
+        <AnimatePresence mode="popLayout">
+          {isVisible && (
+            <motion.p
+              key={index}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="absolute top-0 w-full text-[21px] md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.25] tracking-tight text-center md:text-left md:left-0 drop-shadow-sm"
+              style={{ letterSpacing: '-0.02em' }}
+            >
+              {ROTATING_MESSAGES[index]}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Pagination Dots (Mobile Only) */}
+      <div className="flex items-center gap-[6px] mt-4 md:hidden opacity-100 transition-opacity duration-1000" style={{ opacity: isVisible ? 1 : 0 }}>
+        {[0, 1, 2].map((i) => (
+          <div 
+            key={i} 
+            className={`w-[5px] h-[5px] rounded-full transition-colors duration-500 ${
+              (index % 3) === i ? 'bg-white' : 'bg-white/30'
+            }`} 
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -108,26 +122,26 @@ export default function HeroContent() {
         
         {/* Top: Name -> Role */}
         <div 
-          className={`absolute top-0 w-full pt-[max(env(safe-area-inset-top),40px)] mt-4 px-6 flex flex-col items-center gap-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
+          className={`absolute top-0 w-full pt-[max(env(safe-area-inset-top),64px)] mt-4 px-6 flex flex-col items-center gap-4 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
         >
           <h1 
-            className="text-[2.6rem] leading-[1.08] font-bold tracking-tight text-white text-center drop-shadow-md"
+            className="text-[42px] leading-[1.05] font-bold tracking-tight text-white text-center drop-shadow-md"
             style={{ letterSpacing: '-0.03em' }}
           >
             Vipul<br />Katarnaware.
           </h1>
           <p 
-            className="text-[17px] text-white/90 font-medium tracking-tight text-center drop-shadow-md transition-all duration-600 delay-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="text-[16px] text-white/80 font-medium tracking-tight text-center drop-shadow-md transition-all duration-600 delay-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ letterSpacing: '-0.01em', opacity: phase >= 5 ? 1 : 0 }}
           >
             Product Manager · AI Builder · Founder
           </p>
         </div>
 
-        {/* Bottom: Philosophy -> mathematically locked 32px above the dock */}
+        {/* Bottom: Philosophy */}
         <div 
           className={`absolute bottom-0 w-full px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-          style={{ paddingBottom: 'calc(144px + env(safe-area-inset-bottom, 0px))' }}
+          style={{ paddingBottom: 'calc(158px + env(safe-area-inset-bottom, 16px))' }}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
