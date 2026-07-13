@@ -87,7 +87,7 @@ export default function HeroContent() {
 
   return (
     <div className="absolute inset-0 z-10 flex items-center pointer-events-none">
-      {/* Desktop Layout */}
+      {/* Desktop Layout — untouched */}
       <div 
         className={`hidden md:block w-full max-w-7xl mx-auto px-8 md:px-16 lg:px-20 transition-all duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
       >
@@ -103,26 +103,37 @@ export default function HeroContent() {
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div 
-        className={`md:hidden flex flex-col justify-between w-full h-[100dvh] pt-24 pb-32 px-8 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100' : 'opacity-0'}`}
-      >
-        {/* Top: Name */}
-        <div className={`transition-all duration-700 delay-100 ${phase >= 5 ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}>
-          <h1 className="text-[2.8rem] leading-[1.05] font-bold tracking-tight text-white text-center" style={{ letterSpacing: '-0.03em' }}>
+      {/* Mobile Layout — bespoke vertical stack */}
+      <div className="md:hidden flex flex-col items-center justify-between w-full h-[100dvh] pointer-events-none">
+        
+        {/* Top: Name — sits just below Safari chrome */}
+        <div 
+          className={`pt-[env(safe-area-inset-top,20px)] mt-4 px-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
+        >
+          <h1 
+            className="text-[2.6rem] leading-[1.08] font-bold tracking-tight text-white text-center"
+            style={{ letterSpacing: '-0.03em' }}
+          >
             Vipul<br />Katarnaware.
           </h1>
         </div>
 
-        {/* Bottom: Role & Philosophy */}
-        <div className={`flex flex-col items-center transition-all duration-700 delay-300 ${phase >= 6 ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <p className="text-[19px] text-white/70 font-medium tracking-tight mb-2 text-center" style={{ letterSpacing: '-0.015em' }}>
+        {/* Middle: Transparent spacer — the avatar lives here via background */}
+        <div className="flex-1" />
+
+        {/* Bottom: Role + Philosophy — generous space above dock */}
+        <div 
+          className={`pb-28 px-6 flex flex-col items-center gap-3 transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
+          <p 
+            className="text-[17px] text-white/70 font-medium tracking-tight text-center"
+            style={{ letterSpacing: '-0.01em' }}
+          >
             Product Manager · AI Builder · Founder
           </p>
-          <div className="flex justify-center w-full">
-            <RotatingSubtitle isVisible={phase >= 6} />
-          </div>
+          <RotatingSubtitle isVisible={phase >= 6} />
         </div>
+
       </div>
     </div>
   );

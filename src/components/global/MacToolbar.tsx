@@ -52,19 +52,8 @@ export default function MacToolbar() {
   const phase = useStartupPhase();
 
   return (
-    <div className={`transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 2 ? 'opacity-100' : 'opacity-0'}`}>
-      <div className='sticky top-0 z-50 md:hidden bg-transparent text-white h-12 px-8 flex items-center justify-between text-base font-medium'>
-        <span className='font-semibold'>
-          {formatIPhoneTime(currentDateTime)}
-        </span>
-        <div className='flex items-center gap-1.5'>
-          <IoCellular size={20} />
-          <MdWifi size={20} />
-          <IoBatteryHalfOutline size={24} />
-        </div>
-      </div>
-
-      <div className='sticky top-0 z-50 hidden md:flex bg-[rgba(20,20,20,0.18)] backdrop-blur-[12px] border-b border-white/[0.05] text-white/90 h-8 px-6 items-center justify-between text-sm font-medium'>
+    <div className={`hidden md:block transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 2 ? 'opacity-100' : 'opacity-0'}`}>
+      <div className='sticky top-0 z-50 flex bg-[rgba(20,20,20,0.18)] backdrop-blur-[12px] border-b border-white/[0.05] text-white/90 h-8 px-6 items-center justify-between text-sm font-medium'>
         <div className='flex items-center space-x-4 pl-1'>
           <img src='/memoji.png' alt='Memoji' className='w-4 h-4 rounded-full object-cover shadow-sm opacity-90' />
         </div>
