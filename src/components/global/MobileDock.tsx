@@ -48,13 +48,13 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
 
   return (
     <motion.div 
-      className='fixed bottom-0 left-0 right-0 md:hidden z-50'
-      initial={{ y: 150, opacity: 0 }}
-      animate={phase >= 3 ? { y: 0, opacity: 1 } : { y: 150, opacity: 0 }}
+      className='fixed left-0 right-0 md:hidden z-50 pointer-events-none flex justify-center'
+      initial={{ bottom: -150, opacity: 0 }}
+      animate={phase >= 3 ? { bottom: 0, opacity: 1 } : { bottom: -150, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)' }}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 32px)' }}
     >
-      <div className='mx-auto mb-3 p-3 bg-[#1c1c1e]/50 border border-white/10 backdrop-blur-2xl rounded-[22px] flex justify-around items-center w-[85%] max-w-[280px] shadow-2xl'>
+      <div className='mb-6 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-[24px] flex justify-around items-center w-[85%] max-w-[280px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'>
         
         {/* QRapid (Flagship) */}
         <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex flex-col items-center cursor-pointer relative'>

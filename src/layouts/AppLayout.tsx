@@ -59,16 +59,22 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         }}
       />
 
-      {/* Mobile Background — independently composed */}
-      <div
-        className='absolute inset-0 md:hidden bg-no-repeat transition-opacity duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
-        style={{ 
-          backgroundImage: `url(${backgroundMap[currentBg]})`,
-          opacity: phase >= 1 ? 1 : 0,
-          backgroundSize: 'auto 75vh',
-          backgroundPosition: 'center 38%'
-        }}
-      />
+      {/* Mobile Background — independently composed with gradients */}
+      <div className="absolute inset-0 md:hidden bg-black z-0 pointer-events-none">
+        <div
+          className='absolute inset-0 bg-no-repeat transition-opacity duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+          style={{ 
+            backgroundImage: `url(${backgroundMap[currentBg]})`,
+            opacity: phase >= 1 ? 1 : 0,
+            backgroundSize: 'auto 88vh',
+            backgroundPosition: 'center 45%'
+          }}
+        />
+        {/* Top Gradient for text readability */}
+        <div className="absolute top-0 left-0 right-0 h-[25vh] bg-gradient-to-b from-black via-black/70 to-transparent" />
+        {/* Bottom Gradient for dock grounding */}
+        <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black via-black/80 to-transparent" />
+      </div>
 
       {/* Hero Content Layer */}
       <HeroContent />

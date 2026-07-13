@@ -103,30 +103,27 @@ export default function HeroContent() {
         </div>
       </div>
 
-      {/* Mobile Layout — bespoke vertical stack */}
-      <div className="md:hidden flex flex-col items-center justify-between w-full h-[100dvh] pointer-events-none">
+      {/* Mobile Layout — absolute positioned for precise vertical rhythm */}
+      <div className="md:hidden w-full h-[100dvh] pointer-events-none relative">
         
-        {/* Top: Name — sits just below Safari chrome */}
+        {/* Top: Name */}
         <div 
-          className={`pt-[env(safe-area-inset-top,20px)] mt-4 px-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
+          className={`absolute top-0 w-full pt-[env(safe-area-inset-top,40px)] mt-8 px-6 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
         >
           <h1 
-            className="text-[2.6rem] leading-[1.08] font-bold tracking-tight text-white text-center"
+            className="text-[2.6rem] leading-[1.08] font-bold tracking-tight text-white text-center drop-shadow-md"
             style={{ letterSpacing: '-0.03em' }}
           >
             Vipul<br />Katarnaware.
           </h1>
         </div>
 
-        {/* Middle: Transparent spacer — the avatar lives here via background */}
-        <div className="flex-1" />
-
-        {/* Bottom: Role + Philosophy — generous space above dock */}
+        {/* Bottom: Role + Philosophy */}
         <div 
-          className={`pb-28 px-6 flex flex-col items-center gap-3 transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`absolute bottom-0 w-full pb-[180px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
         >
           <p 
-            className="text-[17px] text-white/70 font-medium tracking-tight text-center"
+            className="text-[17px] text-white/80 font-medium tracking-tight text-center mb-10 drop-shadow-md"
             style={{ letterSpacing: '-0.01em' }}
           >
             Product Manager · AI Builder · Founder
