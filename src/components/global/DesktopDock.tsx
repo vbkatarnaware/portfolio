@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BsGithub } from 'react-icons/bs';
 import { IoIosMail } from 'react-icons/io';
-import { motion } from 'framer-motion';
-import { useStartupPhase } from '../../context/StartupContext';
+import { motion, useAnimation } from 'framer-motion';
 
 interface DesktopDockProps {
   onOpenQRapid?: () => void;
@@ -11,7 +10,33 @@ interface DesktopDockProps {
 
 export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockProps) {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-  const phase = useStartupPhase();
+  const qRapidControls = useAnimation();
+  const [showDot, setShowDot] = useState(false);
+
+  useEffect(() => {
+    const bouncedBefore = sessionStorage.getItem('qrapid_bounced_v2');
+    if (!bouncedBefore) {
+      const runBounce = async () => {
+        // Wait a bit for the site to load
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        await qRapidControls.start({
+          y: [0, -45, 0, -22, 0, -8, 0],
+          transition: { 
+            duration: 1.6, 
+            times: [0, 0.25, 0.5, 0.75, 0.88, 0.95, 1],
+            ease: ["easeOut", "easeIn", "easeOut", "easeIn", "easeOut", "easeIn"]
+          }
+        });
+        
+        sessionStorage.setItem('qrapid_bounced_v2', 'true');
+        setShowDot(true);
+      };
+      runBounce();
+    } else {
+      setShowDot(true);
+    }
+  }, [qRapidControls]);
 
   const handleEmailClick = () => {
     window.location.href = 'mailto:john@johndoe.com';
@@ -45,12 +70,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
   };
 
   return (
-    <motion.div 
-      className='fixed bottom-0 left-1/2 -translate-x-1/2 hidden md:block z-50'
-      initial={{ y: 150, opacity: 0 }}
-      animate={phase >= 3 ? { y: 0, opacity: 1 } : { y: 150, opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-    >
+    <div className='fixed bottom-0 left-1/2 -translate-x-1/2 hidden md:block z-50'>
       <div className='relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl'>
         <div className='flex items-end space-x-4'>
           {/* Finder */}
@@ -74,16 +94,26 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
           <motion.div
             variants={dockItemVariants}
             initial="initial"
+            animate={qRapidControls}
             whileHover="hover"
             whileTap="tap"
             onClick={onOpenQRapid}
             onMouseEnter={() => setHoveredIcon('custom')}
             onMouseLeave={() => setHoveredIcon(null)}
-            className='relative cursor-pointer'
+            className='relative cursor-pointer flex flex-col items-center'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
               <img src='/custom-icon.png' alt='QRapid' className='w-full h-full object-cover' />
             </div>
+            {/* White dot indicator */}
+            {showDot && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: 'spring', damping: 20 }}
+                className="absolute -bottom-2 w-1 h-1 rounded-full bg-white/80" 
+              />
+            )}
             {hoveredIcon === 'custom' && <Tooltip text='QRapid' />}
           </motion.div>
 
@@ -219,6 +249,6 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
           </motion.button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
