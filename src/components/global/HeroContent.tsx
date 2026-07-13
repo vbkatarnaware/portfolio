@@ -126,7 +126,7 @@ export default function HeroContent() {
 
         {/* Bottom: Philosophy -> perfectly spaced above dock in its own dedicated section */}
         <div 
-          className={`absolute bottom-0 w-full pb-[210px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`absolute bottom-0 w-full pb-[160px] px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
