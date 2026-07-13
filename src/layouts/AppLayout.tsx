@@ -52,7 +52,7 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
     <div className='relative w-full h-screen overflow-hidden bg-black font-sans antialiased'>
       {/* Fixed Background */}
       <div
-        className='absolute inset-0 bg-cover bg-[position:92%_bottom] bg-no-repeat transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+        className='absolute inset-0 bg-[length:180%_auto] bg-[position:center_60%] md:bg-cover md:bg-[position:92%_bottom] bg-no-repeat transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
         style={{ 
           backgroundImage: `url(${backgroundMap[currentBg]})`,
           opacity: phase >= 1 ? 1 : 0

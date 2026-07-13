@@ -10,21 +10,17 @@ export function StartupProvider({ children }: { children: React.ReactNode }) {
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
-    // Phase 0: Initial state (0ms)
-    // Phase 1: Wallpaper appears (100ms)
-    // Phase 2: Menu bar fades in (300ms)
-    // Phase 3: Dock slides up (500ms)
-    // Phase 4: QRapid app bounce (700ms)
-    // Phase 5: Hero typography fades in (900ms)
-    // Phase 6: Rotating philosophy starts (1100ms)
+    // Determine if mobile for faster startup
+    const isMobile = window.innerWidth < 768;
+    const m = isMobile ? 0.6 : 1; // 40% faster on mobile
 
     const timeouts = [
-      setTimeout(() => setPhase(1), 100),
-      setTimeout(() => setPhase(2), 300),
-      setTimeout(() => setPhase(3), 500),
-      setTimeout(() => setPhase(4), 700),
-      setTimeout(() => setPhase(5), 900),
-      setTimeout(() => setPhase(6), 1100),
+      setTimeout(() => setPhase(1), 100 * m),
+      setTimeout(() => setPhase(2), 300 * m),
+      setTimeout(() => setPhase(3), 500 * m),
+      setTimeout(() => setPhase(4), 700 * m),
+      setTimeout(() => setPhase(5), 900 * m),
+      setTimeout(() => setPhase(6), 1100 * m),
     ];
 
     return () => timeouts.forEach(clearTimeout);
