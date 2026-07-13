@@ -1,6 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import LandingPage from '../components/LandingPage.astro';
+import { getImage } from 'astro:assets';
+import AppLayout from '../layouts/AppLayout';
+import customWallpaper from '../assets/images/wallpaper4.png';
+
+const backgrounds = [customWallpaper];
+
+function getRandomBackground() {
+  return `bg-1`;
+}
+
+const optimizedBackgrounds = await Promise.all(
+  backgrounds.map((bg) =>
+    getImage({
+      src: bg,
+      width: 3500,
+    })
+  )
+);
+
+const backgroundMap = Object.fromEntries(
+  optimizedBackgrounds.map((bg, index) => [`bg-${index + 1}`, bg.src])
+);
 ---
 
 <!-- 
@@ -11,16 +32,20 @@ import LandingPage from '../components/LandingPage.astro';
   - openGraph: Social media sharing metadata
 -->
 <Layout
-  title='John Doe - Full Stack Developer'
+  title='Vipul Katarnaware - Full Stack Developer'
   description='Full Stack Developer based in Austin, TX specializing in React, Node.js, and modern web technologies'
   canonical='https://johndoe.com'
   openGraph={{
     url: 'https://johndoe.com',
-    title: 'John Doe - Full Stack Developer',
+    title: 'Vipul Katarnaware - Full Stack Developer',
     description:
       'Full Stack Developer based in Austin, TX specializing in React, Node.js, and modern web technologies',
-    site_name: 'John Doe',
+    site_name: 'Vipul Katarnaware',
   }}
 >
-  <LandingPage />
+  <AppLayout
+    client:load
+    initialBg={getRandomBackground()}
+    backgroundMap={backgroundMap}
+  />
 </Layout>

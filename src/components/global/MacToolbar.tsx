@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { MdWifi } from 'react-icons/md';
-import { FaApple } from 'react-icons/fa';
 import {
-  IoSearchSharp,
   IoBatteryHalfOutline,
   IoCellular,
 } from 'react-icons/io5';
-import { VscVscode } from 'react-icons/vsc';
+import { FaApple } from 'react-icons/fa';
 
 export default function MacToolbar() {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -63,26 +61,13 @@ export default function MacToolbar() {
         </div>
       </div>
 
-      <div className='sticky top-0 z-50 hidden md:flex bg-black/20 backdrop-blur-md text-white h-6 px-4 items-center justify-between text-sm'>
-        <div className='flex items-center space-x-4'>
-          <FaApple size={16} />
-          <span className='font-semibold cursor-default'>John Doe</span>
-          <span className='cursor-default'>File</span>
-          <span className='cursor-default'>Edit</span>
-          <span className='cursor-default'>View</span>
-          <span className='cursor-default'>Go</span>
-          <span className='cursor-default'>Window</span>
-          <span className='cursor-default'>Help</span>
+      <div className='sticky top-0 z-50 hidden md:flex bg-[rgba(20,20,20,0.18)] backdrop-blur-[12px] border-b border-white/[0.05] text-white/90 h-8 px-6 items-center justify-between text-sm font-medium'>
+        <div className='flex items-center space-x-4 pl-1'>
+          <img src='/memoji.png' alt='Memoji' className='w-4 h-4 rounded-full object-cover shadow-sm opacity-90' />
         </div>
-        <div className='flex items-center space-x-4'>
-          <VscVscode
-            size={16}
-            className='cursor-default hover:opacity-80 transition-opacity'
-            onClick={handleVSCodeClick}
-            title='Open in VSCode'
-          />
-          <MdWifi size={16} />
-          <IoSearchSharp size={16} />
+        <div className='flex items-center space-x-4 pr-1'>
+          <MdWifi size={16} className='opacity-80 cursor-default' />
+          <IoBatteryHalfOutline size={18} className='opacity-80 cursor-default' />
           <span className='cursor-default'>
             {formatMacDate(currentDateTime)}
           </span>

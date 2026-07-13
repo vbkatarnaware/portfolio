@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { BsGithub, BsSpotify, BsTerminal } from 'react-icons/bs';
+import { BsGithub } from 'react-icons/bs';
 import { IoIosMail } from 'react-icons/io';
-import { VscVscode } from 'react-icons/vsc';
-import { RiTerminalFill } from 'react-icons/ri';
+import { motion } from 'framer-motion';
 
-export default function DesktopDock() {
+interface DesktopDockProps {
+  onOpenQRapid?: () => void;
+  onOpenFinder?: () => void;
+}
+
+export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockProps) {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
   const handleEmailClick = () => {
@@ -12,19 +16,15 @@ export default function DesktopDock() {
   };
 
   const handleGithubClick = () => {
-    window.open('https://github.com/johndoe', '_blank');
+    window.open('https://github.com/vbkatarnaware', '_blank');
   };
 
   const handleCalendarClick = () => {
     window.open('https://calendly.com/', '_blank');
   };
 
-  const handleSpotifyClick = () => {
-    window.open('https://open.spotify.com', '_blank');
-  };
-
-  const handleVSCodeClick = () => {
-    window.location.href = 'vscode:/';
+  const handleLinkedinClick = () => {
+    window.open('https://linkedin.com/', '_blank');
   };
 
   const Tooltip = ({ text }: { text: string }) => (
@@ -36,108 +36,180 @@ export default function DesktopDock() {
     </div>
   );
 
+  const dockItemVariants = {
+    initial: { scale: 1, y: 0 },
+    hover: { scale: 1.2, y: -10, transition: { type: 'spring', stiffness: 400, damping: 20 } },
+    tap: { scale: 0.95 }
+  };
+
   return (
     <div className='fixed bottom-0 left-1/2 -translate-x-1/2 hidden md:block z-50'>
-      <div className='relative mb-2 p-3 bg-gradient-to-t from-gray-700 to-gray-800 backdrop-blur-2xl rounded-2xl'>
+      <div className='relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl'>
         <div className='flex items-end space-x-4'>
-          {/* VSCode */}
-          <button
-            onClick={handleVSCodeClick}
-            onMouseEnter={() => setHoveredIcon('vscode')}
+          {/* Finder */}
+          <motion.div
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onClick={onOpenFinder}
+            onMouseEnter={() => setHoveredIcon('finder')}
             onMouseLeave={() => setHoveredIcon(null)}
-            className='relative'
+            className='relative cursor-pointer'
           >
-            <div className='w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-lg'>
-              <VscVscode size={45} className='text-blue-500' />
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
+              <img src='/finder.png' alt='Finder' className='w-full h-full object-cover' />
             </div>
-            {hoveredIcon === 'vscode' && <Tooltip text='Launch VS Code' />}
-          </button>
+            {hoveredIcon === 'finder' && <Tooltip text='Finder' />}
+          </motion.div>
+
+          {/* QRapid */}
+          <motion.div
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onClick={onOpenQRapid}
+            onMouseEnter={() => setHoveredIcon('custom')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            className='relative cursor-pointer'
+          >
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
+              <img src='/custom-icon.png' alt='QRapid' className='w-full h-full object-cover' />
+            </div>
+            {hoveredIcon === 'custom' && <Tooltip text='QRapid' />}
+          </motion.div>
+
+          {/* CareerOS */}
+          <motion.div
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onMouseEnter={() => setHoveredIcon('careeros')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            className='relative cursor-pointer'
+          >
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
+              <img src='/careeros.png' alt='CareerOS' className='w-full h-full object-cover' />
+            </div>
+            {hoveredIcon === 'careeros' && <Tooltip text='CareerOS' />}
+          </motion.div>
+
+          {/* Rizent AI */}
+          <motion.div
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onMouseEnter={() => setHoveredIcon('rizent')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            className='relative cursor-pointer'
+          >
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
+              <img src='/rizent.svg' alt='Rizent AI' className='w-full h-full object-cover' />
+            </div>
+            {hoveredIcon === 'rizent' && <Tooltip text='Rizent AI' />}
+          </motion.div>
+
+          {/* MoatDaily */}
+          <motion.div
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onMouseEnter={() => setHoveredIcon('moatdaily')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            className='relative cursor-pointer'
+          >
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50'>
+              <img src='/moatdaily.png' alt='MoatDaily' className='w-full h-full object-cover' />
+            </div>
+            {hoveredIcon === 'moatdaily' && <Tooltip text='MoatDaily' />}
+          </motion.div>
+
+          {/* Divider */}
+          <div className='flex items-center h-14'>
+            <div className='w-px h-10 bg-white/20' />
+          </div>
+
+          {/* LinkedIn */}
+          <motion.button
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onClick={handleLinkedinClick}
+            onMouseEnter={() => setHoveredIcon('linkedin')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            className='relative cursor-pointer'
+          >
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
+              <img src='/linkedin.png' alt='LinkedIn' className='w-full h-full object-cover' />
+            </div>
+            {hoveredIcon === 'linkedin' && <Tooltip text='LinkedIn' />}
+          </motion.button>
+
+          {/* Github */}
+          <motion.button
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onClick={handleGithubClick}
+            onMouseEnter={() => setHoveredIcon('github')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            className='relative cursor-pointer'
+          >
+            <div className='w-14 h-14 bg-gradient-to-t from-[#2b2b2b] to-[#1c1c1e] border border-white/10 rounded-xl flex items-center justify-center shadow-lg'>
+              <BsGithub size={40} className='text-gray-100' />
+            </div>
+            {hoveredIcon === 'github' && <Tooltip text='My GitHub' />}
+          </motion.button>
 
           {/* Email */}
-          <button
+          <motion.button
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
             onClick={handleEmailClick}
             onMouseEnter={() => setHoveredIcon('email')}
             onMouseLeave={() => setHoveredIcon(null)}
-            className='relative'
+            className='relative cursor-pointer'
           >
             <div className='w-14 h-14 bg-gradient-to-t from-blue-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg'>
               <IoIosMail size={45} className='text-white' />
             </div>
             {hoveredIcon === 'email' && <Tooltip text='Email Me' />}
-          </button>
-
-          {/* Github */}
-          <button
-            onClick={handleGithubClick}
-            onMouseEnter={() => setHoveredIcon('github')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative'
-          >
-            <div className='w-14 h-14  bg-gradient-to-t from-black to-black/60 rounded-xl flex items-center justify-center shadow-lg'>
-              <BsGithub size={45} className='text-gray-100' />
-            </div>
-            {hoveredIcon === 'github' && <Tooltip text='My GitHub' />}
-          </button>
+          </motion.button>
 
           {/* Calendar */}
-          <button
+          <motion.button
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
             onClick={handleCalendarClick}
             onMouseEnter={() => setHoveredIcon('calendar')}
             onMouseLeave={() => setHoveredIcon(null)}
-            className='relative'
+            className='relative cursor-pointer'
           >
-            <div className='w-14 h-14 overflow-hidden shadow-lg'>
-              <div className='absolute inset-0 bg-gradient-to-b from-white to-gray-200 rounded-xl'></div>
-
-              <div className='absolute top-0 inset-x-0 h-5 bg-red-500 flex items-center justify-center rounded-t-xl'>
-                <span className='text-xs font-semibold text-white uppercase'>
+            <div className='w-14 h-14 overflow-hidden shadow-lg relative border border-white/10 rounded-xl'>
+              <div className='absolute inset-0 bg-gradient-to-b from-white to-gray-200'></div>
+              <div className='absolute top-0 inset-x-0 h-4 bg-[#ff3b30] flex items-center justify-center'>
+                <span className='text-[10px] font-bold text-white uppercase tracking-wider'>
                   {new Date().toLocaleString('en-US', { month: 'short' })}
                 </span>
               </div>
-
-              <div className='absolute inset-0 flex items-end justify-center'>
-                <span className='text-3xl font-light text-black'>
+              <div className='absolute inset-0 flex items-end justify-center pb-1'>
+                <span className='text-3xl font-light text-black tracking-tighter'>
                   {new Date().getDate()}
                 </span>
               </div>
             </div>
             {hoveredIcon === 'calendar' && <Tooltip text='Book a Call' />}
-          </button>
-
-          {/* Spotify */}
-          <button
-            onClick={handleSpotifyClick}
-            onMouseEnter={() => setHoveredIcon('spotify')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative'
-          >
-            <div className='w-14 h-14 bg-gradient-to-t from-black to-black/60 rounded-xl flex items-center justify-center shadow-lg'>
-              <BsSpotify size={45} className='text-[#1ED760]' />
-            </div>
-            {hoveredIcon === 'spotify' && <Tooltip text='My Dev Playlist' />}
-          </button>
-
-          {/* Divider */}
-          <div className='flex items-center'>
-            <div className='w-px h-14 bg-white/20' />
-          </div>
-
-          {/* Terminal */}
-          <button
-            onMouseEnter={() => setHoveredIcon('terminal')}
-            onMouseLeave={() => setHoveredIcon(null)}
-            className='relative'
-          >
-            <div className='w-14 h-14 rounded-2xl overflow-hidden shadow-lg'>
-              <div className='absolute inset-0 bg-gradient-to-b from-gray-300 to-gray-500 rounded-xl'></div>
-              <div className='absolute inset-[2px] rounded-xl bg-black'>
-                <div className='absolute top-1 left-2'>
-                  <RiTerminalFill size={20} className='text-white' />
-                </div>
-              </div>
-            </div>
-            {hoveredIcon === 'terminal' && <Tooltip text='Terminal' />}
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>

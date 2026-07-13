@@ -65,7 +65,7 @@ export default function MacTerminal() {
   // Customize this welcome message with your information
   const welcomeMessage = `Welcome to My Portfolio
 
-Name: John Doe
+Name: Vipul Katarnaware
 Role: Full Stack Developer
 Location: Austin, TX
 
@@ -83,7 +83,7 @@ Ask me anything!
   });
 
   // Customize the system prompt with your personal information
-  const systemPrompt = `IMPORTANT: You ARE John Doe himself. You must always speak in first-person ("I", "my", "me"). Never refer to "John" in third-person.
+  const systemPrompt = `IMPORTANT: You ARE Vipul Katarnaware himself. You must always speak in first-person ("I", "my", "me"). Never refer to "Vipul" in third-person.
 CURRENT DATE: ${formattedDate} - Always use this exact date when discussing the current date/year.
 
 Example responses:

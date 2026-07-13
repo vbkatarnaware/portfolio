@@ -2,14 +2,10 @@
 import '../../styles/global.css';
 import { AstroSeo } from '@astrolib/seo';
 import { getImage } from 'astro:assets';
-import macBackground1 from '../../assets/images/mac-background1.jpg';
-import macBackground2 from '../../assets/images/mac-background2.jpg';
-import macBackground3 from '../../assets/images/mac-background3.jpg';
+import customWallpaper from '../../assets/images/wallpaper4.png';
 
 const backgrounds = await Promise.all([
-  getImage({ src: macBackground1, width: 3500 }),
-  getImage({ src: macBackground2, width: 3500 }),
-  getImage({ src: macBackground3, width: 3500 }),
+  getImage({ src: customWallpaper, width: 3500 }),
 ]);
 ---
 
@@ -20,18 +16,18 @@ const backgrounds = await Promise.all([
   name='viewport'
   content='width=device-width, initial-scale=1, maximum-scale=1'
 />
-<meta name='author' content='John Doe' />
+<meta name='author' content='Vipul Katarnaware' />
 <!-- Replace with your name -->
 
 <!-- SEO Configuration - customize these values -->
 <AstroSeo
-  title={Astro.props.title || 'John Doe - Full Stack Developer'}
+  title={Astro.props.title || 'Vipul Katarnaware - Full Stack Developer'}
   description={Astro.props.description ||
     'Full Stack Developer based in Austin, TX specializing in React, Node.js, and modern web technologies'}
   canonical={Astro.props.canonical || 'https://johndoe.com'}
   openGraph={{
     url: Astro.props.openGraph?.url || 'https://johndoe.com',
-    title: Astro.props.openGraph?.title || 'John Doe - Full Stack Developer',
+    title: Astro.props.openGraph?.title || 'Vipul Katarnaware - Full Stack Developer',
     description:
       Astro.props.openGraph?.description ||
       'Full Stack Developer based in Austin, TX specializing in React, Node.js, and modern web technologies',
@@ -41,7 +37,7 @@ const backgrounds = await Promise.all([
         // og image here
       },
     ],
-    site_name: Astro.props.openGraph?.site_name || 'John Doe',
+    site_name: Astro.props.openGraph?.site_name || 'Vipul Katarnaware',
   }}
 />
 
