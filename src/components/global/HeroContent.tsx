@@ -96,7 +96,7 @@ export default function HeroContent() {
             Katarnaware.
           </h1>
           <p className="text-[22px] md:text-[28px] text-white/60 font-[450] tracking-tight mb-4" style={{ letterSpacing: '-0.015em' }}>
-            Product Manager · Builder · Founder
+            Product Manager · AI Builder · Founder
           </p>
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
