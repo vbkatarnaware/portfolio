@@ -78,7 +78,7 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         <div className="absolute top-0 left-0 right-0 h-[15vh] bg-gradient-to-b from-black/10 to-transparent" />
         
         {/* Reduced Bottom Overlay to reveal wallpaper while maintaining quote contrast */}
-        <div className="absolute bottom-0 left-0 right-0 h-[25vh] bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-[25vh] bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
       </div>
 
       {/* Hero Content Layer */}
