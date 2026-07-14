@@ -250,6 +250,6 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
           </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
