@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import '../styles/hero-background.css';
 import MacToolbar from '../components/global/MacToolbar';
 
 import MobileDock from '../components/global/MobileDock';
@@ -49,43 +50,31 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
   }, [initialBg, backgroundMap]);
 
   return (
-    <div className='fixed inset-0 w-full overflow-hidden bg-black font-sans antialiased'>
-      {/* Universal Background Layer (The Infinite Canvas) */}
-      <div className="absolute inset-0 z-0 pointer-events-none bg-black overflow-hidden">
+    <div className='fixed inset-0 w-full overflow-hidden bg-[#d9d7dc] font-sans antialiased'>
+      {/* Universal Background Layer (CSS Generated VisionOS Style) */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         
-        {/* Layer 1: Pure Black Base */}
-        <div className="absolute inset-0 bg-black" />
+        {/* Oversized breathing background container */}
+        <div className="hero-background">
+          <div className="hero-layer hero-layer-main" />
+          <div className="hero-layer hero-layer-warm" />
+          <div className="hero-layer hero-layer-reflection" />
+          <div className="hero-layer hero-layer-grain" />
+        </div>
 
-        {/* Layer 2: The Focal Point Anchor (3D Render) */}
-        <div
-          className="absolute inset-0 bg-no-repeat transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{ 
-            backgroundImage: `url(${backgroundMap[currentBg]})`,
-            opacity: phase >= 1 ? 1 : 0,
-            
-            // The Mathematical Anchor
-            // Mobile: 75dvh to guarantee text clearance. Desktop: cover or 100dvh for immersion.
-            backgroundSize: 'auto max(75dvh, 600px)',
-            backgroundPosition: 'center 50%'
-          }}
-        />
-        
-        {/* Layer 3: Edge Bleeding (Black Gradients overlay to hide hard image edges on mobile/tablet) */}
-        <div className="absolute top-0 left-0 right-0 h-[30vh] bg-gradient-to-b from-black via-black/90 to-transparent min-[1025px]:hidden z-10" />
-        <div className="absolute bottom-0 left-0 right-0 h-[32vh] bg-gradient-to-t from-black via-black/95 to-transparent min-[1025px]:hidden z-10" />
-
-        {/* Desktop-specific adjustments (override for widescreen immersion) */}
-        <style dangerouslySetInnerHTML={{__html: `
-          @media (min-width: 1025px) {
-            .absolute.inset-0.bg-no-repeat {
-              background-size: cover !important;
-              background-position: center bottom !important;
-            }
-          }
-        `}} />
-
-        {/* Shadow floor for text and dock contrast (Mobile/Tablet Only) */}
-        <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black/80 via-black/20 to-transparent min-[1025px]:hidden" />
+        {/* Independent Avatar Layer */}
+        <div className="absolute inset-0 flex items-end justify-center">
+          <img 
+            src="/avatar-cutout.png" 
+            alt="Vipul Katarnaware"
+            className="w-auto h-[65%] md:h-[75%] lg:h-[80%] object-contain object-bottom"
+            style={{ 
+              opacity: phase >= 1 ? 1 : 0, 
+              transition: 'opacity 1200ms ease',
+              filter: 'drop-shadow(0 -10px 40px rgba(0,0,0,0.05))'
+            }}
+          />
+        </div>
       </div>
 
       {/* Hero Content Layer */}
