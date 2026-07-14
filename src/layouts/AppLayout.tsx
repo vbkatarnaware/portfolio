@@ -57,8 +57,8 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         <div
           className="absolute inset-0 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{
-            // Ambient base colors sampled from the 3D studio render
-            background: 'radial-gradient(circle at 50% 40%, #3a3d46 0%, #2a2c33 40%, #15161a 100%)',
+            // Ambient base colors sampled from the 3D studio render (Cool Grey to Warm Grey)
+            background: 'linear-gradient(to bottom, #6B7382 0%, #9DA1A8 40%, #C7C5C8 100%)',
             opacity: phase >= 1 ? 1 : 0
           }}
         />
