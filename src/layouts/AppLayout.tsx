@@ -70,13 +70,9 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
           }}
         />
         
-        {/* Layer 3: Edge Bleeding (Vignette Overlay from all 4 sides) */}
-        {/* Top & Bottom */}
-        <div className="absolute top-0 left-0 right-0 h-[22vh] bg-gradient-to-b from-black via-black/80 to-transparent min-[1025px]:hidden" />
-        <div className="absolute bottom-0 left-0 right-0 h-[28vh] bg-gradient-to-t from-black via-black/90 to-transparent min-[1025px]:hidden" />
-        {/* Left & Right */}
-        <div className="absolute top-0 bottom-0 left-0 w-[15vw] bg-gradient-to-r from-black via-black/50 to-transparent min-[1025px]:hidden" />
-        <div className="absolute top-0 bottom-0 right-0 w-[15vw] bg-gradient-to-l from-black via-black/50 to-transparent min-[1025px]:hidden" />
+        {/* Layer 3: Edge Bleeding (Black Gradients overlay to hide hard image edges on mobile/tablet) */}
+        <div className="absolute top-0 left-0 right-0 h-[30vh] bg-gradient-to-b from-black via-black/90 to-transparent min-[1025px]:hidden z-10" />
+        <div className="absolute bottom-0 left-0 right-0 h-[32vh] bg-gradient-to-t from-black via-black/95 to-transparent min-[1025px]:hidden z-10" />
 
         {/* Desktop-specific adjustments (override for widescreen immersion) */}
         <style dangerouslySetInnerHTML={{__html: `
