@@ -141,7 +141,7 @@ export default function HeroContent() {
         {/* Bottom: Philosophy */}
         <div 
           className={`absolute bottom-0 w-full px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-          style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom, 16px))' }}
+          style={{ paddingBottom: 'calc(148px + env(safe-area-inset-bottom, 16px))' }}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
