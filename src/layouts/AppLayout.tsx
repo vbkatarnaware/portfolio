@@ -59,13 +59,15 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         }}
       />
 
-      {/* Mobile Background — CSS simulation of 3D studio lighting */}
+      {/* Mobile Background — unified continuous canvas */}
       <div className="absolute inset-0 md:hidden bg-black z-0 pointer-events-none">
         <div
-          className='absolute inset-0 transition-opacity duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+          className='absolute inset-0 bg-no-repeat transition-opacity duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
           style={{ 
-            background: 'radial-gradient(150% 100% at 50% 10%, #4a4f5c 0%, #5d616d 40%, #a29a91 75%, #d4cec6 100%)',
+            backgroundImage: `url(${backgroundMap[currentBg]})`,
             opacity: phase >= 1 ? 1 : 0,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center'
           }}
         />
         {/* Extremely Subtle Top Gradient (10% opacity) */}

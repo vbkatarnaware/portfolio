@@ -117,15 +117,12 @@ export default function HeroContent() {
         </div>
       </div>
 
-      {/* Mobile Layout — Native Flexbox Stack */}
-      <div 
-        className="md:hidden w-full h-full pointer-events-none flex flex-col justify-between"
-        style={{ paddingBottom: 'calc(158px + env(safe-area-inset-bottom, 16px))' }}
-      >
+      {/* Mobile Layout — absolute positioned for precise vertical rhythm */}
+      <div className="md:hidden w-full h-full pointer-events-none relative">
         
         {/* Top: Name -> Role */}
         <div 
-          className={`w-full pt-[max(env(safe-area-inset-top),64px)] px-6 flex flex-col items-center gap-4 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] flex-shrink-0 ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
+          className={`absolute top-0 w-full pt-[max(env(safe-area-inset-top),64px)] mt-4 px-6 flex flex-col items-center gap-4 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
         >
           <h1 
             className="text-[42px] leading-[1.05] font-bold tracking-tight text-white text-center drop-shadow-md"
@@ -141,28 +138,14 @@ export default function HeroContent() {
           </p>
         </div>
 
-        {/* Middle: Avatar Cutout (Flexible space guarantees zero overlap) */}
-        <div 
-          className={`flex-1 w-full my-2 flex justify-center items-center overflow-hidden transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-          style={{ minHeight: 0 }}
-        >
-          <div className="relative h-full flex justify-center items-end">
-            <img 
-              src="/avatar-cutout.png" 
-              alt="Vipul Katarnaware"
-              className="h-full w-auto object-contain drop-shadow-[-10px_20px_20px_rgba(0,0,0,0.4)] relative z-10"
-            />
-            {/* Fake 3D floor contact shadow */}
-            <div className="absolute bottom-[1%] w-[60%] h-[3%] bg-black/60 blur-[6px] rounded-[100%] z-0" />
-          </div>
-        </div>
-
         {/* Bottom: Philosophy */}
         <div 
-          className={`w-full px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] flex-shrink-0 ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          className={`absolute bottom-0 w-full px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ paddingBottom: 'calc(158px + env(safe-area-inset-bottom, 16px))' }}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>
+
       </div>
     </div>
   );
