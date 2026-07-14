@@ -83,18 +83,18 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
 
         {/* Desktop-specific adjustments (override for widescreen immersion) */}
         <style dangerouslySetInnerHTML={{__html: `
-          @media (min-width: 768px) {
+          @media (min-width: 1025px) {
             .absolute.inset-0.bg-no-repeat {
               background-size: cover !important;
-              background-position: 92% bottom !important;
+              background-position: center bottom !important;
               -webkit-mask-image: none !important;
               mask-image: none !important;
             }
           }
         `}} />
 
-        {/* Shadow floor for text and dock contrast (Mobile Only) */}
-        <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black/80 via-black/20 to-transparent md:hidden" />
+        {/* Shadow floor for text and dock contrast (Mobile/Tablet Only) */}
+        <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black/80 via-black/20 to-transparent min-[1025px]:hidden" />
       </div>
 
       {/* Hero Content Layer */}

@@ -101,9 +101,9 @@ export default function HeroContent() {
 
   return (
     <div className="absolute inset-0 z-10 flex items-center pointer-events-none">
-      {/* Desktop Layout — untouched */}
+      {/* Desktop Layout */}
       <div 
-        className={`hidden md:block w-full max-w-7xl mx-auto px-8 md:px-16 lg:px-20 transition-all duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        className={`hidden min-[1025px]:block w-full max-w-7xl mx-auto px-8 md:px-16 lg:px-20 transition-all duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
       >
         <div className="max-w-3xl lg:-translate-x-8 xl:-translate-x-12">
           <h1 className="text-5xl md:text-6xl lg:text-[4.6rem] font-bold tracking-tight text-white leading-[1.05] mb-10" style={{ letterSpacing: '-0.035em' }}>
@@ -118,7 +118,7 @@ export default function HeroContent() {
       </div>
 
       {/* Mobile Layout — absolute positioned for precise vertical rhythm */}
-      <div className="md:hidden w-full h-full pointer-events-none relative">
+      <div className="min-[1025px]:hidden w-full h-full pointer-events-none relative">
         
         {/* Top: Name -> Role */}
         <div 

@@ -70,8 +70,9 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
   };
 
   return (
-    <div className='fixed bottom-0 left-1/2 -translate-x-1/2 hidden md:block z-50'>
-      <div className='relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl'>
+    <motion.div 
+      className='fixed bottom-10 left-0 right-0 hidden min-[1025px]:flex justify-center z-50 pointer-events-none'>
+      <div className='relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl pointer-events-auto'>
         <div className='flex items-end space-x-4'>
           {/* Finder */}
           <motion.div
