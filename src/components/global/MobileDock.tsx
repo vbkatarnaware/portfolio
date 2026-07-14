@@ -40,43 +40,45 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
   };
 
   return (
-    <motion.div
-      className='fixed left-0 right-0 min-[1025px]:hidden z-50 pointer-events-none flex justify-center'
+    <motion.div 
+      className='fixed left-0 right-0 md:hidden z-50 pointer-events-none flex justify-center'
       initial={{ bottom: -150, opacity: 0 }}
       animate={phase >= 3 ? { bottom: 0, opacity: 1 } : { bottom: -150, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 16px)' }}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
     >
-      <div
-        className='mb-[16px] py-[16px] px-7 bg-[#1a1a1c]/80 border border-white/10 backdrop-blur-3xl rounded-[44px] flex items-center justify-center gap-[20px] w-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'
-      >
-
+      <div className='mb-[16px] py-[16px] px-6 bg-[#1a1a1c]/80 border border-white/10 backdrop-blur-3xl rounded-[38px] flex justify-between items-start w-[92%] max-w-[380px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'>
+        
         {/* QRapid */}
-        <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex items-center justify-center cursor-pointer'>
-          <div className='w-[56px] h-[56px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
+        <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex flex-col items-center cursor-pointer gap-[6px]'>
+          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
             <img src='/custom-icon.png' alt='QRapid' className='w-full h-full object-cover' />
           </div>
+          <span className="text-[11px] font-medium text-white/90 tracking-wide">QRapid</span>
         </motion.div>
 
         {/* CareerOS */}
-        <motion.div variants={dockItemVariants} whileTap="tap" className='flex items-center justify-center cursor-pointer'>
-          <div className='w-[56px] h-[56px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden bg-white'>
+        <motion.div variants={dockItemVariants} whileTap="tap" className='flex flex-col items-center cursor-pointer gap-[6px]'>
+          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden bg-white'>
             <img src='/careeros.png' alt='CareerOS' className='w-full h-full object-cover' />
           </div>
+          <span className="text-[11px] font-medium text-white/90 tracking-wide">CareerOS</span>
         </motion.div>
 
         {/* MoatDaily */}
-        <motion.div variants={dockItemVariants} whileTap="tap" className='flex items-center justify-center cursor-pointer'>
-          <div className='w-[56px] h-[56px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden border border-white/15 bg-black'>
+        <motion.div variants={dockItemVariants} whileTap="tap" className='flex flex-col items-center cursor-pointer gap-[6px]'>
+          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden border border-white/15 bg-black'>
             <img src='/moatdaily.png' alt='MoatDaily' className='w-full h-full object-cover' />
           </div>
+          <span className="text-[11px] font-medium text-white/90 tracking-wide">MoatDaily</span>
         </motion.div>
 
         {/* Contact */}
-        <motion.button variants={dockItemVariants} whileTap="tap" onClick={handleEmailClick} className='flex items-center justify-center cursor-pointer'>
-          <div className='w-[56px] h-[56px] bg-[#007AFF] rounded-[14px] flex items-center justify-center shadow-lg'>
+        <motion.button variants={dockItemVariants} whileTap="tap" onClick={handleEmailClick} className='flex flex-col items-center cursor-pointer gap-[6px]'>
+          <div className='w-[54px] h-[54px] bg-[#007AFF] rounded-[14px] flex items-center justify-center shadow-lg'>
             <IoIosMail size={38} className='text-white' />
           </div>
+          <span className="text-[11px] font-medium text-white/90 tracking-wide">Contact</span>
         </motion.button>
 
       </div>

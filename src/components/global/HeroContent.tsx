@@ -56,15 +56,14 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
   };
 
   return (
-    <div
-      className="mt-2 lg:mt-20 flex flex-col items-center lg:items-start lg:mx-0 mx-auto w-[78vw] lg:max-w-[420px] relative pointer-events-auto cursor-default"
-      style={{ maxWidth: 'clamp(280px, 80vw, 420px)' }}
+    <div 
+      className="mt-2 md:mt-20 flex flex-col items-center md:items-start md:mx-0 mx-auto w-[85vw] max-w-[340px] md:max-w-[420px] relative pointer-events-auto cursor-default"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      <div className="h-[64px] lg:h-[120px] w-full relative flex justify-center lg:justify-start">
+      <div className="h-[64px] md:h-[120px] w-full relative flex justify-center md:justify-start">
         <AnimatePresence mode="popLayout">
           {isVisible && (
             <motion.p
@@ -73,13 +72,25 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
               initial="enter"
               animate="center"
               exit="exit"
-              className="absolute top-0 w-full lg:text-4xl xl:text-[36px] text-[#F5F5F7] font-medium leading-[1.25] tracking-tight text-center lg:text-left lg:left-0 drop-shadow-sm"
-              style={{ letterSpacing: '-0.02em', fontSize: 'clamp(19px, min(5vw, 4.4svh), 30px)' }}
+              className="absolute top-0 w-full text-[21px] md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.25] tracking-tight text-center md:text-left md:left-0 drop-shadow-sm"
+              style={{ letterSpacing: '-0.02em' }}
             >
               {ROTATING_MESSAGES[index]}
             </motion.p>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Pagination Dots (Mobile Only) */}
+      <div className="flex items-center gap-[6px] mt-4 md:hidden opacity-100 transition-opacity duration-1000" style={{ opacity: isVisible ? 1 : 0 }}>
+        {[0, 1, 2].map((i) => (
+          <div 
+            key={i} 
+            className={`w-[5px] h-[5px] rounded-full transition-colors duration-500 ${
+              (index % 3) === i ? 'bg-white' : 'bg-white/30'
+            }`} 
+          />
+        ))}
       </div>
     </div>
   );
@@ -91,8 +102,8 @@ export default function HeroContent() {
   return (
     <div className="absolute inset-0 z-10 flex items-center pointer-events-none">
       {/* Desktop Layout — untouched */}
-      <div
-        className={`hidden min-[1025px]:block w-full max-w-7xl mx-auto px-8 md:px-16 lg:px-20 transition-all duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      <div 
+        className={`hidden md:block w-full max-w-7xl mx-auto px-8 md:px-16 lg:px-20 transition-all duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
       >
         <div className="max-w-3xl lg:-translate-x-8 xl:-translate-x-12">
           <h1 className="text-5xl md:text-6xl lg:text-[4.6rem] font-bold tracking-tight text-white leading-[1.05] mb-10" style={{ letterSpacing: '-0.035em' }}>
@@ -106,40 +117,31 @@ export default function HeroContent() {
         </div>
       </div>
 
-      {/* Native Layout (phones + iPad portrait) — svh flex column, guarantees no overlap with the avatar */}
-      <div
-        className="min-[1025px]:hidden w-full pointer-events-none relative flex flex-col items-center px-6"
-        style={{
-          height: '100svh',
-          paddingTop: 'max(env(safe-area-inset-top), 24px)',
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + max(min(150px, 22svh), 100px))'
-        }}
-      >
+      {/* Mobile Layout — absolute positioned for precise vertical rhythm */}
+      <div className="md:hidden w-full h-[100dvh] pointer-events-none relative">
+        
         {/* Top: Name -> Role */}
-        <div
-          className={`w-full flex flex-col items-center transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
-          style={{ gap: 'clamp(8px, min(2vw, 1.8svh), 16px)' }}
+        <div 
+          className={`absolute top-0 w-full pt-[max(env(safe-area-inset-top),64px)] mt-4 px-6 flex flex-col items-center gap-4 transition-all duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'}`}
         >
-          <h1
-            className="leading-[1.05] font-bold tracking-tight text-white text-center drop-shadow-md"
-            style={{ letterSpacing: '-0.03em', fontSize: 'clamp(34px, min(9vw, 8svh), 60px)' }}
+          <h1 
+            className="text-[42px] leading-[1.05] font-bold tracking-tight text-white text-center drop-shadow-md"
+            style={{ letterSpacing: '-0.03em' }}
           >
             Vipul<br />Katarnaware.
           </h1>
-          <p
-            className="text-white/70 font-medium tracking-tight text-center drop-shadow-md transition-all duration-600 delay-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style={{ letterSpacing: '-0.01em', fontSize: 'clamp(14px, min(3.6vw, 3.2svh), 19px)', opacity: phase >= 5 ? 1 : 0 }}
+          <p 
+            className="text-[16px] text-white/80 font-medium tracking-tight text-center drop-shadow-md transition-all duration-600 delay-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{ letterSpacing: '-0.01em', opacity: phase >= 5 ? 1 : 0 }}
           >
             Product Manager · AI Builder · Founder
           </p>
         </div>
 
-        {/* Middle: pure breathing space — the avatar art layer shows through here */}
-        <div className="flex-1" />
-
         {/* Bottom: Philosophy */}
-        <div
-          className={`w-full flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        <div 
+          className={`absolute bottom-0 w-full px-6 flex flex-col items-center transition-all duration-600 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 6 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ paddingBottom: 'calc(158px + env(safe-area-inset-bottom, 16px))' }}
         >
           <RotatingSubtitle isVisible={phase >= 6} />
         </div>

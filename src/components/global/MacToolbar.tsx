@@ -52,7 +52,7 @@ export default function MacToolbar() {
   const phase = useStartupPhase();
 
   return (
-    <div className={`hidden min-[1025px]:block transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 2 ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`hidden md:block transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${phase >= 2 ? 'opacity-100' : 'opacity-0'}`}>
       <div className='sticky top-0 z-50 flex bg-[rgba(20,20,20,0.18)] backdrop-blur-[12px] border-b border-white/[0.05] text-white/90 h-8 px-6 items-center justify-between text-sm font-medium'>
         <div className='flex items-center space-x-4 pl-1'>
           <img src='/memoji.png' alt='Memoji' className='w-4 h-4 rounded-full object-cover shadow-sm opacity-90' />
