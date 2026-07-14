@@ -41,9 +41,9 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
 
   return (
     <motion.div 
-      className='fixed left-0 right-0 min-[1025px]:hidden z-50 pointer-events-none flex justify-center'
-      initial={{ bottom: -150, opacity: 0 }}
-      animate={phase >= 3 ? { bottom: 0, opacity: 1 } : { bottom: -150, opacity: 0 }}
+      className='fixed bottom-0 left-0 right-0 min-[1025px]:hidden z-50 pointer-events-none flex justify-center'
+      initial={{ y: 150, opacity: 0 }}
+      animate={phase >= 3 ? { y: 0, opacity: 1 } : { y: 150, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
     >

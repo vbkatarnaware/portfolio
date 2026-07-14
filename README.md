@@ -1,121 +1,75 @@
-# MacOS Terminal Portfolio - Astro Theme
+# macOS Terminal Portfolio
 
-![MacOS Terminal Portfolio](https://storage.googleapis.com/v-staff/theme-cover.png)
+A highly immersive, performance-optimized personal portfolio built to mimic a macOS desktop environment with a 3D Infinite Canvas architecture.
 
-An interactive macOS-inspired portfolio theme for Astro, featuring an AI-powered terminal chat, dynamic backgrounds, and a responsive dock interface.
+## 🚀 Tech Stack
+- **Framework:** [Astro](https://astro.build/) for static site generation and React integration
+- **UI Library:** [React 19](https://react.dev/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **Icons:** [Lucide React](https://lucide.dev/) & React Icons
+- **Deployment:** Vercel
 
-## Features
+## 📂 Project Structure
+Following strict frontend engineering patterns:
+```
+├── docs/                # Project documentation and architectural specs
+├── public/              # Static assets (favicons, fonts, robots.txt)
+├── scripts/             # Build and deployment utilities
+├── src/
+│   ├── assets/          # Processed assets (optimized images)
+│   ├── components/      # React components (global, projects)
+│   ├── constants/       # Global constants and configuration
+│   ├── context/         # React Context providers (Startup phase, etc)
+│   ├── hooks/           # Custom React hooks
+│   ├── layouts/         # Astro layouts & React root layouts
+│   ├── lib/             # External library initializers (analytics, etc)
+│   ├── pages/           # Astro file-based routing
+│   ├── styles/          # Global CSS and Tailwind directives
+│   ├── types/           # TypeScript interfaces and type definitions
+│   └── utils/           # Helper functions
+```
 
-- OpenAI-powered terminal chat
-- Dynamic rotating wallpapers
-- Responsive macOS-style dock
-- Built-in SEO optimization
-- Automated sitemap generation
-- Customizable system prompts
-- Tailwind CSS styling
-- Mobile-friendly design
+## 🏗 Architecture & Philosophy
+### The Infinite Canvas
+The core layout (`AppLayout.tsx`) utilizes a mathematically anchored background system to ensure that the 3D studio render (avatar and desk) remains perfectly positioned across all viewports—from 1440p ultrawides down to the iPhone SE. 
+- **Mobile handling:** A 4-sided dynamic black gradient bleeds the edges into pure black, preventing harsh clipping.
+- **Performance:** Complex layout animations are restricted entirely to hardware-accelerated CSS properties (`transform: translate` and `opacity`) to guarantee 60fps on low-end mobile devices.
 
-## Tech Stack
+### Hydration Strategy
+Astro allows us to ship 0kb of JavaScript for the outer HTML shell. React components are selectively hydrated using the `client:load` directive only where interactivity is required (docks, windows, and startup animations).
 
-- [Astro](https://astro.build)
-- [React](https://reactjs.org)
-- [TypeScript](https://www.typescriptlang.org)
-- [Tailwind CSS](https://tailwindcss.com)
-- [OpenAI API](https://openai.com/api)
+## 🛠 Installation & Development
 
-## Integrations
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/vbkatarnaware/portfolio.git
+   cd portfolio
+   ```
 
-- @astrojs/react
-- @astrojs/vercel
-- @astrolib/seo
-- @astrojs/sitemap
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Getting Started
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
 
-### Prerequisites
+## 📦 Production Build
+To create a highly optimized production build:
+```bash
+npm run build
+```
+You can preview the production output locally:
+```bash
+npm run preview
+```
 
-- Node.js (v18 or higher)
-- OpenAI API key
+## 📈 Future Improvements
+- **a11y Enhancements:** Deeper screen-reader support within the window management system.
+- **Theme Engine:** Expose a toggle to switch between Light/Dark variants natively in the MacToolbar.
 
-### Installation
-
-1. Clone the repository:
-   `git clone https://github.com/yourusername/macos-terminal-portfolio`
-
-2. Install dependencies:
-   `npm install`
-
-3. Create a .env file in the root directory:
-   `cp .env.example .env`
-
-4. Add your OpenAI API key to the .env file:
-   `OPENAI_API_KEY=your_api_key_here`
-
-5. Start the development server:
-   `npm run dev`
-
-## Customization
-
-### Personal Information
-
-Update the following files with your information:
-
-1. `src/components/global/MacTerminal.tsx`:
-
-- Modify welcomeMessage and systemPrompt with your details
-- Customize placeholder messages
-
-2. `src/pages/index.astro`:
-
-- Update SEO metadata
-- Add your website URL
-
-3. `src/components/global/BaseHead.astro`:
-
-- Update meta tags
-- Add your favicon
-
-### Background Images
-
-Replace or add images in `src/assets/images/` directory.
-
-### Dock Icons
-
-Modify `src/components/global/DesktopDock.tsx` and MobileDock.tsx to customize your dock shortcuts.
-
-## Configuration
-
-### SEO
-
-Update SEO metadata in:
-
-- `src/pages/index.astro`
-- `src/components/global/BaseHead.astro`
-
-### Sitemap
-
-The sitemap is automatically generated using @astrojs/sitemap. Configure in astro.config.mjs.
-
-## Deployment
-
-This theme is configured for deployment on Vercel. Update astro.config.mjs if you prefer a different platform.
-
-## License
-
-MIT License - feel free to use this theme for your portfolio!
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-## Acknowledgments
-
-- Inspired by macOS interface
-- Powered by OpenAI's API
-- Built with Astro
-
-## Contact
-
-For questions or support, please open an issue on GitHub.
-
-Made with ❤️ in Austin, TX by Johnny Culbreth
+---
+*Built by Vipul Katarnaware. Product Manager · AI Builder · Founder.*
