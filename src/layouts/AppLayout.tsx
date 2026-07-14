@@ -53,17 +53,10 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
       {/* Universal Background Layer (The Infinite Canvas) */}
       <div className="absolute inset-0 z-0 pointer-events-none bg-black overflow-hidden">
         
-        {/* Layer 1: The Infinite Canvas (CSS Base Lighting) */}
-        <div
-          className="absolute inset-0 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{
-            // Ambient base colors sampled from the 3D studio render (Cool Grey to Warm Grey)
-            background: 'linear-gradient(to bottom, #6B7382 0%, #9DA1A8 40%, #C7C5C8 100%)',
-            opacity: phase >= 1 ? 1 : 0
-          }}
-        />
+        {/* Layer 1: Pure Black Base */}
+        <div className="absolute inset-0 bg-black" />
 
-        {/* Layer 2: The Focal Point Anchor (3D Render + Edge Masking) */}
+        {/* Layer 2: The Focal Point Anchor (3D Render) */}
         <div
           className="absolute inset-0 bg-no-repeat transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ 
@@ -73,13 +66,13 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
             // The Mathematical Anchor
             // Mobile: 75dvh to guarantee text clearance. Desktop: cover or 100dvh for immersion.
             backgroundSize: 'auto max(75dvh, 600px)',
-            backgroundPosition: 'center 50%',
-            
-            // Edge Feathering to blend the PNG into the Infinite Canvas
-            maskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 50%, transparent 95%)',
-            WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 50%, transparent 95%)'
+            backgroundPosition: 'center 50%'
           }}
         />
+        
+        {/* Layer 3: Edge Bleeding (Black Gradients overlay to hide hard image edges on mobile/tablet) */}
+        <div className="absolute top-0 left-0 right-0 h-[22vh] bg-gradient-to-b from-black via-black/80 to-transparent min-[1025px]:hidden" />
+        <div className="absolute bottom-0 left-0 right-0 h-[28vh] bg-gradient-to-t from-black via-black/90 to-transparent min-[1025px]:hidden" />
 
         {/* Desktop-specific adjustments (override for widescreen immersion) */}
         <style dangerouslySetInnerHTML={{__html: `
@@ -87,8 +80,6 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
             .absolute.inset-0.bg-no-repeat {
               background-size: cover !important;
               background-position: center bottom !important;
-              -webkit-mask-image: none !important;
-              mask-image: none !important;
             }
           }
         `}} />
