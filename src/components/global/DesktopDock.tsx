@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { BsGithub } from 'react-icons/bs';
 import { IoIosMail } from 'react-icons/io';
 import { motion, useAnimation } from 'framer-motion';
+import finderImg from '../../assets/images/finder.png';
+import customIconImg from '../../assets/images/custom-icon.png';
+import careerosImg from '../../assets/images/careeros.png';
+import rizentImg from '../../assets/images/rizent.svg';
+import moatdailyImg from '../../assets/images/moatdaily.png';
+import linkedinImg from '../../assets/images/linkedin.png';
 
 interface DesktopDockProps {
   onOpenQRapid?: () => void;
@@ -86,7 +92,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             className='relative cursor-pointer'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/finder.png' alt='Finder' className='w-full h-full object-cover' />
+              <img src={finderImg.src} alt='Finder' className='w-full h-full object-cover' />
             </div>
             {hoveredIcon === 'finder' && <Tooltip text='Finder' />}
           </motion.div>
@@ -104,7 +110,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             className='relative cursor-pointer flex flex-col items-center'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/custom-icon.png' alt='QRapid' className='w-full h-full object-cover' />
+              <img src={customIconImg.src} alt='QRapid' className='w-full h-full object-cover' />
             </div>
             {/* White dot indicator */}
             {showDot && (
@@ -129,7 +135,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             className='relative cursor-pointer'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/careeros.png' alt='CareerOS' className='w-full h-full object-cover' />
+              <img src={careerosImg.src} alt='CareerOS' className='w-full h-full object-cover' />
             </div>
             {hoveredIcon === 'careeros' && <Tooltip text='CareerOS' />}
           </motion.div>
@@ -145,7 +151,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             className='relative cursor-pointer'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/rizent.svg' alt='Rizent AI' className='w-full h-full object-cover' />
+              <img src={rizentImg.src} alt='Rizent AI' className='w-full h-full object-cover' />
             </div>
             {hoveredIcon === 'rizent' && <Tooltip text='Rizent AI' />}
           </motion.div>
@@ -161,7 +167,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             className='relative cursor-pointer'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50'>
-              <img src='/moatdaily.png' alt='MoatDaily' className='w-full h-full object-cover' />
+              <img src={moatdailyImg.src} alt='MoatDaily' className='w-full h-full object-cover' />
             </div>
             {hoveredIcon === 'moatdaily' && <Tooltip text='MoatDaily' />}
           </motion.div>
@@ -183,7 +189,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             className='relative cursor-pointer'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
-              <img src='/linkedin.png' alt='LinkedIn' className='w-full h-full object-cover' />
+              <img src={linkedinImg.src} alt='LinkedIn' className='w-full h-full object-cover' />
             </div>
             {hoveredIcon === 'linkedin' && <Tooltip text='LinkedIn' />}
           </motion.button>

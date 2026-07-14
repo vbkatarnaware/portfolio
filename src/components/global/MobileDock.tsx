@@ -2,6 +2,9 @@ import { IoIosMail } from 'react-icons/io';
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect } from 'react';
 import { useStartupPhase } from '../../context/StartupContext';
+import customIconImg from '../../assets/images/custom-icon.png';
+import careerosImg from '../../assets/images/careeros.png';
+import moatdailyImg from '../../assets/images/moatdaily.png';
 
 interface MobileDockProps {
   onOpenQRapid?: () => void;
@@ -52,7 +55,7 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
         {/* QRapid */}
         <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex flex-col items-center cursor-pointer gap-[5px]'>
           <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
-            <img src='/custom-icon.png' alt='QRapid' className='w-full h-full object-cover' />
+            <img src={customIconImg.src} alt='QRapid' className='w-full h-full object-cover' />
           </div>
           <span className="text-[11px] font-medium text-white/90 tracking-wide">QRapid</span>
         </motion.div>
@@ -60,7 +63,7 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
         {/* CareerOS */}
         <motion.div variants={dockItemVariants} whileTap="tap" className='flex flex-col items-center cursor-pointer gap-[5px]'>
           <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden bg-white'>
-            <img src='/careeros.png' alt='CareerOS' className='w-full h-full object-cover' />
+            <img src={careerosImg.src} alt='CareerOS' className='w-full h-full object-cover' />
           </div>
           <span className="text-[11px] font-medium text-white/90 tracking-wide">CareerOS</span>
         </motion.div>
@@ -68,7 +71,7 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
         {/* MoatDaily */}
         <motion.div variants={dockItemVariants} whileTap="tap" className='flex flex-col items-center cursor-pointer gap-[5px]'>
           <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden border border-white/15 bg-black'>
-            <img src='/moatdaily.png' alt='MoatDaily' className='w-full h-full object-cover' />
+            <img src={moatdailyImg.src} alt='MoatDaily' className='w-full h-full object-cover' />
           </div>
           <span className="text-[11px] font-medium text-white/90 tracking-wide">MoatDaily</span>
         </motion.div>
