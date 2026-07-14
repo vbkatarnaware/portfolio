@@ -49,7 +49,7 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
   }, [initialBg, backgroundMap]);
 
   return (
-    <div className='relative w-full h-screen overflow-hidden bg-black font-sans antialiased'>
+    <div className='fixed inset-0 w-full overflow-hidden bg-black font-sans antialiased'>
       {/* Desktop Background */}
       <div
         className='absolute inset-0 hidden md:block bg-cover bg-[position:92%_bottom] bg-no-repeat transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'

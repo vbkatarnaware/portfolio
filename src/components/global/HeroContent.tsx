@@ -118,7 +118,7 @@ export default function HeroContent() {
       </div>
 
       {/* Mobile Layout — absolute positioned for precise vertical rhythm */}
-      <div className="md:hidden w-full h-[100dvh] pointer-events-none relative">
+      <div className="md:hidden w-full h-full pointer-events-none relative">
         
         {/* Top: Name -> Role */}
         <div 
