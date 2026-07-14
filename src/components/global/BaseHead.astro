@@ -3,10 +3,12 @@ import '../../styles/global.css';
 import { AstroSeo } from '@astrolib/seo';
 import { getImage } from 'astro:assets';
 import customWallpaper from '../../assets/images/wallpaper4.png';
+import avatarCutout from '../../assets/images/avatar-cutout.png';
 
 const backgrounds = await Promise.all([
   getImage({ src: customWallpaper, width: 3500 }),
 ]);
+const avatarCutoutPreload = await getImage({ src: avatarCutout, width: 940, format: 'webp' });
 ---
 
 <!-- Core meta tags -->
@@ -14,7 +16,7 @@ const backgrounds = await Promise.all([
 <meta http-equiv='X-UA-Compatible' content='IE=edge' />
 <meta
   name='viewport'
-  content='width=device-width, initial-scale=1, maximum-scale=1'
+  content='width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover'
 />
 <meta name='author' content='Vipul Katarnaware' />
 <!-- Replace with your name -->
@@ -75,3 +77,11 @@ const backgrounds = await Promise.all([
     />
   ))
 }
+<link
+  rel='preload'
+  href={avatarCutoutPreload.src}
+  as='image'
+  type='image/webp'
+  fetchpriority='high'
+  media='(max-width: 1024px)'
+/>

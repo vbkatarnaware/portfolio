@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { getImage } from 'astro:assets';
 import AppLayout from '../layouts/AppLayout';
 import customWallpaper from '../assets/images/wallpaper4.png';
+import avatarCutout from '../assets/images/avatar-cutout.png';
 
 const backgrounds = [customWallpaper];
 
@@ -22,6 +23,12 @@ const optimizedBackgrounds = await Promise.all(
 const backgroundMap = Object.fromEntries(
   optimizedBackgrounds.map((bg, index) => [`bg-${index + 1}`, bg.src])
 );
+
+const optimizedAvatarCutout = await getImage({
+  src: avatarCutout,
+  width: 940,
+  format: 'webp',
+});
 ---
 
 <!-- 
@@ -47,5 +54,6 @@ const backgroundMap = Object.fromEntries(
     client:load
     initialBg={getRandomBackground()}
     backgroundMap={backgroundMap}
+    mobileAvatarSrc={optimizedAvatarCutout.src}
   />
 </Layout>
