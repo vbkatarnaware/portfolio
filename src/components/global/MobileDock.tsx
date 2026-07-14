@@ -1,6 +1,6 @@
 import { IoIosMail } from 'react-icons/io';
 import { motion, useAnimation } from 'framer-motion';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useStartupPhase } from '../../context/StartupContext';
 import customIconImg from '../../assets/images/custom-icon.png';
 import careerosImg from '../../assets/images/careeros.png';
@@ -14,6 +14,16 @@ interface MobileDockProps {
 export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
   const phase = useStartupPhase();
   const qRapidControls = useAnimation();
+  const [showDot, setShowDot] = useState(false);
+
+  useEffect(() => {
+    if (phase >= 4) {
+      const timer = setTimeout(() => {
+        setShowDot(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [phase]);
 
   useEffect(() => {
     const bouncedBefore = sessionStorage.getItem('qrapid_bounced_mobile');
@@ -53,11 +63,21 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
       <div className='mb-[16px] py-[12px] px-[20px] bg-[#1a1a1c]/80 border border-white/10 backdrop-blur-3xl rounded-[34px] flex justify-between items-start w-[90%] max-w-[340px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'>
         
         {/* QRapid */}
-        <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex flex-col items-center cursor-pointer gap-[5px]'>
-          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
+        <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex flex-col items-center cursor-pointer gap-[5px] relative'>
+          <div className='relative w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
             <img src={customIconImg.src} alt='QRapid' className='w-full h-full object-cover' />
           </div>
-          <span className="text-[11px] font-medium text-white/90 tracking-wide">QRapid</span>
+          <div className="flex flex-col items-center gap-[2px]">
+            {showDot && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: 'spring', damping: 20 }}
+                className="w-1 h-1 rounded-full bg-white/80" 
+              />
+            )}
+            <span className="text-[11px] font-medium text-white/90 tracking-wide">QRapid</span>
+          </div>
         </motion.div>
 
         {/* CareerOS */}
@@ -70,7 +90,7 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
 
         {/* MoatDaily */}
         <motion.div variants={dockItemVariants} whileTap="tap" className='flex flex-col items-center cursor-pointer gap-[5px]'>
-          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden border border-white/15 bg-black'>
+          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
             <img src={moatdailyImg.src} alt='MoatDaily' className='w-full h-full object-cover' />
           </div>
           <span className="text-[11px] font-medium text-white/90 tracking-wide">MoatDaily</span>
