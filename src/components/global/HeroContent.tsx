@@ -57,13 +57,13 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
 
   return (
     <div 
-      className="mt-2 md:mt-20 flex flex-col items-center md:items-start md:mx-0 mx-auto w-[85vw] max-w-[340px] md:max-w-[420px] relative pointer-events-auto cursor-default"
+      className="mt-2 min-[1025px]:mt-20 flex flex-col items-center min-[1025px]:items-start min-[1025px]:mx-0 mx-auto w-[85vw] max-w-[340px] min-[1025px]:max-w-[420px] relative pointer-events-auto cursor-default"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      <div className="h-[64px] md:h-[120px] w-full relative flex justify-center md:justify-start">
+      <div className="h-[64px] min-[1025px]:h-[120px] w-full relative flex justify-center min-[1025px]:justify-start">
         <AnimatePresence mode="popLayout">
           {isVisible && (
             <motion.p
@@ -72,7 +72,7 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
               initial="enter"
               animate="center"
               exit="exit"
-              className="absolute top-0 w-full text-[21px] md:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.25] tracking-tight text-center md:text-left md:left-0 drop-shadow-sm"
+              className="absolute top-0 w-full text-[21px] min-[1025px]:text-4xl lg:text-[36px] text-[#F5F5F7] font-medium leading-[1.25] tracking-tight text-center min-[1025px]:text-left min-[1025px]:left-0 drop-shadow-sm"
               style={{ letterSpacing: '-0.02em' }}
             >
               {ROTATING_MESSAGES[index]}
@@ -82,7 +82,7 @@ function RotatingSubtitle({ isVisible }: { isVisible: boolean }) {
       </div>
 
       {/* Pagination Dots (Mobile Only) */}
-      <div className="flex items-center gap-[6px] mt-4 md:hidden opacity-100 transition-opacity duration-1000" style={{ opacity: isVisible ? 1 : 0 }}>
+      <div className="flex items-center gap-[6px] mt-4 min-[1025px]:hidden opacity-100 transition-opacity duration-1000" style={{ opacity: isVisible ? 1 : 0 }}>
         {[0, 1, 2].map((i) => (
           <div 
             key={i} 
