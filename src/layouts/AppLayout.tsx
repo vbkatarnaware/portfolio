@@ -50,31 +50,51 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
 
   return (
     <div className='fixed inset-0 w-full overflow-hidden bg-black font-sans antialiased'>
-      {/* Desktop Background */}
-      <div
-        className='absolute inset-0 hidden md:block bg-cover bg-[position:92%_bottom] bg-no-repeat transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
-        style={{ 
-          backgroundImage: `url(${backgroundMap[currentBg]})`,
-          opacity: phase >= 1 ? 1 : 0
-        }}
-      />
-
-      {/* Mobile Background — unified continuous canvas */}
-      <div className="absolute inset-0 md:hidden bg-black z-0 pointer-events-none">
+      {/* Universal Background Layer (The Infinite Canvas) */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-black overflow-hidden">
+        
+        {/* Layer 1: The Infinite Canvas (CSS Base Lighting) */}
         <div
-          className='absolute inset-0 bg-no-repeat transition-opacity duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)]'
+          className="absolute inset-0 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{
+            // Ambient base colors sampled from the 3D studio render
+            background: 'radial-gradient(circle at 50% 40%, #3a3d46 0%, #2a2c33 40%, #15161a 100%)',
+            opacity: phase >= 1 ? 1 : 0
+          }}
+        />
+
+        {/* Layer 2: The Focal Point Anchor (3D Render + Edge Masking) */}
+        <div
+          className="absolute inset-0 bg-no-repeat transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ 
             backgroundImage: `url(${backgroundMap[currentBg]})`,
             opacity: phase >= 1 ? 1 : 0,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center'
+            
+            // The Mathematical Anchor
+            // Mobile: 75dvh to guarantee text clearance. Desktop: cover or 100dvh for immersion.
+            backgroundSize: 'auto max(75dvh, 600px)',
+            backgroundPosition: 'center 50%',
+            
+            // Edge Feathering to blend the PNG into the Infinite Canvas
+            maskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 50%, transparent 95%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 50%, transparent 95%)'
           }}
         />
-        {/* Extremely Subtle Top Gradient (10% opacity) */}
-        <div className="absolute top-0 left-0 right-0 h-[15vh] bg-gradient-to-b from-black/10 to-transparent" />
-        
-        {/* Shadow floor for text and dock contrast */}
-        <div className="absolute bottom-0 left-0 right-0 h-[35vh] bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+        {/* Desktop-specific adjustments (override for widescreen immersion) */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @media (min-width: 768px) {
+            .absolute.inset-0.bg-no-repeat {
+              background-size: cover !important;
+              background-position: 92% bottom !important;
+              -webkit-mask-image: none !important;
+              mask-image: none !important;
+            }
+          }
+        `}} />
+
+        {/* Shadow floor for text and dock contrast (Mobile Only) */}
+        <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black/80 via-black/20 to-transparent md:hidden" />
       </div>
 
       {/* Hero Content Layer */}
