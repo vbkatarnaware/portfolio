@@ -4,6 +4,16 @@ import { getImage } from 'astro:assets';
 import AppLayout from '../layouts/AppLayout';
 import customWallpaper from '../assets/images/wallpaper4.png';
 
+export function getStaticPaths() {
+  return [
+    { params: { tab: 'about' } },
+    { params: { tab: 'resume' } },
+    { params: { tab: 'experience' } },
+    { params: { tab: 'contact' } },
+    { params: { tab: 'products' } }
+  ];
+}
+
 const backgrounds = [customWallpaper];
 
 function getRandomBackground() {
@@ -24,13 +34,6 @@ const backgroundMap = Object.fromEntries(
 );
 ---
 
-<!-- 
-  Customize these values for your portfolio:
-  - title: Your name and role
-  - description: Brief description of your expertise
-  - canonical: Your website URL
-  - openGraph: Social media sharing metadata
--->
 <Layout
   title='Vipul Katarnaware — AI-Native Product Manager & Founder'
   description='Vipul Katarnaware is an AI-native Product Manager and founder based in Mumbai, building 0-to-1 products with agentic AI workflows across FinTech and B2B SaaS.'

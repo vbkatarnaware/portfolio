@@ -24,11 +24,11 @@ export default function Window({ id, title, isOpen, onClose, children, width = 8
           className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none origin-bottom"
         >
           <div 
-            className="pointer-events-auto bg-[#1c1c1e]/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden flex flex-col"
+            className="pointer-events-auto bg-[#1a1a1c]/35 backdrop-blur-[40px] rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.15),_0_30px_60px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden flex flex-col"
             style={{ width: `${width}px`, height: `${height}px`, maxWidth: '95vw', maxHeight: '85vh' }}
           >
             {/* Toolbar */}
-            <div className="h-12 bg-white/5 border-b border-white/10 flex items-center px-4 relative shrink-0">
+            <div className="h-12 flex items-center px-4 relative shrink-0 z-10">
               {/* Traffic Lights */}
               <div className="flex gap-2 absolute left-4">
                 <button 
@@ -52,7 +52,7 @@ export default function Window({ id, title, isOpen, onClose, children, width = 8
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-auto bg-black/20">
+            <div className="flex-1 overflow-auto">
               {children}
             </div>
           </div>
