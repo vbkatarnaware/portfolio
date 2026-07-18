@@ -72,11 +72,13 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
           } ${
             isMobile || windowData.isMaximized ? 'rounded-none top-0 left-0' : 'rounded-2xl'
           }`}
-          style={{ 
+          style={{
             zIndex: windowData.zIndex,
             ...( !isMobile && !windowData.isMaximized ? {
-              top: `calc(50vh - ${(windowData.defaultHeight || 500) / 2}px)`,
-              left: `calc(50vw - ${(windowData.defaultWidth || 800) / 2}px)`
+              // Center, then cascade each subsequent window ~30px down-right
+              // so stacked windows stay visibly distinct (macOS cascade).
+              top: `calc(50vh - ${(windowData.defaultHeight || 500) / 2}px + ${(windowData.cascade || 0) * 30}px)`,
+              left: `calc(50vw - ${(windowData.defaultWidth || 800) / 2}px + ${(windowData.cascade || 0) * 30}px)`
             } : {})
           }}
         >

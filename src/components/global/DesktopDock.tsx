@@ -1,51 +1,69 @@
 import { useState, useEffect } from 'react';
 import { BsGithub } from 'react-icons/bs';
-import { IoIosMail } from 'react-icons/io';
 import { motion, useAnimation } from 'framer-motion';
 import finderImg from '../../assets/images/finder.png';
 import customIconImg from '../../assets/images/custom-icon.png';
+import iciciImg from '../../assets/images/icici.png';
+import mailImg from '../../assets/images/mail.svg';
 import careerosImg from '../../assets/images/careeros.png';
 import rizentImg from '../../assets/images/rizent.svg';
 import moatdailyImg from '../../assets/images/moatdaily.png';
 import linkedinImg from '../../assets/images/linkedin.png';
+import type { AppId } from '../../context/WindowContext';
+import { useWindows } from '../../context/WindowContext';
 
 interface DesktopDockProps {
-  onOpenQRapid?: () => void;
-  onOpenFinder?: () => void;
+  onOpenWindow: (id: AppId) => void;
 }
 
-export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockProps) {
+// Dock order (locked): Finder | QRapid ICICI (Experience) | CareerOS Rizent
+// MoatDaily (Independent Products) | LinkedIn GitHub Email Calendar.
+// Grouping is communicated by spacing only — no extra navigation hierarchy.
+export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const { windows } = useWindows();
   const qRapidControls = useAnimation();
-  const [showDot, setShowDot] = useState(false);
+  // QRapid carries a dot by default as the "start here" onboarding cue —
+  // it appears after the attention bounce lands (instantly on revisits).
+  const [qrapidCueDot, setQrapidCueDot] = useState(false);
 
   useEffect(() => {
     const bouncedBefore = sessionStorage.getItem('qrapid_bounced_v2');
     if (!bouncedBefore) {
       const runBounce = async () => {
-        // Wait a bit for the site to load
         await new Promise(resolve => setTimeout(resolve, 1500));
-        
         await qRapidControls.start({
           y: [0, -45, 0, -22, 0, -8, 0],
-          transition: { 
-            duration: 1.6, 
+          transition: {
+            duration: 1.6,
             times: [0, 0.25, 0.5, 0.75, 0.88, 0.95, 1],
             ease: ["easeOut", "easeIn", "easeOut", "easeIn", "easeOut", "easeIn"]
           }
         });
-        
         sessionStorage.setItem('qrapid_bounced_v2', 'true');
-        setShowDot(true);
+        setQrapidCueDot(true);
       };
       runBounce();
     } else {
-      setShowDot(true);
+      setQrapidCueDot(true);
     }
   }, [qRapidControls]);
 
+  // macOS running-app indicator: a dot appears under every OPEN app window.
+  // QRapid additionally shows it by default (onboarding cue, see above).
+  // Social/link icons never get one — they're links, not apps.
+  const OpenDot = ({ id }: { id: AppId }) =>
+    windows[id]?.isOpen || (id === 'qrapid' && qrapidCueDot) ? (
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', damping: 20 }}
+        className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-white/80"
+      />
+    ) : null;
+
   const handleEmailClick = () => {
-    window.location.href = 'mailto:john@johndoe.com';
+    window.location.href = 'mailto:vipulkatarnaware@gmail.com';
   };
 
   const handleGithubClick = () => {
@@ -53,11 +71,15 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
   };
 
   const handleCalendarClick = () => {
-    window.open('https://calendly.com/', '_blank');
+    // No standing scheduling link yet — route to Contact instead of a dead
+    // generic calendly.com URL.
+    onOpenWindow('finder');
+    window.history.pushState(null, '', '/contact');
+    window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
   const handleLinkedinClick = () => {
-    window.open('https://linkedin.com/', '_blank');
+    window.open('https://linkedin.com/in/vipul-katarnaware', '_blank');
   };
 
   const Tooltip = ({ text }: { text: string }) => (
@@ -75,8 +97,14 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
     tap: { scale: 0.95 }
   };
 
+  const Divider = () => (
+    <div className='flex items-center h-14'>
+      <div className='w-px h-10 bg-white/20' />
+    </div>
+  );
+
   return (
-    <motion.div 
+    <motion.div
       className='fixed bottom-10 left-0 right-0 hidden min-[1025px]:flex justify-center z-50 pointer-events-none'>
       <div className='relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl pointer-events-auto'>
         <div className='flex items-end space-x-4'>
@@ -86,7 +114,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             initial="initial"
             whileHover="hover"
             whileTap="tap"
-            onClick={onOpenFinder}
+            onClick={() => onOpenWindow('finder')}
             onMouseEnter={() => setHoveredIcon('finder')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -94,6 +122,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
               <img src={finderImg.src} alt='Finder' className='w-full h-full object-cover' />
             </div>
+            <OpenDot id='finder' />
             {hoveredIcon === 'finder' && <Tooltip text='Finder' />}
           </motion.div>
 
@@ -104,25 +133,37 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             animate={qRapidControls}
             whileHover="hover"
             whileTap="tap"
-            onClick={onOpenQRapid}
-            onMouseEnter={() => setHoveredIcon('custom')}
+            onClick={() => onOpenWindow('qrapid')}
+            onMouseEnter={() => setHoveredIcon('qrapid')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer flex flex-col items-center'
           >
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
               <img src={customIconImg.src} alt='QRapid' className='w-full h-full object-cover' />
             </div>
-            {/* White dot indicator */}
-            {showDot && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: 'spring', damping: 20 }}
-                className="absolute -bottom-2 w-1 h-1 rounded-full bg-white/80" 
-              />
-            )}
-            {hoveredIcon === 'custom' && <Tooltip text='QRapid' />}
+            <OpenDot id='qrapid' />
+            {hoveredIcon === 'qrapid' && <Tooltip text='QRapid' />}
           </motion.div>
+
+          {/* ICICI */}
+          <motion.div
+            variants={dockItemVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            onClick={() => onOpenWindow('icici')}
+            onMouseEnter={() => setHoveredIcon('icici')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            className='relative cursor-pointer'
+          >
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
+              <img src={iciciImg.src} alt='ICICI Bank' className='w-full h-full object-cover' />
+            </div>
+            <OpenDot id='icici' />
+            {hoveredIcon === 'icici' && <Tooltip text='ICICI Bank' />}
+          </motion.div>
+
+          <Divider />
 
           {/* CareerOS */}
           <motion.div
@@ -130,6 +171,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             initial="initial"
             whileHover="hover"
             whileTap="tap"
+            onClick={() => onOpenWindow('careeros')}
             onMouseEnter={() => setHoveredIcon('careeros')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -137,6 +179,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
               <img src={careerosImg.src} alt='CareerOS' className='w-full h-full object-cover' />
             </div>
+            <OpenDot id='careeros' />
             {hoveredIcon === 'careeros' && <Tooltip text='CareerOS' />}
           </motion.div>
 
@@ -146,6 +189,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             initial="initial"
             whileHover="hover"
             whileTap="tap"
+            onClick={() => onOpenWindow('rizent')}
             onMouseEnter={() => setHoveredIcon('rizent')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -153,6 +197,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
               <img src={rizentImg.src} alt='Rizent AI' className='w-full h-full object-cover' />
             </div>
+            <OpenDot id='rizent' />
             {hoveredIcon === 'rizent' && <Tooltip text='Rizent AI' />}
           </motion.div>
 
@@ -162,6 +207,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             initial="initial"
             whileHover="hover"
             whileTap="tap"
+            onClick={() => onOpenWindow('moatdaily')}
             onMouseEnter={() => setHoveredIcon('moatdaily')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -169,13 +215,11 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden border border-white/50'>
               <img src={moatdailyImg.src} alt='MoatDaily' className='w-full h-full object-cover' />
             </div>
+            <OpenDot id='moatdaily' />
             {hoveredIcon === 'moatdaily' && <Tooltip text='MoatDaily' />}
           </motion.div>
 
-          {/* Divider */}
-          <div className='flex items-center h-14'>
-            <div className='w-px h-10 bg-white/20' />
-          </div>
+          <Divider />
 
           {/* LinkedIn */}
           <motion.button
@@ -222,8 +266,8 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
           >
-            <div className='w-14 h-14 bg-gradient-to-t from-blue-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg'>
-              <IoIosMail size={45} className='text-white' />
+            <div className='w-14 h-14 rounded-xl flex items-center justify-center shadow-lg overflow-hidden'>
+              <img src={mailImg.src} alt='Email' className='w-full h-full object-cover' />
             </div>
             {hoveredIcon === 'email' && <Tooltip text='Email Me' />}
           </motion.button>
@@ -252,7 +296,7 @@ export default function DesktopDock({ onOpenQRapid, onOpenFinder }: DesktopDockP
                 </span>
               </div>
             </div>
-            {hoveredIcon === 'calendar' && <Tooltip text='Book a Call' />}
+            {hoveredIcon === 'calendar' && <Tooltip text='Book a call' />}
           </motion.button>
         </div>
       </div>

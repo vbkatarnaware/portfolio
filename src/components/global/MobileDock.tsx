@@ -1,26 +1,33 @@
-import { IoIosMail } from 'react-icons/io';
 import { motion, useAnimation } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useStartupPhase } from '../../context/StartupContext';
 import customIconImg from '../../assets/images/custom-icon.png';
+import iciciImg from '../../assets/images/icici.png';
+import mailImg from '../../assets/images/mail.svg';
 import careerosImg from '../../assets/images/careeros.png';
+import rizentImg from '../../assets/images/rizent.svg';
 import moatdailyImg from '../../assets/images/moatdaily.png';
+import type { AppId } from '../../context/WindowContext';
+import { useWindows } from '../../context/WindowContext';
 
 interface MobileDockProps {
-  onOpenQRapid?: () => void;
-  onOpenFinder?: () => void;
+  onOpenWindow: (id: AppId) => void;
 }
 
-export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
+// Mobile dock: same app set and grouping as DesktopDock, re-flowed into a
+// horizontally scrollable strip rather than dropping any icon (Mobile
+// principle — same IA, touch-optimized).
+export default function MobileDock({ onOpenWindow }: MobileDockProps) {
   const phase = useStartupPhase();
+  const { windows } = useWindows();
   const qRapidControls = useAnimation();
-  const [showDot, setShowDot] = useState(false);
+  // QRapid "start here" cue dot — appears once startup completes, after the
+  // bounce would have landed (mirrors DesktopDock behavior).
+  const [qrapidCueDot, setQrapidCueDot] = useState(false);
 
   useEffect(() => {
     if (phase >= 4) {
-      const timer = setTimeout(() => {
-        setShowDot(true);
-      }, 2000);
+      const timer = setTimeout(() => setQrapidCueDot(true), 2000);
       return () => clearTimeout(timer);
     }
   }, [phase]);
@@ -32,8 +39,8 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
         await new Promise(resolve => setTimeout(resolve, 800));
         await qRapidControls.start({
           y: [0, -35, 0, -15, 0, -5, 0],
-          transition: { 
-            duration: 1.4, 
+          transition: {
+            duration: 1.4,
             times: [0, 0.25, 0.5, 0.75, 0.88, 0.95, 1],
             ease: ["easeOut", "easeIn", "easeOut", "easeIn", "easeOut", "easeIn"]
           }
@@ -45,61 +52,66 @@ export default function MobileDock({ onOpenQRapid }: MobileDockProps) {
   }, [phase, qRapidControls]);
 
   const handleEmailClick = () => {
-    window.location.href = 'mailto:john@johndoe.com';
+    window.location.href = 'mailto:vipulkatarnaware@gmail.com';
   };
 
   const dockItemVariants = {
     tap: { scale: 0.9 }
   };
 
+  const items: { id: AppId; label: string; img: string; controls?: typeof qRapidControls }[] = [
+    { id: 'qrapid', label: 'QRapid', img: customIconImg.src, controls: qRapidControls },
+    { id: 'icici', label: 'ICICI', img: iciciImg.src },
+    { id: 'careeros', label: 'CareerOS', img: careerosImg.src },
+    { id: 'rizent', label: 'Rizent', img: rizentImg.src },
+    { id: 'moatdaily', label: 'MoatDaily', img: moatdailyImg.src },
+  ];
+
   return (
-    <motion.div 
+    <motion.div
       className='fixed bottom-0 left-0 right-0 min-[1025px]:hidden z-50 pointer-events-none flex justify-center'
       initial={{ y: 150, opacity: 0 }}
       animate={phase >= 3 ? { y: 0, opacity: 1 } : { y: 150, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
     >
-      <div className='mb-[16px] py-[12px] px-[20px] bg-[#1a1a1c]/80 border border-white/10 backdrop-blur-3xl rounded-[34px] flex justify-between items-start w-[90%] max-w-[340px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto'>
-        
-        {/* QRapid */}
-        <motion.div variants={dockItemVariants} whileTap="tap" onClick={onOpenQRapid} animate={qRapidControls} className='flex flex-col items-center cursor-pointer gap-[5px] relative'>
-          <div className='relative w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
-            <img src={customIconImg.src} alt='QRapid' className='w-full h-full object-cover' />
-          </div>
-          <div className="flex flex-col items-center gap-[2px]">
-            {showDot && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: 'spring', damping: 20 }}
-                className="w-1 h-1 rounded-full bg-white/80" 
-              />
-            )}
-            <span className="text-[11px] font-medium text-white/90 tracking-wide">QRapid</span>
-          </div>
-        </motion.div>
+      <div className='mb-[16px] py-[12px] px-[16px] bg-[#1a1a1c]/80 border border-white/10 backdrop-blur-3xl rounded-[34px] flex items-start gap-4 w-[92%] max-w-[400px] overflow-x-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto [&::-webkit-scrollbar]:hidden'>
 
-        {/* CareerOS */}
-        <motion.div variants={dockItemVariants} whileTap="tap" className='flex flex-col items-center cursor-pointer gap-[5px]'>
-          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden bg-white'>
-            <img src={careerosImg.src} alt='CareerOS' className='w-full h-full object-cover' />
-          </div>
-          <span className="text-[11px] font-medium text-white/90 tracking-wide">CareerOS</span>
-        </motion.div>
-
-        {/* MoatDaily */}
-        <motion.div variants={dockItemVariants} whileTap="tap" className='flex flex-col items-center cursor-pointer gap-[5px]'>
-          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
-            <img src={moatdailyImg.src} alt='MoatDaily' className='w-full h-full object-cover' />
-          </div>
-          <span className="text-[11px] font-medium text-white/90 tracking-wide">MoatDaily</span>
-        </motion.div>
+        {items.map((item) => (
+          <motion.div
+            key={item.id}
+            variants={dockItemVariants}
+            whileTap="tap"
+            onClick={() => onOpenWindow(item.id)}
+            animate={item.controls}
+            className='flex flex-col items-center cursor-pointer gap-[5px] relative shrink-0'
+          >
+            <div className='relative w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden bg-white'>
+              <img src={item.img} alt={item.label} className='w-full h-full object-cover' />
+            </div>
+            <div className="flex flex-col items-center gap-[2px]">
+              {(windows[item.id]?.isOpen || (item.id === 'qrapid' && qrapidCueDot)) && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', damping: 20 }}
+                  className="w-1 h-1 rounded-full bg-white/80"
+                />
+              )}
+              <span className="text-[11px] font-medium text-white/90 tracking-wide whitespace-nowrap">{item.label}</span>
+            </div>
+          </motion.div>
+        ))}
 
         {/* Contact */}
-        <motion.button variants={dockItemVariants} whileTap="tap" onClick={handleEmailClick} className='flex flex-col items-center cursor-pointer gap-[5px]'>
-          <div className='w-[54px] h-[54px] bg-[#007AFF] rounded-[14px] flex items-center justify-center shadow-lg'>
-            <IoIosMail size={38} className='text-white' />
+        <motion.button
+          variants={dockItemVariants}
+          whileTap="tap"
+          onClick={handleEmailClick}
+          className='flex flex-col items-center cursor-pointer gap-[5px] shrink-0'
+        >
+          <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
+            <img src={mailImg.src} alt='Contact' className='w-full h-full object-cover' />
           </div>
           <span className="text-[11px] font-medium text-white/90 tracking-wide">Contact</span>
         </motion.button>

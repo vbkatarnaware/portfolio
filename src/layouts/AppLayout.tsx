@@ -6,12 +6,15 @@ import HeroContent from '../components/global/HeroContent';
 
 import WindowFrame from '../components/WindowManager/WindowFrame';
 import { WindowProvider, useWindows } from '../context/WindowContext';
+import type { AppId } from '../context/WindowContext';
 import { StartupProvider, useStartupPhase } from '../context/StartupContext';
 
 import FinderApp from '../components/Finder/FinderApp';
-import QRapidApp from '../components/Applications/QRapidApp';
-import CareerOSApp from '../components/Applications/CareerOSApp';
-import MoatDailyApp from '../components/Applications/MoatDailyApp';
+import QRapidApp from '../components/apps/qrapid';
+import IciciApp from '../components/apps/icici';
+import CareerOSApp from '../components/apps/careeros';
+import RizentApp from '../components/apps/rizent';
+import MoatDailyApp from '../components/apps/moatdaily';
 
 interface AppLayoutProps {
   initialBg: string;
@@ -28,10 +31,23 @@ export default function Desktop({ initialBg, backgroundMap }: AppLayoutProps) {
   );
 }
 
+const DEEP_LINK_APPS = ['qrapid', 'icici', 'careeros', 'rizent', 'moatdaily'] as const;
+
 function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
   const [currentBg, setCurrentBg] = useState<string>(initialBg);
   const phase = useStartupPhase();
   const { openWindow } = useWindows();
+
+  // Deep-linking: a direct visit to /<app> (or /<app>/<section>) opens that
+  // app's window on mount, so the URLs prerendered by src/pages/[app]/
+  // index.astro are real, functional entry points — not just SEO shells.
+  useEffect(() => {
+    const firstSegment = window.location.pathname.split('/').filter(Boolean)[0];
+    if ((DEEP_LINK_APPS as readonly string[]).includes(firstSegment)) {
+      openWindow(firstSegment as AppId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const lastBg = localStorage.getItem('lastBackground');
@@ -97,7 +113,9 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
       <div className="absolute inset-0 z-40 pointer-events-none overflow-hidden">
         <WindowFrame id="finder"><FinderApp /></WindowFrame>
         <WindowFrame id="qrapid"><QRapidApp /></WindowFrame>
+        <WindowFrame id="icici"><IciciApp /></WindowFrame>
         <WindowFrame id="careeros"><CareerOSApp /></WindowFrame>
+        <WindowFrame id="rizent"><RizentApp /></WindowFrame>
         <WindowFrame id="moatdaily"><MoatDailyApp /></WindowFrame>
       </div>
 
@@ -106,8 +124,8 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         <MacToolbar />
       </div>
 
-      <MobileDock onOpenQRapid={() => openWindow('qrapid')} onOpenFinder={() => openWindow('finder')} />
-      <DesktopDock onOpenQRapid={() => openWindow('qrapid')} onOpenFinder={() => openWindow('finder')} />
+      <MobileDock onOpenWindow={openWindow} />
+      <DesktopDock onOpenWindow={openWindow} />
     </div>
   );
 }

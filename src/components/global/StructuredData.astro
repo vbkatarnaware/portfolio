@@ -1,0 +1,52 @@
+---
+import type { AppContent } from '../../types/app';
+
+interface Props {
+  app?: AppContent;
+}
+
+const { app } = Astro.props;
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Vipul Katarnaware',
+  jobTitle: 'Product Manager',
+  url: 'https://vipulkatarnaware.in',
+  email: 'mailto:vipulkatarnaware@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Navi Mumbai',
+    addressCountry: 'IN',
+  },
+  sameAs: [
+    'https://linkedin.com/in/vipul-katarnaware',
+    'https://github.com/vbkatarnaware',
+  ],
+};
+
+const appNode = app
+  ? app.mode === 'product'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: app.name,
+        description: app.tagline,
+        applicationCategory: 'BusinessApplication',
+        author: { '@type': 'Person', name: 'Vipul Katarnaware' },
+        ...(app.externalUrl ? { url: app.externalUrl } : {}),
+        ...(app.githubUrl ? { sameAs: [app.githubUrl] } : {}),
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'OrganizationRole',
+        roleName: app.role,
+        startDate: app.dates?.split('–')[0]?.trim(),
+        description: app.tagline,
+        member: { '@type': 'Person', name: 'Vipul Katarnaware' },
+      }
+  : null;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(person)} />
+{appNode && <script type="application/ld+json" set:html={JSON.stringify(appNode)} />}

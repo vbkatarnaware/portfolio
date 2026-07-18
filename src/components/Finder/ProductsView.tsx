@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import customIconImg from '../../assets/images/custom-icon.png';
 import careerosImg from '../../assets/images/careeros.png';
+import rizentImg from '../../assets/images/rizent.svg';
 import moatdailyImg from '../../assets/images/moatdaily.png';
 
+// Independent Products only — QRapid and ICICI are Professional Experience
+// and stay out of this folder, matching the dock's grouping distinction.
 const APPLICATIONS = [
-  { id: 'qrapid', label: 'QRapid.app', imgSrc: customIconImg.src, action: 'qrapid' },
   { id: 'careeros', label: 'CareerOS.app', imgSrc: careerosImg.src, action: 'careeros' },
+  { id: 'rizent', label: 'Rizent.app', imgSrc: rizentImg.src, action: 'rizent' },
   { id: 'moatdaily', label: 'MoatDaily.app', imgSrc: moatdailyImg.src, action: 'moatdaily' },
 ];
 

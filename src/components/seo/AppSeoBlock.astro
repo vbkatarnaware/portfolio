@@ -1,0 +1,142 @@
+---
+import type { AppContent } from '../../types/app';
+
+interface Props {
+  content: AppContent;
+}
+
+const { content } = Astro.props;
+---
+
+<!--
+  Server-rendered content parity block. The interactive desktop (AppLayout,
+  client:load) visually covers this once hydrated — but this real semantic
+  HTML is what crawlers, AI search, and ATS parsers actually read, since the
+  desktop's window content is otherwise invisible to them (client-rendered).
+  Sourced from the same content.ts module the React shell uses — single
+  source of truth, never duplicated by hand.
+-->
+<article class="sr-content">
+  <h1>{content.name}</h1>
+  <p>{content.tagline}</p>
+
+  <h2>Overview</h2>
+  {content.overview.map((p) => <p>{p}</p>)}
+
+  {content.problem?.length > 0 && (
+    <>
+      <h2>{content.problemTitle}</h2>
+      {content.problem.map((p) => <p>{p}</p>)}
+    </>
+  )}
+
+  {content.discovery?.length > 0 && (
+    <>
+      <h2>Discovery &amp; Decisions</h2>
+      {content.discovery.map((p) => <p>{p}</p>)}
+    </>
+  )}
+
+  {content.decisionLog?.length > 0 && (
+    <>
+      <h2>Decision Log</h2>
+      {content.decisionLog.map((d) => (
+        <section>
+          <h3>{d.decision}</h3>
+          <p><strong>Reason:</strong> {d.reason}</p>
+          <p><strong>Alternatives considered:</strong> {d.alternatives}</p>
+          <p><strong>Rejected because:</strong> {d.rejectedBecause}</p>
+          <p><strong>Outcome:</strong> {d.outcome}</p>
+        </section>
+      ))}
+    </>
+  )}
+
+  {content.rejectedDecisions?.length > 0 && (
+    <>
+      <h2>Rejected Decisions</h2>
+      {content.rejectedDecisions.map((r) => (
+        <p><strong>{r.question}</strong> {r.answer}</p>
+      ))}
+    </>
+  )}
+
+  {content.timeline?.length > 0 && (
+    <>
+      <h2>Timeline</h2>
+      <ul>
+        {content.timeline.map((t) => (
+          <li>{t.date ? `${t.date} — ` : ''}{t.label}{t.description ? `: ${t.description}` : ''}</li>
+        ))}
+      </ul>
+    </>
+  )}
+
+  {content.roadmap?.length > 0 && (
+    <>
+      <h2>Roadmap</h2>
+      {content.roadmap.map((r) => (
+        <p><strong>{r.whatsNext}</strong> — Why: {r.why} Why not now: {r.whyNotNow}</p>
+      ))}
+    </>
+  )}
+
+  {content.highlights?.length > 0 && (
+    <>
+      <h2>Highlights</h2>
+      <dl>
+        {content.highlights.map((h) => (
+          <>
+            <dt>{h.label}</dt>
+            <dd>{h.value}</dd>
+          </>
+        ))}
+      </dl>
+    </>
+  )}
+
+  {content.impact?.length > 0 && (
+    <>
+      <h2>Impact</h2>
+      <dl>
+        {content.impact.map((i) => (
+          <>
+            <dt>{i.label}</dt>
+            <dd>{i.value}</dd>
+          </>
+        ))}
+      </dl>
+    </>
+  )}
+
+  {content.lessons?.length > 0 && (
+    <>
+      <h2>Lessons Learned</h2>
+      <ul>
+        {content.lessons.map((l) => <li>{l}</li>)}
+      </ul>
+    </>
+  )}
+
+  {content.externalUrl && (
+    <p><a href={content.externalUrl}>Visit {content.name}</a></p>
+  )}
+  {content.githubUrl && (
+    <p><a href={content.githubUrl}>{content.name} on GitHub</a></p>
+  )}
+</article>
+
+<style>
+  /* Visually beneath the desktop once hydrated, but present in the DOM for
+     any client that doesn't render the interactive layer. */
+  .sr-content {
+    position: absolute;
+    inset: 0;
+    max-width: 70ch;
+    margin: 0 auto;
+    padding: 2rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    z-index: 0;
+  }
+</style>

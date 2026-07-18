@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppLayout from '../../layouts/AppLayout';
+import AppSeoBlock from '../../components/seo/AppSeoBlock.astro';
+import { getImage } from 'astro:assets';
+import customWallpaper from '../../assets/images/wallpaper4.png';
+import type { AppContent } from '../../types/app';
+
+import qrapidContent from '../../components/apps/qrapid/content';
+import iciciContent from '../../components/apps/icici/content';
+import careerosContent from '../../components/apps/careeros/content';
+import rizentContent from '../../components/apps/rizent/content';
+import moatdailyContent from '../../components/apps/moatdaily/content';
+
+export function getStaticPaths() {
+  return [
+    { params: { app: 'qrapid' }, props: { content: qrapidContent } },
+    { params: { app: 'icici' }, props: { content: iciciContent } },
+    { params: { app: 'careeros' }, props: { content: careerosContent } },
+    { params: { app: 'rizent' }, props: { content: rizentContent } },
+    { params: { app: 'moatdaily' }, props: { content: moatdailyContent } },
+  ];
+}
+
+const { app } = Astro.params;
+const content = Astro.props.content as AppContent;
+
+const backgrounds = [customWallpaper];
+const optimizedBackgrounds = await Promise.all(
+  backgrounds.map((bg) => getImage({ src: bg, width: 3500 }))
+);
+const backgroundMap = Object.fromEntries(
+  optimizedBackgrounds.map((bg, index) => [`bg-${index + 1}`, bg.src])
+);
+
+const title = `${content.name} — Vipul Katarnaware`;
+const description = `${content.tagline} ${content.overview[0] ?? ''}`.slice(0, 200);
+const url = `https://vipulkatarnaware.in/${app}`;
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={url}
+  openGraph={{ url, title, description, site_name: 'Vipul Katarnaware' }}
+  structuredDataApp={content}
+>
+  <AppSeoBlock content={content} />
+  <AppLayout client:load initialBg="bg-1" backgroundMap={backgroundMap} />
+</Layout>

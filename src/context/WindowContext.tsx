@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
-export type AppId = 'finder' | 'qrapid' | 'careeros' | 'moatdaily';
+export type AppId = 'finder' | 'qrapid' | 'icici' | 'careeros' | 'rizent' | 'moatdaily';
 
 export interface WindowData {
   id: AppId;
@@ -11,6 +11,10 @@ export interface WindowData {
   zIndex: number;
   defaultWidth?: number;
   defaultHeight?: number;
+  /** Cascade slot assigned on open: each open window is offset ~30px down-right
+   *  from the previous so stacked windows stay visibly distinct (real-macOS
+   *  cascade behavior). Only set on closed→open transitions. */
+  cascade?: number;
 }
 
 interface WindowContextType {
@@ -28,9 +32,11 @@ const WindowContext = createContext<WindowContextType | undefined>(undefined);
 // Initial state map
 const initialWindows: Record<AppId, WindowData> = {
   finder: { id: 'finder', title: 'Explore Me', isOpen: typeof window !== 'undefined' && ['/about', '/experience', '/resume', '/contact', '/products'].includes(window.location.pathname), isMinimized: false, isMaximized: false, zIndex: 10, defaultWidth: 920, defaultHeight: 600 },
-  qrapid: { id: 'qrapid', title: 'QRapid', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 11, defaultWidth: 900, defaultHeight: 600 },
-  careeros: { id: 'careeros', title: 'CareerOS', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 12, defaultWidth: 900, defaultHeight: 600 },
-  moatdaily: { id: 'moatdaily', title: 'MoatDaily', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 13, defaultWidth: 900, defaultHeight: 600 },
+  qrapid: { id: 'qrapid', title: 'QRapid', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 11, defaultWidth: 920, defaultHeight: 620 },
+  icici: { id: 'icici', title: 'ICICI Bank', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 12, defaultWidth: 920, defaultHeight: 620 },
+  careeros: { id: 'careeros', title: 'CareerOS', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 13, defaultWidth: 920, defaultHeight: 620 },
+  rizent: { id: 'rizent', title: 'Rizent AI', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 14, defaultWidth: 920, defaultHeight: 620 },
+  moatdaily: { id: 'moatdaily', title: 'MoatDaily', isOpen: false, isMinimized: false, isMaximized: false, zIndex: 15, defaultWidth: 920, defaultHeight: 620 },
 };
 
 export const WindowProvider = ({ children }: { children: React.ReactNode }) => {
@@ -51,18 +57,25 @@ export const WindowProvider = ({ children }: { children: React.ReactNode }) => {
   const openWindow = useCallback((id: AppId, title?: string, defaultWidth?: number, defaultHeight?: number) => {
     setHighestZ(prev => {
       const nextZ = prev + 1;
-      setWindows(curr => ({
-        ...curr,
-        [id]: {
-          ...curr[id],
-          isOpen: true,
-          isMinimized: false,
-          zIndex: nextZ,
-          ...(title && { title }),
-          ...(defaultWidth && { defaultWidth }),
-          ...(defaultHeight && { defaultHeight })
-        }
-      }));
+      setWindows(curr => {
+        // Assign a cascade slot only when actually opening (closed → open).
+        // Re-clicking an already-open app just brings it forward in place.
+        const wasOpen = curr[id].isOpen;
+        const openCount = Object.values(curr).filter(w => w.isOpen).length;
+        return {
+          ...curr,
+          [id]: {
+            ...curr[id],
+            isOpen: true,
+            isMinimized: false,
+            zIndex: nextZ,
+            ...(!wasOpen && { cascade: openCount % 5 }),
+            ...(title && { title }),
+            ...(defaultWidth && { defaultWidth }),
+            ...(defaultHeight && { defaultHeight })
+          }
+        };
+      });
       return nextZ;
     });
   }, []);

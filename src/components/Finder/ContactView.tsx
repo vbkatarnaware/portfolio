@@ -58,10 +58,10 @@ export default function ContactView() {
             </div>
           </a>
 
-          <a 
-            href="https://github.com/vipulkatarnaware" 
-            target="_blank" 
-            rel="noreferrer" 
+          <a
+            href="https://github.com/vbkatarnaware"
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-[#1c1c1e]"
             aria-label="Open GitHub Profile"
           >
@@ -69,7 +69,7 @@ export default function ContactView() {
               <AppWindow size={18} aria-hidden="true" />
             </div>
             <div className="flex-1 truncate">
-              <div className="text-white/90 font-medium truncate">github.com/vipulkatarnaware</div>
+              <div className="text-white/90 font-medium truncate">github.com/vbkatarnaware</div>
             </div>
           </a>
 

@@ -17,48 +17,34 @@ const backgrounds = await Promise.all([
   content='width=device-width, initial-scale=1, maximum-scale=1'
 />
 <meta name='author' content='Vipul Katarnaware' />
-<!-- Replace with your name -->
 
-<!-- SEO Configuration - customize these values -->
+<!-- SEO Configuration -->
 <AstroSeo
-  title={Astro.props.title || 'Vipul Katarnaware - Full Stack Developer'}
+  title={Astro.props.title || 'Vipul Katarnaware — Product Manager'}
   description={Astro.props.description ||
-    'Full Stack Developer based in Austin, TX specializing in React, Node.js, and modern web technologies'}
-  canonical={Astro.props.canonical || 'https://johndoe.com'}
+    'Vipul Katarnaware is a Product Manager based in Navi Mumbai, India, with hands-on founder and enterprise experience across B2B SaaS, FinTech, and AI products.'}
+  canonical={Astro.props.canonical || 'https://vipulkatarnaware.in'}
   openGraph={{
-    url: Astro.props.openGraph?.url || 'https://johndoe.com',
-    title: Astro.props.openGraph?.title || 'Vipul Katarnaware - Full Stack Developer',
+    url: Astro.props.openGraph?.url || 'https://vipulkatarnaware.in',
+    title: Astro.props.openGraph?.title || 'Vipul Katarnaware — Product Manager',
     description:
       Astro.props.openGraph?.description ||
-      'Full Stack Developer based in Austin, TX specializing in React, Node.js, and modern web technologies',
+      'Vipul Katarnaware is a Product Manager based in Navi Mumbai, India, with hands-on founder and enterprise experience across B2B SaaS, FinTech, and AI products.',
     images: [
       {
-        url: '',
-        // og image here
+        url: 'https://vipulkatarnaware.in/favicon.svg',
       },
     ],
     site_name: Astro.props.openGraph?.site_name || 'Vipul Katarnaware',
   }}
 />
 
-<!-- Add your favicon files in public/images/ -->
-<link rel='apple-touch-icon' sizes='180x180' href='/images/YOUR_FAVICON.svg' />
-<link
-  rel='icon'
-  type='image/png'
-  sizes='32x32'
-  href='/images/YOUR_FAVICON.svg'
-/>
-<link
-  rel='icon'
-  type='image/png'
-  sizes='16x16'
-  href='/images/YOUR_FAVICON.svg'
-/>
+<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+<link rel='apple-touch-icon' href='/favicon.svg' />
 
 <!-- Theme colors for browsers -->
-<meta name='msapplication-TileColor' content='YOUR_COLOR_HEX' />
-<meta name='theme-color' content='YOUR_COLOR_HEX' />
+<meta name='msapplication-TileColor' content='#0058d0' />
+<meta name='theme-color' content='#0058d0' />
 
 <!-- Auto-generated sitemap -->
 <link rel='sitemap' href='/sitemap-index.xml' />
