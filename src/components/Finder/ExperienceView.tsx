@@ -16,7 +16,7 @@ export default function ExperienceView() {
           <p className="text-white/50 text-[13px] mb-3 font-medium">Product Lead · Founder <span className="opacity-50 mx-1">|</span> Sep 2024 – Present</p>
           <ul className="text-white/70 leading-[1.6] space-y-2 list-none">
             <li className="relative before:content-[''] before:absolute before:-left-4 before:top-2.5 before:w-1 before:h-1 before:bg-white/30 before:rounded-full">
-              Owned QRapid's restaurant management system end to end — QR menu, ordering, POS, and billing, shipped as native iOS and Android apps — leading a team of up to 10 across engineering, onboarding, support, and go-to-market.
+              Owned QRapid's restaurant management system end to end — QR menu, ordering, POS, and billing, shipped as a web application — leading a team of up to 10 across engineering, onboarding, support, and go-to-market.
             </li>
             <li className="relative before:content-[''] before:absolute before:-left-4 before:top-2.5 before:w-1 before:h-1 before:bg-white/30 before:rounded-full">
               Grew the platform to 26 paying restaurant partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions across 1,99,640 paid bills, with churn under 5%.

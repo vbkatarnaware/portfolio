@@ -39,7 +39,7 @@ export default function AboutView() {
           I validate problems with users before building, ship end to end, and use AI as a working tool for product and GTM execution — not a substitute for customer-facing decision making.
         </p>
         <p>
-          At <strong>QRapid</strong>, I interviewed diners and restaurant owners to find why the QR menu wasn't converting, then made the sequencing calls that grew it into a native iOS and Android restaurant platform: 26 paying partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions. At <strong>ICICI Bank</strong>, I owned the Business Rules Engine deciding credit eligibility and underwriting for millions of loan and credit card applications a year, and evaluated an external geospatial data vendor that lifted campaign approval quality by an estimated 15%.
+          At <strong>QRapid</strong>, I interviewed diners and restaurant owners to find why the QR menu wasn't converting, then made the sequencing calls that grew it into a restaurant platform: 26 paying partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions. At <strong>ICICI Bank</strong>, I owned the Business Rules Engine deciding credit eligibility and underwriting for millions of loan and credit card applications a year, and evaluated an external geospatial data vendor that lifted campaign approval quality by an estimated 15%.
         </p>
         <p>
           I build AI-native tools of my own — CareerOS, Rizent, and MoatDaily — to prove the same product philosophy holds outside a single company: take a complex operational workflow, understand the people doing it, simplify it, and automate only the repetitive part.

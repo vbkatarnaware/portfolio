@@ -16,7 +16,7 @@ const content: AppContent = {
   location: 'Mumbai, India',
 
   overview: [
-    "QRapid is a restaurant management system covering QR menus, ordering, POS, and billing, shipped as native iOS and Android apps. I own it end to end and led a team of up to 10 across engineering, restaurant onboarding, customer support, and go-to-market.",
+    "QRapid is a restaurant management system covering QR menus, ordering, POS, and billing, shipped as a web application. I own it end to end and led a team of up to 10 across engineering, restaurant onboarding, customer support, and go-to-market.",
     "The platform has grown to 26 paying restaurant partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions across 1,99,640 paid bills, with churn held under 5% on annual subscriptions and partners renewing after year one.",
   ],
   problemTitle: 'Role',
@@ -63,8 +63,8 @@ const content: AppContent = {
     { label: 'Launch', date: 'Sep 2024', description: 'QR menu only — no ordering, no POS.' },
     { label: 'Discovery', description: 'Scans below forecast; diner and restaurant-owner interviews surface the perceived-value barrier.' },
     { label: 'Pivot to ordering + own POS', description: 'Table-side ordering added; lightweight POS built in-house rather than integrating incumbents.' },
-    { label: 'QCash validated MVP', description: '55 restaurants interested, 40 organic users in month one, 12.5% repeat-visit rate — then deliberately deferred.' },
-    { label: 'Current', description: '26 paying partners, 10,000+ registered diners, $1.45M+ (₹12.05 Cr+) processed across 1,99,640 bills, native iOS & Android, churn under 5%.' },
+    { label: 'QCash validated MVP', description: '55 restaurants interested, 40 organic users in month one, 12.5% repeat-visit rate, shipped as a native iOS and Android app — then deliberately deferred.' },
+    { label: 'Current', description: '26 paying partners, 10,000+ registered diners, $1.45M+ (₹12.05 Cr+) processed across 1,99,640 bills, web app, churn under 5%.' },
   ],
 
   crossFunctional: [
@@ -79,7 +79,7 @@ const content: AppContent = {
   highlights: [
     { label: 'Restaurant Partners', value: '26' },
     { label: 'Registered Diners', value: '10,000+' },
-    { label: 'Platform', value: 'Native iOS & Android' },
+    { label: 'Platform', value: 'Web App' },
     { label: 'Activation', value: '20% → 80%' },
   ],
   impact: [
