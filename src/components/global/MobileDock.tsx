@@ -21,16 +21,9 @@ export default function MobileDock({ onOpenWindow }: MobileDockProps) {
   const phase = useStartupPhase();
   const { windows } = useWindows();
   const qRapidControls = useAnimation();
-  // QRapid "start here" cue dot — appears once startup completes, after the
-  // bounce would have landed (mirrors DesktopDock behavior).
-  const [qrapidCueDot, setQrapidCueDot] = useState(false);
-
-  useEffect(() => {
-    if (phase >= 4) {
-      const timer = setTimeout(() => setQrapidCueDot(true), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [phase]);
+  // QRapid carries a permanent "start here" onboarding cue dot, visible
+  // immediately (mirrors DesktopDock) — independent of the bounce below.
+  const [qrapidCueDot] = useState(true);
 
   useEffect(() => {
     const bouncedBefore = sessionStorage.getItem('qrapid_bounced_mobile');

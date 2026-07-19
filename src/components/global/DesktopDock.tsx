@@ -23,9 +23,10 @@ export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const { windows } = useWindows();
   const qRapidControls = useAnimation();
-  // QRapid carries a dot by default as the "start here" onboarding cue —
-  // it appears after the attention bounce lands (instantly on revisits).
-  const [qrapidCueDot, setQrapidCueDot] = useState(false);
+  // QRapid carries a dot by default as the permanent "start here" onboarding
+  // cue — visible immediately on load, independent of the bounce animation
+  // below (which is just a separate one-time attention flourish).
+  const [qrapidCueDot] = useState(true);
 
   useEffect(() => {
     const bouncedBefore = sessionStorage.getItem('qrapid_bounced_v2');
@@ -41,11 +42,8 @@ export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
           }
         });
         sessionStorage.setItem('qrapid_bounced_v2', 'true');
-        setQrapidCueDot(true);
       };
       runBounce();
-    } else {
-      setQrapidCueDot(true);
     }
   }, [qRapidControls]);
 
