@@ -1,0 +1,54 @@
+graph TD
+    classDef default fill:#111111,stroke:#333333,stroke-width:2px,color:#ffffff
+    classDef highlight fill:#0058d0,stroke:#003c8f,stroke-width:2px,color:#ffffff
+
+    %% User Interaction Layer
+    CLI[CareerOS CLI]
+
+    %% Storage & Queue Layer
+    DB[(SQLite Database)]
+    Queue[Job Processing Queue]
+    Files[Local File Storage]
+
+    CLI --> DB
+    CLI --> Queue
+    CLI --> Files
+
+    %% Core Pipeline
+    subgraph Core Pipeline
+        JobDiscovery[Job Discovery Service]
+        DeterministicFilter[Deterministic Filter Engine]
+        AITriage[AI Batch Gate]
+        DeepEval[Deep Evaluation Engine]
+        ArtifactGen[Artifact Generator]
+    end
+
+    %% Providers
+    subgraph Providers
+        SearchAPI[Search Aggregators]
+        Ollama[Local LLMs]
+        OpenAI[OpenAI / Claude APIs]
+        Typst[Typst Compiler]
+    end
+
+    Queue --> JobDiscovery
+    JobDiscovery --> SearchAPI
+    JobDiscovery --> DeterministicFilter
+    
+    DeterministicFilter -- Passed --> AITriage
+    DeterministicFilter -- Failed --> DB
+    
+    AITriage --> Ollama
+    AITriage -- Passed --> DeepEval
+    AITriage -- Failed --> DB
+
+    DeepEval --> OpenAI
+    DeepEval -- Passed --> ArtifactGen
+    DeepEval -- Failed --> DB
+
+    ArtifactGen --> Typst
+    ArtifactGen --> Files
+
+    class CLI highlight
+    class AITriage highlight
+    class Typst highlight

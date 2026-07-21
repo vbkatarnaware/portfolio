@@ -12,11 +12,16 @@ export default function ProseSection({ title, paragraphs }: ProseSectionProps) {
   if (!paragraphs || paragraphs.length === 0) return null;
   return (
     <div>
-      <h2 className="text-[18px] md:text-[20px] font-semibold mb-4 tracking-tight">{title}</h2>
-      <div className="space-y-3">
+      <h2 className="text-[20px] font-semibold mb-6 tracking-tight text-white">{title}</h2>
+      <div className="space-y-5">
         {paragraphs.map((p, i) => (
-          <p key={i} className="text-[14px] md:text-[15px] text-white/70 leading-[1.6]">
-            {p}
+          <p key={i} className="text-[14.5px] leading-relaxed text-white/80 whitespace-pre-wrap max-w-[65ch]">
+            {/* Simple bold parser for **text** */}
+            {p.split(/(\*\*.*?\*\*)/g).map((part, index) => 
+              part.startsWith('**') && part.endsWith('**') 
+                ? <strong key={index} className="text-white font-semibold">{part.slice(2, -2)}</strong> 
+                : part
+            )}
           </p>
         ))}
       </div>

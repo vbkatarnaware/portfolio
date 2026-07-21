@@ -14,20 +14,20 @@ export default function ArchDiagram({ steps, title = 'Architecture' }: ArchDiagr
   if (!steps || steps.length === 0) return null;
   return (
     <div>
-      <h2 className="text-[18px] md:text-[20px] font-semibold mb-4 tracking-tight">{title}</h2>
-      <div className="flex flex-col md:flex-row md:flex-wrap items-stretch md:items-center gap-2">
+      <h2 className="text-[20px] font-semibold mb-6 tracking-tight text-white">{title}</h2>
+      <div className="flex flex-col md:flex-row md:flex-wrap items-start md:items-center gap-y-2 md:gap-y-3 gap-x-2">
         {steps.map((step, i) => (
-          <React.Fragment key={step.label}>
-            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-[13px] font-medium text-white/90 text-center shrink-0">
+          <div key={step.label} className="flex flex-col md:flex-row items-center gap-2">
+            <div className="bg-white/[0.03] border border-white/[0.05] rounded-xl px-4 py-3 text-[13px] font-medium text-white/90 text-center shadow-sm whitespace-nowrap">
               {step.label}
             </div>
             {i < steps.length - 1 && (
-              <div className="flex items-center justify-center text-white/25 shrink-0">
+              <div className="flex items-center justify-center text-white/25 shrink-0 py-1 md:py-0">
                 <ChevronDown size={16} className="md:hidden" />
                 <ChevronRight size={16} className="hidden md:block" />
               </div>
             )}
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </div>

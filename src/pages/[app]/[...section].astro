@@ -1,0 +1,79 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppLayout from '../../layouts/AppLayout';
+import AppSeoBlock from '../../components/seo/AppSeoBlock.astro';
+import { getImage } from 'astro:assets';
+import customWallpaper from '../../assets/images/wallpaper4.png';
+import type { AppContent } from '../../types/app';
+
+import qrapidContent from '../../components/apps/qrapid/content';
+import iciciContent from '../../components/apps/icici/content';
+import careerosContent from '../../components/apps/careeros/content';
+import rizentContent from '../../components/apps/rizent/content';
+import moatdailyContent from '../../components/apps/moatdaily/content';
+
+export function getStaticPaths() {
+  const apps = [
+    { id: 'qrapid', content: qrapidContent },
+    { id: 'icici', content: iciciContent },
+    { id: 'careeros', content: careerosContent },
+    { id: 'rizent', content: rizentContent },
+    { id: 'moatdaily', content: moatdailyContent },
+  ];
+  
+  const sections = [
+    undefined, // Base route e.g. /qrapid
+    'overview',
+    'problem',
+    'discovery',
+    'decisions',
+    'rejected',
+    'timeline',
+    'architecture',
+    'cross-functional',
+    'decision-systems',
+    'highlights',
+    'demo',
+    'evidence',
+    'lessons',
+    'roadmap'
+  ];
+
+  const paths = [];
+  apps.forEach(app => {
+    sections.forEach(section => {
+      paths.push({
+        params: { app: app.id, section },
+        props: { content: app.content }
+      });
+    });
+  });
+  return paths;
+}
+
+const { app } = Astro.params;
+const content = Astro.props.content as AppContent;
+
+const backgrounds = [customWallpaper];
+const optimizedBackgrounds = await Promise.all(
+  backgrounds.map((bg) => getImage({ src: bg, width: 3500 }))
+);
+const backgroundMap = Object.fromEntries(
+  optimizedBackgrounds.map((bg, index) => [`bg-${index + 1}`, bg.src])
+);
+
+const title = `${content.name} — Vipul Katarnaware`;
+const description = `${content.tagline} ${content.overview[0] ?? ''}`.slice(0, 200);
+const url = `https://vipulkatarnaware.in/${app}`;
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={url}
+  openGraph={{ url, title, description, site_name: 'Vipul Katarnaware' }}
+  structuredDataApp={content}
+>
+  <AppSeoBlock content={content} />
+  <AppLayout client:load initialBg="bg-1" backgroundMap={backgroundMap} />
+</Layout>

@@ -11,12 +11,81 @@ export interface HighlightItem {
   value: string;
 }
 
+export interface OverviewSummary {
+  problem: string;
+  solution: string;
+  impact: string;
+}
+
+export interface CustomerResearch {
+  hero: {
+    title: string;
+    description: string;
+    metrics: { label: string; value: string }[];
+  };
+  biggestDiscoveries: {
+    title: string;
+    description: string;
+    influencedDecision: string;
+  }[];
+  visualMapping: {
+    research: string;
+    decision: string;
+    feature: string;
+    outcome: string;
+  }[];
+  personas: {
+    role: string;
+    goals: string[];
+    painPoints: string[];
+    decisionInfluence: string;
+  }[];
+  jtbd: {
+    when: string;
+    iWant: string;
+    soICan: string;
+  }[];
+  methods: string[];
+  quotes: { text: string; attribution: string }[];
+  bottomSummary: { label: string; value: string }[];
+}
+
+export interface ProblemDefinition {
+  workflow: string;
+  whyFailed: string;
+  painPoints: string[];
+  opportunity: string;
+}
+
+export interface TechnicalDiscovery {
+  initialObservation: string;
+  investigation: string;
+  rootCauseAnalysis: string;
+  validation: string;
+  finalInsight: string;
+  evidence: { label: string; value: string }[];
+}
+
+export interface LessonsLearned {
+  biggestLesson: string;
+  mistake: string;
+  differently: string;
+  principle: string;
+  advice: string;
+}
+
 export interface DecisionLogEntry {
   decision: string;
-  reason: string;
-  alternatives: string;
-  rejectedBecause: string;
+  summary?: string;
+  reason: string | string[];
+  alternatives: string[];
+  rejectedBecause: string[];
   outcome: string;
+  impact: string[];
+  date?: string;
+  stage?: string;
+  tag?: string;
+  confidence?: string;
 }
 
 export interface RejectedDecisionEntry {
@@ -40,6 +109,15 @@ export interface DiagramStep {
   label: string;
 }
 
+export interface ArchitectureDetails {
+  overview: string;
+  diagramSteps: DiagramStep[];
+  designPrinciples: string[];
+  whyThisArchitecture: string;
+  majorTradeoffs: { tradeoff: string; reason: string }[];
+  pdfUrl?: string;
+}
+
 export interface MediaLink {
   label: string;
   href: string;
@@ -50,13 +128,57 @@ export interface ImageItem {
   alt: string;
 }
 
+export interface ScreenshotCategory {
+  title: string;
+  description: string;
+  images: {
+    src: string;
+    alt: string;
+    title: string;
+    description: string;
+  }[];
+}
+
+export interface DocumentItem {
+  title: string;
+  category: string;
+  pages: number;
+  date: string;
+  status: string;
+  description: string;
+  thumbnailSrc: string;
+  pdfUrl?: string;
+  embedUrl?: string;
+}
+
+
+export interface UserFlowItem {
+  title: string;
+  description: string;
+  date: string;
+  verifiedStatus?: string;
+  mediaUrl: string;
+  pngUrl?: string;
+  svgUrl?: string;
+}
+
+export interface PrototypeItem {
+  title: string;
+  description: string;
+  href: string;
+  thumbnailSrc?: string;
+}
+
 export interface AppMedia {
   heroVideo?: string | null;
   screenshots?: ImageItem[];
+  screenshotCategories?: ScreenshotCategory[];
+  interactivePrototypes?: PrototypeItem[];
   architectureDiagram?: string | null;
-  workflowDiagram?: string | null;
+  workflowDiagram?: string | null; // @deprecated use userFlows
+  userFlows?: UserFlowItem[];
   wireframes?: ImageItem[];
-  documents?: MediaLink[];
+  documents?: DocumentItem[];
   externalLinks?: MediaLink[];
   /** Metabase/Looker-style dashboard screenshots or embeds. */
   dashboards?: ImageItem[];
@@ -80,17 +202,21 @@ export interface AppContent {
   location?: string;
 
   overview: string[];
+  overviewSummary?: OverviewSummary;
   /** 'Problem' for Product mode, 'Role' for Experience mode. */
   problemTitle: string;
-  problem: string[];
+  problem: string[] | ProblemDefinition;
+  roleCards?: string[];
   discovery: string[];
+  customerResearch?: CustomerResearch;
+  technicalDiscovery?: TechnicalDiscovery;
 
   decisionLog: DecisionLogEntry[];
   rejectedDecisions: RejectedDecisionEntry[];
   timeline: TimelineNode[];
 
   /** Product mode only. */
-  architecture?: DiagramStep[];
+  architecture?: DiagramStep[] | ArchitectureDetails;
   /** Experience mode only. */
   crossFunctional?: string[];
   /** Experience mode only (e.g. ICICI's BRE decision flow). */
@@ -101,6 +227,8 @@ export interface AppContent {
   /** Optional compact strip below Highlights — business-scale proof (GMV, volume). */
   impact?: HighlightItem[];
   lessons: string[];
+  lessonsLearned?: LessonsLearned;
+  metadataChips?: string[];
   /** Product mode only; must be labeled as planned, never shipped, when unbuilt. */
   roadmap?: RoadmapItem[];
 

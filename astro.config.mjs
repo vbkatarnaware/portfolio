@@ -6,6 +6,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://vipulkatarnaware.in',
+  base: '/',
 
   // URL configuration
   trailingSlash: 'never', // Removes trailing slashes from URLs

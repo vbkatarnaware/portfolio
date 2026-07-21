@@ -45,7 +45,7 @@ export default function MobileDock({ onOpenWindow }: MobileDockProps) {
   }, [phase, qRapidControls]);
 
   const handleEmailClick = () => {
-    window.location.href = 'mailto:vipulkatarnaware@gmail.com';
+    window.location.href = 'mailto:vbkatarnaware@gmail.com';
   };
 
   const dockItemVariants = {

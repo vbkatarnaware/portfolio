@@ -61,7 +61,7 @@ export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
     ) : null;
 
   const handleEmailClick = () => {
-    window.location.href = 'mailto:vipulkatarnaware@gmail.com';
+    window.location.href = 'mailto:vbkatarnaware@gmail.com';
   };
 
   const handleGithubClick = () => {
@@ -69,11 +69,7 @@ export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
   };
 
   const handleCalendarClick = () => {
-    // No standing scheduling link yet — route to Contact instead of a dead
-    // generic calendly.com URL.
-    onOpenWindow('finder');
-    window.history.pushState(null, '', '/contact');
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    window.open('https://calendly.com/katarnaware/videocall?month=2026-07', '_blank');
   };
 
   const handleLinkedinClick = () => {

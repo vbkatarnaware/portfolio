@@ -9,14 +9,22 @@ import type { AppContent } from '../../types/app';
 import AppHeader from './AppHeader';
 import AppSidebar, { type SidebarSection } from './AppSidebar';
 import ProseSection from './ProseSection';
+import Overview from './Overview';
+import Role from './Role';
+import CustomerResearch from './CustomerResearch';
+import TechnicalDiscovery from './TechnicalDiscovery';
 import DecisionLog from './DecisionLog';
 import RejectedDecisions from './RejectedDecisions';
 import Timeline from './Timeline';
+import Architecture from './Architecture';
 import ArchDiagram from './ArchDiagram';
 import Highlights from './Highlights';
 import Roadmap from './Roadmap';
 import Demo from './Artifacts/Demo';
 import Evidence from './Artifacts/Evidence';
+import CrossFunctionalGraph from './CrossFunctionalGraph';
+import LessonsLearned from './LessonsLearned';
+import PageNavigation from './PageNavigation';
 
 interface AppShellProps {
   appId: AppId;
@@ -40,7 +48,7 @@ export default function AppShell({ appId, content }: AppShellProps) {
       list.push({ id: 'problem', label: content.problemTitle, icon: FileQuestion });
     }
     if (content.discovery?.length) {
-      list.push({ id: 'discovery', label: 'Discovery & Decisions', icon: Search });
+      list.push({ id: 'discovery', label: 'Discovery', icon: Search });
     }
     if (content.decisionLog?.length) {
       list.push({ id: 'decisions', label: 'Decision Log', icon: ListChecks });
@@ -60,9 +68,6 @@ export default function AppShell({ appId, content }: AppShellProps) {
     if (content.decisionSystems?.length) {
       list.push({ id: 'decision-systems', label: 'Decision Systems', icon: GitBranch });
     }
-    if (content.highlights?.length) {
-      list.push({ id: 'highlights', label: 'Highlights', icon: BarChart3 });
-    }
     // Demo and Evidence are present whenever the app has a media object at
     // all (placeholder rule) — Demo is the "hook" a visitor clicks first,
     // Evidence the supporting proof they reach for after, kept as two
@@ -71,8 +76,10 @@ export default function AppShell({ appId, content }: AppShellProps) {
     // confidential) omit `media` entirely, so no blank placeholder section
     // ever shows — that's the difference between "not yet" and "never".
     if (content.media) {
-      list.push({ id: 'demo', label: 'Demo', icon: PlayCircle });
-      list.push({ id: 'evidence', label: 'Evidence', icon: FolderOpen });
+      if (content.media.heroVideo) {
+        list.push({ id: 'demo', label: 'Demo', icon: PlayCircle });
+      }
+      list.push({ id: 'evidence', label: 'Artifacts', icon: FolderOpen });
     }
     if (content.lessons?.length) {
       list.push({ id: 'lessons', label: 'Lessons Learned', icon: Lightbulb });
@@ -115,23 +122,24 @@ export default function AppShell({ appId, content }: AppShellProps) {
     // content instead of eating the sidebar's vertical space.
     <div className="flex flex-col md:flex-row h-full text-white/90 bg-[#1c1c1e] overflow-hidden">
       <AppSidebar sections={sections} activeId={activeId} onSelect={handleSelect} />
-      <main className="flex-1 overflow-y-auto" role="main">
+      <main className="flex-1 overflow-y-scroll overflow-x-hidden" role="main">
         <AppHeader content={content} />
         <div className="max-w-4xl mx-auto space-y-10 p-6 md:p-8">
-          {activeId === 'overview' && <ProseSection title="Overview" paragraphs={content.overview} />}
-          {activeId === 'problem' && <ProseSection title={content.problemTitle} paragraphs={content.problem} />}
-          {activeId === 'discovery' && <ProseSection title="Discovery & Decisions" paragraphs={content.discovery} />}
+          {activeId === 'overview' && <Overview content={content} />}
+          {activeId === 'problem' && <Role content={content} />}
+          {activeId === 'discovery' && (content.technicalDiscovery ? <TechnicalDiscovery content={content} /> : <CustomerResearch content={content} />)}
           {activeId === 'decisions' && <DecisionLog entries={content.decisionLog} />}
           {activeId === 'rejected' && <RejectedDecisions entries={content.rejectedDecisions} />}
           {activeId === 'timeline' && <Timeline nodes={content.timeline} />}
-          {activeId === 'architecture' && <ArchDiagram steps={content.architecture ?? []} />}
-          {activeId === 'cross-functional' && <ProseSection title="Cross-functional Leadership" paragraphs={content.crossFunctional} />}
+          {activeId === 'architecture' && <Architecture content={content} />}
+          {activeId === 'cross-functional' && <CrossFunctionalGraph paragraphs={content.crossFunctional} />}
           {activeId === 'decision-systems' && <ArchDiagram steps={content.decisionSystems ?? []} title="Decision Systems" />}
-          {activeId === 'highlights' && <Highlights items={content.highlights} impact={content.impact} />}
           {activeId === 'demo' && content.media && <Demo videoUrl={content.media.heroVideo} />}
           {activeId === 'evidence' && content.media && <Evidence media={content.media} />}
-          {activeId === 'lessons' && <ProseSection title="Lessons Learned" paragraphs={content.lessons} />}
+          {activeId === 'lessons' && <LessonsLearned content={content} />}
           {activeId === 'roadmap' && <Roadmap items={content.roadmap ?? []} />}
+          
+          <PageNavigation sections={sections} activeId={activeId} onSelect={handleSelect} />
         </div>
       </main>
     </div>
