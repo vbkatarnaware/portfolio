@@ -43,6 +43,23 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
     wasResizing.current = isResizing;
   }, [isResizing, size, id, updateSize]);
 
+  // Tracks viewport size so the drag-constraint math further down (which
+  // mirrors the cascade top/left formula in the style block) stays correct
+  // across resizes, not just at mount. Declared above the isOpen early
+  // return below — every hook must run unconditionally on every render, or
+  // React throws the moment this window's isOpen flips and the hook count
+  // changes between renders of the same mounted instance.
+  const [viewport, setViewport] = useState(() =>
+    typeof window !== 'undefined'
+      ? { width: window.innerWidth, height: window.innerHeight }
+      : { width: 1280, height: 800 }
+  );
+  useEffect(() => {
+    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   if (!windowData.isOpen) return null;
 
   // The fixed MacToolbar (h-8 = 2rem, z-50) sits above every window's own
@@ -61,20 +78,6 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
   const activeHeight = isMobile
     ? '100%'
     : (windowData.isMaximized ? `calc(100vh - ${TOOLBAR_HEIGHT})` : size.height);
-
-  // Tracks viewport size so the drag-constraint math below (which mirrors
-  // the cascade top/left formula in the style block further down) stays
-  // correct across resizes, not just at mount.
-  const [viewport, setViewport] = useState(() =>
-    typeof window !== 'undefined'
-      ? { width: window.innerWidth, height: window.innerHeight }
-      : { width: 1280, height: 800 }
-  );
-  useEffect(() => {
-    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
 
   // The cascade formula below computes each window's un-dragged top/left as
   // "centered, offset by the cascade index". dragConstraints previously used
