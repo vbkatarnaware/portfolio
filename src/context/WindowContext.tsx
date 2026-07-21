@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 
 export type AppId = 'finder' | 'qrapid' | 'icici' | 'careeros' | 'rizent' | 'moatdaily';
 
+export interface Point { x: number; y: number; }
+export interface Size { width: number; height: number; }
+
 export interface WindowData {
   id: AppId;
   title: string;
@@ -15,6 +18,15 @@ export interface WindowData {
    *  from the previous so stacked windows stay visibly distinct (real-macOS
    *  cascade behavior). Only set on closed→open transitions. */
   cascade?: number;
+  /** Drag offset from the cascade-computed origin, and current size — both
+   *  in-memory only (never persisted to storage), so a page refresh always
+   *  resets every window to its default position/size, matching real macOS
+   *  app relaunch behavior. Survive minimize/restore within the session. */
+  position?: Point;
+  size?: Size;
+  /** Snapshot taken the instant a window is maximized, so exiting fullscreen
+   *  restores the exact position/size it had before, not a default. */
+  previousBounds?: { position: Point; size: Size };
 }
 
 interface WindowContextType {
@@ -25,6 +37,8 @@ interface WindowContextType {
   toggleMaximize: (id: AppId) => void;
   bringToFront: (id: AppId) => void;
   updateWindowTitle: (id: AppId, title: string) => void;
+  updatePosition: (id: AppId, position: Point) => void;
+  updateSize: (id: AppId, size: Size) => void;
 }
 
 const WindowContext = createContext<WindowContextType | undefined>(undefined);
@@ -78,13 +92,33 @@ export const WindowProvider = ({ children }: { children: React.ReactNode }) => {
       });
       return nextZ;
     });
+    // Keep the address bar in sync with the Dock, mirroring in-window section
+    // navigation (AppShell.handleSelect). Skipped when already there (e.g.
+    // the initial deep-link mount) so it doesn't add a redundant history entry.
+    if (typeof window !== 'undefined' && window.location.pathname !== `/${id}`) {
+      window.history.pushState(null, '', `/${id}`);
+    }
   }, []);
 
   const closeWindow = useCallback((id: AppId) => {
-    setWindows(curr => ({
-      ...curr,
-      [id]: { ...curr[id], isOpen: false }
-    }));
+    setWindows(curr => {
+      const next = { ...curr, [id]: { ...curr[id], isOpen: false } };
+      // Only touch the URL if it was actually pointing at the window being
+      // closed — closing via the Dock/traffic-light shouldn't clobber a URL
+      // the user reached some other way. Deep-linked sections (/app/section)
+      // reset to the app root: the section belongs to a window that no
+      // longer exists once its content stops being on screen.
+      if (typeof window !== 'undefined' && window.location.pathname.split('/')[1] === id) {
+        const stillOpen = Object.values(next).filter(w => w.isOpen);
+        if (stillOpen.length === 0) {
+          window.history.pushState(null, '', '/');
+        } else {
+          const frontMost = stillOpen.reduce((a, b) => (b.zIndex > a.zIndex ? b : a));
+          window.history.pushState(null, '', `/${frontMost.id}`);
+        }
+      }
+      return next;
+    });
   }, []);
 
   const updateWindowTitle = useCallback((id: AppId, title: string) => {
@@ -102,14 +136,46 @@ export const WindowProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const toggleMaximize = useCallback((id: AppId) => {
-    setWindows(curr => ({
-      ...curr,
-      [id]: { ...curr[id], isMaximized: !curr[id].isMaximized }
-    }));
+    setWindows(curr => {
+      const w = curr[id];
+      if (!w.isMaximized) {
+        // Entering fullscreen: snapshot exactly where the window was so the
+        // green button always restores to it, not a default centered size.
+        return {
+          ...curr,
+          [id]: {
+            ...w,
+            isMaximized: true,
+            previousBounds: {
+              position: w.position ?? { x: 0, y: 0 },
+              size: w.size ?? { width: w.defaultWidth ?? 800, height: w.defaultHeight ?? 500 },
+            },
+          },
+        };
+      }
+      // Exiting fullscreen: restore the snapshot.
+      const bounds = w.previousBounds;
+      return {
+        ...curr,
+        [id]: {
+          ...w,
+          isMaximized: false,
+          ...(bounds && { position: bounds.position, size: bounds.size }),
+        },
+      };
+    });
+  }, []);
+
+  const updatePosition = useCallback((id: AppId, position: Point) => {
+    setWindows(curr => ({ ...curr, [id]: { ...curr[id], position } }));
+  }, []);
+
+  const updateSize = useCallback((id: AppId, size: Size) => {
+    setWindows(curr => ({ ...curr, [id]: { ...curr[id], size } }));
   }, []);
 
   return (
-    <WindowContext.Provider value={{ windows, openWindow, closeWindow, toggleMinimize, toggleMaximize, bringToFront, updateWindowTitle }}>
+    <WindowContext.Provider value={{ windows, openWindow, closeWindow, toggleMinimize, toggleMaximize, bringToFront, updateWindowTitle, updatePosition, updateSize }}>
       {children}
     </WindowContext.Provider>
   );

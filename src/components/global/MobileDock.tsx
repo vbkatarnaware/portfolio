@@ -12,12 +12,13 @@ import { useWindows } from '../../context/WindowContext';
 
 interface MobileDockProps {
   onOpenWindow: (id: AppId) => void;
+  hidden?: boolean;
 }
 
 // Mobile dock: same app set and grouping as DesktopDock, re-flowed into a
 // horizontally scrollable strip rather than dropping any icon (Mobile
 // principle — same IA, touch-optimized).
-export default function MobileDock({ onOpenWindow }: MobileDockProps) {
+export default function MobileDock({ onOpenWindow, hidden }: MobileDockProps) {
   const phase = useStartupPhase();
   const { windows } = useWindows();
   const qRapidControls = useAnimation();
@@ -45,7 +46,10 @@ export default function MobileDock({ onOpenWindow }: MobileDockProps) {
   }, [phase, qRapidControls]);
 
   const handleEmailClick = () => {
-    window.location.href = 'mailto:vbkatarnaware@gmail.com';
+    // Distinct from the Finder icon (which opens the in-site Contact window)
+    // — this one goes straight to Gmail compose in a new tab. Not mailto:,
+    // since that silently no-ops with no default mail client configured.
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&to=vbkatarnaware@gmail.com', '_blank');
   };
 
   const dockItemVariants = {
@@ -64,11 +68,11 @@ export default function MobileDock({ onOpenWindow }: MobileDockProps) {
     <motion.div
       className='fixed bottom-0 left-0 right-0 min-[1025px]:hidden z-50 pointer-events-none flex justify-center'
       initial={{ y: 150, opacity: 0 }}
-      animate={phase >= 3 ? { y: 0, opacity: 1 } : { y: 150, opacity: 0 }}
+      animate={phase >= 3 && !hidden ? { y: 0, opacity: 1 } : { y: 150, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
     >
-      <div className='mb-[16px] py-[12px] px-[16px] bg-[#1a1a1c]/80 border border-white/10 backdrop-blur-3xl rounded-[34px] flex items-start gap-4 w-[92%] max-w-[400px] overflow-x-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto [&::-webkit-scrollbar]:hidden'>
+      <div className={`mb-[16px] py-[12px] px-[16px] bg-[#1a1a1c]/80 border border-white/10 backdrop-blur-3xl rounded-[34px] flex items-start gap-4 w-[92%] max-w-[400px] overflow-x-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)] [&::-webkit-scrollbar]:hidden ${hidden ? 'pointer-events-none' : 'pointer-events-auto'}`}>
 
         {items.map((item) => (
           <motion.div

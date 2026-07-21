@@ -36,7 +36,11 @@ const DEEP_LINK_APPS = ['qrapid', 'icici', 'careeros', 'rizent', 'moatdaily'] as
 function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
   const [currentBg, setCurrentBg] = useState<string>(initialBg);
   const phase = useStartupPhase();
-  const { openWindow } = useWindows();
+  const { windows, openWindow, closeWindow, toggleMinimize } = useWindows();
+
+  // Real macOS hides the Dock while any window is maximized/fullscreen —
+  // it fills the screen below the menu bar, so the Dock has nowhere to sit.
+  const anyMaximized = Object.values(windows).some(w => w.isOpen && w.isMaximized && !w.isMinimized);
 
   // Deep-linking: a direct visit to /<app> (or /<app>/<section>) opens that
   // app's window on mount, so the URLs prerendered by src/pages/[app]/
@@ -48,6 +52,66 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Keep window open/close in sync with Back/Forward, not just the section
+  // within an already-open window (that part is handled by AppShell/
+  // FinderApp's own popstate listeners). Landing on an app's path opens it;
+  // navigating away from every app's path (e.g. back to Home) closes
+  // whichever app window was open — so Back after opening a window actually
+  // closes it, matching the URL, instead of leaving a stale window on screen.
+  useEffect(() => {
+    const handlePopState = () => {
+      const firstSegment = window.location.pathname.split('/').filter(Boolean)[0] ?? '';
+      if ((DEEP_LINK_APPS as readonly string[]).includes(firstSegment)) {
+        if (!windows[firstSegment as AppId]?.isOpen) {
+          openWindow(firstSegment as AppId);
+        }
+        return;
+      }
+      // Back all the way to Home (empty path) — close any open product-app
+      // windows so the desktop matches the URL. Navigating to a Finder tab
+      // (/contact, /about, …) is NOT "home" and should leave other windows
+      // (e.g. a product app opened alongside Finder) exactly as they are.
+      if (firstSegment === '') {
+        for (const appId of DEEP_LINK_APPS) {
+          if (windows[appId]?.isOpen) closeWindow(appId);
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [windows, openWindow, closeWindow]);
+
+  // Global window-management shortcuts, scoped to whichever window is
+  // currently focused (highest z-index) — mirrors macOS's Esc/⌘W/⌘M acting
+  // on the active app, not whatever the browser happens to have focus on.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // A Lightbox/FlowLightbox/DocumentViewer overlay is open — let its own
+      // Escape handler close *it* first rather than also closing/minimizing
+      // the window underneath in the same keystroke. All three already set
+      // this as their own open/close signal, so it's a free check here.
+      if (document.body.style.overflow === 'hidden') return;
+
+      const openWindows = Object.values(windows).filter(w => w.isOpen && !w.isMinimized);
+      if (openWindows.length === 0) return;
+      const focused = openWindows.reduce((a, b) => (b.zIndex > a.zIndex ? b : a));
+
+      const isModified = e.metaKey || e.ctrlKey;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeWindow(focused.id);
+      } else if (isModified && e.key.toLowerCase() === 'w') {
+        e.preventDefault();
+        closeWindow(focused.id);
+      } else if (isModified && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        toggleMinimize(focused.id);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [windows, closeWindow, toggleMinimize]);
 
   useEffect(() => {
     const lastBg = localStorage.getItem('lastBackground');
@@ -124,8 +188,8 @@ function DesktopInner({ initialBg, backgroundMap }: AppLayoutProps) {
         <MacToolbar />
       </div>
 
-      <MobileDock onOpenWindow={openWindow} />
-      <DesktopDock onOpenWindow={openWindow} />
+      <MobileDock onOpenWindow={openWindow} hidden={anyMaximized} />
+      <DesktopDock onOpenWindow={openWindow} hidden={anyMaximized} />
     </div>
   );
 }

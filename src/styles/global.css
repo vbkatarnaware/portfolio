@@ -1,5 +1,17 @@
 @import 'tailwindcss';
 
+/* Portfolio-wide palette tokens. Tailwind v4 auto-generates utilities from
+ * these (e.g. bg-mac-chrome, text-accent-blue) — use them for any *new*
+ * macOS-chrome or accent-blue surface instead of a fresh hex literal.
+ * (Existing call sites weren't mass-migrated to avoid unrelated churn —
+ * these are the two colors confirmed repeated across many components:
+ * #1c1c1e is the window/dock chrome background, #328df9 the accent blue
+ * used for links/icons in ContactView, DecisionLog, etc.) */
+@theme {
+  --color-mac-chrome: #1c1c1e;
+  --color-accent-blue: #328df9;
+}
+
 @layer base {
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',

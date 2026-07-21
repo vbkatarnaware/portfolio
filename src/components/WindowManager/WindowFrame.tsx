@@ -11,7 +11,7 @@ interface WindowFrameProps {
 }
 
 export default function WindowFrame({ id, children }: WindowFrameProps) {
-  const { windows, closeWindow, toggleMinimize, toggleMaximize, bringToFront } = useWindows();
+  const { windows, closeWindow, toggleMinimize, toggleMaximize, bringToFront, updatePosition, updateSize } = useWindows();
   const windowData = windows[id];
   const dragControls = useDragControls();
   const [isMobile, setIsMobile] = useState(false);
@@ -23,24 +23,87 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const { size, startResize } = useResize(
-    windowData.defaultWidth || 800, 
-    windowData.defaultHeight || 500,
-    350, 
+  // Seeded from context (windowData.size) so a minimize→restore within the
+  // same session keeps whatever the user last resized it to — a fresh
+  // mount only falls back to defaultWidth/Height the very first time.
+  const { size, startResize, isResizing } = useResize(
+    windowData.size?.width ?? windowData.defaultWidth ?? 800,
+    windowData.size?.height ?? windowData.defaultHeight ?? 500,
+    350,
     300
   );
 
+  // Commit the final size back into context once the resize gesture ends,
+  // so it survives a minimize/restore (WindowFrame unmounts while minimized).
+  const wasResizing = React.useRef(false);
+  useEffect(() => {
+    if (wasResizing.current && !isResizing) {
+      updateSize(id, size);
+    }
+    wasResizing.current = isResizing;
+  }, [isResizing, size, id, updateSize]);
+
   if (!windowData.isOpen) return null;
+
+  // The fixed MacToolbar (h-8 = 2rem, z-50) sits above every window's own
+  // z-index. A maximized window that goes fully to the screen's top edge
+  // therefore has the top 2rem of its title bar — exactly where the
+  // traffic lights live — silently covered by the toolbar, with no visible
+  // way to un-maximize/minimize/close. Reserve that strip instead of
+  // covering it, matching how a real macOS window "zooms" to fill the
+  // screen below the menu bar rather than over it. MacToolbar only renders
+  // at md+ (desktop), which is also where isMobile (< 1024px) is false.
+  const TOOLBAR_HEIGHT_PX = 32; // 2rem at the default 16px root font-size
+  const TOOLBAR_HEIGHT = `${TOOLBAR_HEIGHT_PX}px`;
 
   // Mobile mode constraints
   const activeWidth = isMobile ? '100%' : (windowData.isMaximized ? '100vw' : size.width);
-  const activeHeight = isMobile ? '100%' : (windowData.isMaximized ? '100vh' : size.height);
-  const dragConstraints = typeof window !== 'undefined' ? { 
-    top: -window.innerHeight + 100, 
-    left: -window.innerWidth + 100, 
-    right: window.innerWidth - 100, 
-    bottom: window.innerHeight - 100 
+  const activeHeight = isMobile
+    ? '100%'
+    : (windowData.isMaximized ? `calc(100vh - ${TOOLBAR_HEIGHT})` : size.height);
+
+  // Tracks viewport size so the drag-constraint math below (which mirrors
+  // the cascade top/left formula in the style block further down) stays
+  // correct across resizes, not just at mount.
+  const [viewport, setViewport] = useState(() =>
+    typeof window !== 'undefined'
+      ? { width: window.innerWidth, height: window.innerHeight }
+      : { width: 1280, height: 800 }
+  );
+  useEffect(() => {
+    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // The cascade formula below computes each window's un-dragged top/left as
+  // "centered, offset by the cascade index". dragConstraints previously used
+  // flat window.innerHeight/innerWidth bounds with no idea where that base
+  // position actually was — a window whose base top already sat well below
+  // the toolbar could still be dragged far enough up to tuck its title bar
+  // (traffic lights included) behind the fixed MacToolbar, where it's
+  // neither visible nor draggable anymore ("stuck"). Anchoring the
+  // constraints to the same base position keeps the title bar always
+  // reachable below the toolbar, while still allowing the normal amount of
+  // slack on every other edge.
+  const cascadeOffset = (windowData.cascade || 0) * 30;
+  // Floored at the toolbar's height: on a short viewport, the raw
+  // centering formula (50vh - height/2) can land above the toolbar on its
+  // own, with no drag involved — the CSS "top" below applies the same
+  // floor via max(), so this has to match or the drag constraints and the
+  // resting position disagree about where "flush with the toolbar" is.
+  const baseTop = Math.max(
+    viewport.height / 2 - (windowData.defaultHeight || 500) / 2 + cascadeOffset,
+    TOOLBAR_HEIGHT_PX
+  );
+  const baseLeft = viewport.width / 2 - (windowData.defaultWidth || 800) / 2 + cascadeOffset;
+  const dragConstraints = typeof window !== 'undefined' ? {
+    top: -(baseTop - TOOLBAR_HEIGHT_PX),
+    left: -(baseLeft + (windowData.defaultWidth || 800) - 120),
+    right: viewport.width - baseLeft - 120,
+    bottom: viewport.height - baseTop - 80
   } : undefined;
+  const position = windowData.position ?? { x: 0, y: 0 };
 
   const isActive = windowData.zIndex === Math.max(...Object.values(windows).map(w => w.zIndex));
 
@@ -56,13 +119,23 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
           dragElastic={0}
           dragConstraints={dragConstraints}
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ 
-            opacity: isActive ? 1 : 0.95, 
-            scale: 1, 
+          animate={{
+            opacity: isActive ? 1 : 0.95,
+            scale: 1,
             width: activeWidth,
             height: activeHeight,
-            x: windowData.isMaximized ? 0 : undefined,
-            y: windowData.isMaximized ? 0 : 0,
+            // Controlled drag position: framer-motion animates to wherever
+            // context says the window is, and onDragEnd below writes the
+            // gesture's result straight back into context — so the value
+            // here is always where the window already visually is (no
+            // jump), and it now survives a minimize/restore within the
+            // session (it's just React state, so a page refresh resets it).
+            x: windowData.isMaximized ? 0 : position.x,
+            y: windowData.isMaximized ? 0 : position.y,
+          }}
+          onDragEnd={(_e, info) => {
+            if (windowData.isMaximized) return;
+            updatePosition(id, { x: position.x + info.offset.x, y: position.y + info.offset.y });
           }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -70,15 +143,20 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
           className={`absolute flex flex-col pointer-events-auto bg-[#1c1c1e]/80 backdrop-blur-3xl overflow-hidden transition-shadow duration-300 ${
             isActive ? 'shadow-[0_30px_80px_rgba(0,0,0,0.6),_inset_0_1px_0_rgba(255,255,255,0.15)] border border-white/20' : 'shadow-[0_15px_40px_rgba(0,0,0,0.4),_inset_0_1px_0_rgba(255,255,255,0.1)] border border-white/10'
           } ${
-            isMobile || windowData.isMaximized ? 'rounded-none top-0 left-0' : 'rounded-2xl'
+            isMobile || windowData.isMaximized ? 'rounded-none left-0' : 'rounded-2xl'
+          } ${
+            isMobile ? 'top-0' : ''
           }`}
           style={{
             zIndex: windowData.zIndex,
+            ...(!isMobile && windowData.isMaximized ? { top: TOOLBAR_HEIGHT } : {}),
             ...( !isMobile && !windowData.isMaximized ? {
-              // Center, then cascade each subsequent window ~30px down-right
-              // so stacked windows stay visibly distinct (macOS cascade).
-              top: `calc(50vh - ${(windowData.defaultHeight || 500) / 2}px + ${(windowData.cascade || 0) * 30}px)`,
-              left: `calc(50vw - ${(windowData.defaultWidth || 800) / 2}px + ${(windowData.cascade || 0) * 30}px)`
+              // Centered, then cascaded ~30px down-right per stacked window
+              // (real-macOS cascade) — baseTop/baseLeft (computed above,
+              // floored so the title bar can never start above the toolbar)
+              // is the single source of truth shared with dragConstraints.
+              top: `${baseTop}px`,
+              left: `${baseLeft}px`
             } : {})
           }}
         >
@@ -91,14 +169,19 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
             </>
           )}
 
-          {/* Title Bar (Draggable) */}
-          <div 
-            className="h-12 flex items-center px-4 relative shrink-0 z-40"
+          {/* Title Bar (Draggable) — select-none + touch-none on the whole
+              bar (not just the title text) stops the browser from starting
+              a native text-selection or touch-scroll gesture the instant a
+              drag begins anywhere on it, which was the source of the
+              jitter/selection glitches. */}
+          <div
+            className="h-12 flex items-center px-4 relative shrink-0 z-40 select-none touch-none"
             onPointerDown={(e) => {
               if (!isMobile && !windowData.isMaximized) {
                 dragControls.start(e);
               }
             }}
+            onDoubleClick={() => !isMobile && toggleMaximize(id)}
           >
             {/* Traffic Lights */}
             <div className="flex gap-2 absolute left-4 z-50">

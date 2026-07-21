@@ -14,12 +14,13 @@ import { useWindows } from '../../context/WindowContext';
 
 interface DesktopDockProps {
   onOpenWindow: (id: AppId) => void;
+  hidden?: boolean;
 }
 
 // Dock order (locked): Finder | QRapid ICICI (Experience) | CareerOS Rizent
 // MoatDaily (Independent Products) | LinkedIn GitHub Email Calendar.
 // Grouping is communicated by spacing only — no extra navigation hierarchy.
-export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
+export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const { windows } = useWindows();
   const qRapidControls = useAnimation();
@@ -61,7 +62,10 @@ export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
     ) : null;
 
   const handleEmailClick = () => {
-    window.location.href = 'mailto:vbkatarnaware@gmail.com';
+    // Distinct from the Finder icon (which opens the in-site Contact window)
+    // — this one goes straight to Gmail compose in a new tab. Not mailto:,
+    // since that silently no-ops with no default mail client configured.
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&to=vbkatarnaware@gmail.com', '_blank');
   };
 
   const handleGithubClick = () => {
@@ -99,8 +103,11 @@ export default function DesktopDock({ onOpenWindow }: DesktopDockProps) {
 
   return (
     <motion.div
-      className='fixed bottom-10 left-0 right-0 hidden min-[1025px]:flex justify-center z-50 pointer-events-none'>
-      <div className='relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl pointer-events-auto'>
+      className='fixed bottom-10 left-0 right-0 hidden min-[1025px]:flex justify-center z-50 pointer-events-none'
+      animate={{ opacity: hidden ? 0 : 1, y: hidden ? 40 : 0 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className={`relative mb-2 p-3 bg-[#1c1c1e]/60 border border-white/10 backdrop-blur-2xl rounded-2xl ${hidden ? 'pointer-events-none' : 'pointer-events-auto'}`}>
         <div className='flex items-end space-x-4'>
           {/* Finder */}
           <motion.div

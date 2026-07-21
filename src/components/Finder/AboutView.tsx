@@ -1,5 +1,4 @@
 import React from 'react';
-import vipulImg from '../../assets/images/vipul-picture.jpg';
 
 // Aligned to the canonical resume summary (careeros/.careeros/profile.yaml v8,
 // summary_variants.default): PM-first identity, AI as a working tool, not a
@@ -12,7 +11,7 @@ export default function AboutView() {
         <div className="w-24 h-24 rounded-full p-1 border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.3)] shrink-0 bg-black/20">
           <div className="w-full h-full rounded-full overflow-hidden">
             <img
-              src={vipulImg.src}
+              src="/vipul-picture.jpg"
               alt="Vipul Katarnaware - Product Manager"
               className="w-full h-full object-cover"
             />

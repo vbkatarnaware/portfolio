@@ -228,6 +228,10 @@ export interface AppContent {
   impact?: HighlightItem[];
   lessons: string[];
   lessonsLearned?: LessonsLearned;
+  /** Product mode only — 1-2 sharpest principles, shown as a compact block at
+   *  the end of Overview when a Product's full Lessons Learned tab has been
+   *  folded away (lean Product IA). Experience apps keep the full tab instead. */
+  keyLearnings?: string[];
   metadataChips?: string[];
   /** Product mode only; must be labeled as planned, never shipped, when unbuilt. */
   roadmap?: RoadmapItem[];

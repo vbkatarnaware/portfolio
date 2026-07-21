@@ -31,6 +31,18 @@ interface AppShellProps {
   content: AppContent;
 }
 
+// A section's content field may be a non-empty array OR a populated structured
+// object (ProblemDefinition, ArchitectureDetails, TechnicalDiscovery,
+// LessonsLearned, …). `.length` is `undefined` on an object, so a plain
+// `field?.length` guard silently hides every structured section — hence this
+// shared check that handles arrays, objects, and primitives alike.
+function hasData(value: unknown): boolean {
+  if (value == null) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === 'object') return Object.keys(value).length > 0;
+  return Boolean(value);
+}
+
 // The reusable macOS "case study" application shell. One component, two IA
 // modes (Experience / Product), driven entirely by `content`. A narrative
 // section is included in the sidebar only if its content field has data
@@ -44,10 +56,10 @@ export default function AppShell({ appId, content }: AppShellProps) {
     const list: SidebarSection[] = [
       { id: 'overview', label: 'Overview', icon: LayoutGrid },
     ];
-    if (content.problem?.length) {
+    if (hasData(content.problem) || hasData(content.roleCards)) {
       list.push({ id: 'problem', label: content.problemTitle, icon: FileQuestion });
     }
-    if (content.discovery?.length) {
+    if (hasData(content.discovery) || hasData(content.technicalDiscovery) || hasData(content.customerResearch)) {
       list.push({ id: 'discovery', label: 'Discovery', icon: Search });
     }
     if (content.decisionLog?.length) {
@@ -59,7 +71,7 @@ export default function AppShell({ appId, content }: AppShellProps) {
     if (content.timeline?.length) {
       list.push({ id: 'timeline', label: 'Timeline', icon: GitCommit });
     }
-    if (content.architecture?.length) {
+    if (hasData(content.architecture)) {
       list.push({ id: 'architecture', label: 'Architecture', icon: Network });
     }
     if (content.crossFunctional?.length) {
@@ -81,10 +93,10 @@ export default function AppShell({ appId, content }: AppShellProps) {
       }
       list.push({ id: 'evidence', label: 'Artifacts', icon: FolderOpen });
     }
-    if (content.lessons?.length) {
+    if (hasData(content.lessons) || hasData(content.lessonsLearned)) {
       list.push({ id: 'lessons', label: 'Lessons Learned', icon: Lightbulb });
     }
-    if (content.roadmap?.length) {
+    if (hasData(content.roadmap)) {
       list.push({ id: 'roadmap', label: 'Roadmap', icon: Map });
     }
     return list;

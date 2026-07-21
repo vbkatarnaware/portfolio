@@ -26,31 +26,21 @@ const content: AppContent = {
     solution: "Rizent runs outreach end to end: pitch-deck extraction into a queryable 'digital twin', AI investor matching, drafted outreach the founder approves, reply-intent detection, and Calendar-integrated meeting booking — with a human approval gate wherever trust matters most.",
     impact: "Solo-built as a 30,233-line TypeScript monorepo across 71 Postgres migrations. Deliberately still in private beta, validating matching quality, AI cost, and reliability internally before any external rollout.",
   },
+  // Problem and Discovery are intentionally folded away (lean Product IA):
+  // the workflow/pain-point framing below already lives in overviewSummary,
+  // and the cost-tiering investigation IS Decision Log #1/#2's reasoning —
+  // repeating either as its own tab would just re-tell the same story.
+  // Preserved here as ground truth, not deleted:
+  //   painPoints were: (1) a dropped follow-up or stale financial figure
+  //   stated as current is a real, damaging mistake — not a minor
+  //   inconvenience; (2) manually tracking reply intent across many threads
+  //   stops scaling past a handful of investors; (3) outreach tools automate
+  //   sending but not the judgment calls (escalate/snooze/stop). (1) is now
+  //   the Telegram-escalation decision below; (2)/(3) are covered by
+  //   overviewSummary.solution's "human approval gate wherever trust matters".
   problemTitle: 'Problem',
-  problem: {
-    workflow: "Founders raising a round run investor outreach by hand: building a target list, personalizing each email, tracking who replied and who didn't, and remembering when to follow up — across dozens of live threads in parallel.",
-    whyFailed: "Existing tools sit at one of two extremes: fully automated outreach that risks a generic or factually wrong email reaching an investor, or a plain CRM that still leaves 100% of the drafting and judgment to the founder. Neither matches how much trust an investor conversation actually requires.",
-    painPoints: [
-      "A dropped follow-up, or a stale financial figure stated as current, is a real and damaging mistake in front of an investor — not a minor inconvenience.",
-      "Manually tracking reply intent (interested, declining, asking a question, requesting a referral) across many threads stops scaling past a handful of investors.",
-      "Outreach tools automate sending, but not the judgment calls — when to escalate to the founder, when to snooze an investor, when to stop contacting them entirely.",
-    ],
-    opportunity: "Automate the repetitive majority of outreach — drafting, sending, tracking, follow-ups — while keeping the founder in the loop for exactly the moments that require their judgment: approving a draft, confirming a meeting time, or answering something the AI shouldn't guess at.",
-  },
+  problem: [],
   discovery: [],
-  technicalDiscovery: {
-    initialObservation: "Running full-reasoning AI (GPT-4o) on every investor match and outreach draft would make AI cost scale linearly with outreach volume — the same trap that makes naive AI automation expensive at any real scale.",
-    investigation: "Profiling the two AI-heavy paths — investor matching and reply handling — showed most of the load didn't need GPT-4o-level reasoning: classifying a reply's intent or drafting a routine follow-up is a much cheaper task than scoring a startup against an investor's thesis and portfolio.",
-    rootCauseAnalysis: "A single AI tier means every call pays GPT-4o pricing (~$5.00/1M input tokens) regardless of how much reasoning the task needs, and scoring investors one at a time re-sends the same startup context on every call.",
-    validation: "Routing high-volume tasks (intent classification, drafting, thread summarization) to GPT-4o-mini (~$0.15/1M tokens), and batching 10 investor profiles into a single GPT-4o match-scoring call instead of one call per investor, cut tokens per batch by roughly 80%.",
-    finalInsight: "Match each task to the cheapest model that can actually do it, and batch whenever the same context would otherwise be repeated. Cost control is a pipeline design decision, not a prompting trick.",
-    evidence: [
-      { label: 'GPT-4o-mini cost', value: '~$0.15 / 1M tokens' },
-      { label: 'GPT-4o cost', value: '~$5.00 / 1M tokens' },
-      { label: 'Batch size', value: '10 investors/call' },
-      { label: 'Token reduction', value: '~80% vs. per-investor' },
-    ],
-  },
 
   decisionLog: [
     {
@@ -152,13 +142,10 @@ const content: AppContent = {
   ],
 
   lessons: [],
-  lessonsLearned: {
-    biggestLesson: "The hardest part of an outreach agent isn't generating good drafts — it's knowing exactly when not to act, and routing that moment to the founder instead of guessing.",
-    mistake: "Early on I treated 'the AI should answer if it has an answer' as good enough. Even a stale stored figure counts as 'having an answer' — and that's precisely wrong for a number an investor will hold you to.",
-    differently: "I'd design the static/dynamic fact expiry policy before building the reply-drafting path, instead of adding it after realizing memory could go stale mid-conversation.",
-    principle: 'Cost and trust are both architecture decisions, not prompting tricks — which model handles a task, and which decisions escalate to a human, should be decided at the pipeline level.',
-    advice: "Build the escalation path before the automation path. It's easy to automate the majority that's low-risk; the real value — and the real risk — is in designing for the part that isn't.",
-  },
+  keyLearnings: [
+    "The hardest part of an outreach agent isn't generating good drafts — it's knowing exactly when not to act, and routing that moment to the founder instead of guessing.",
+    'Cost and trust are both architecture decisions, not prompting tricks — which model handles a task, and which decisions escalate to a human, should be decided at the pipeline level.',
+  ],
 
   roadmap: [
     {

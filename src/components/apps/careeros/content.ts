@@ -15,78 +15,81 @@ const content: AppContent = {
   externalUrl: 'https://careeros.codes',
   githubUrl: 'https://github.com/vbkatarnaware/careeros',
 
-  overview: [
-    "CareerOS is an open-source, MIT-licensed job-search automation pipeline. I built it from scratch in Python after previous AI agents repeatedly exhausted API quotas without completing a single run.",
-    "The solution wasn't a larger language model. It was a complete workflow redesign: using deterministic code for deterministic filtering, and spending AI compute only where reasoning actually adds value."
-  ],
+  overview: [],
+  overviewSummary: {
+    problem: "A serious job search rewards volume — but applying to hundreds of roles means either spray-and-pray with a generic resume, or hours hand-tailoring each application. The AI tools meant to fix that tend to burn their entire API budget evaluating jobs that were never worth applying to.",
+    solution: "CareerOS finds jobs, scores them against your real experience, and generates a tailored resume and cover letter for every strong match — spending AI only where reasoning changes the outcome. Deterministic code does the filtering; the AI reasoning runs inside your existing coding CLI, so there's no separate service and no runaway bill.",
+    impact: "An MIT-licensed, from-scratch Python rewrite backed by 700+ automated tests — roughly as much test code as product code. The KPI is deliberately narrow: more interviews for the least cost, where selecting zero jobs on a weak day is a correct outcome, not a failure.",
+  },
   problemTitle: 'Problem',
   problem: {
-    workflow: "CareerOps (a prior open-source tool) tried to solve job search by running every discovered job through full AI evaluation, generation, and reporting.",
-    whyFailed: "It was computationally expensive. Most of the cost was spent on jobs that were never going to be worth applying to, exhausting API quotas without yielding results.",
+    workflow: "A real job search is high-volume: to land a handful of interviews you screen hundreds of postings and tailor a resume and cover letter to each promising one. Doing that by hand is hours of repetitive work — so the obvious move is to point an AI agent at it, which is exactly what CareerOps (a prior open-source tool) tried.",
+    whyFailed: "CareerOps ran every discovered job through full AI evaluation, generation, and reporting. It exhausted a Claude Pro quota two to three times without ever completing a single pipeline run — because most of that spend went to jobs that were never going to be worth applying to.",
     painPoints: [
-      "Cost scaled linearly with discovery volume, regardless of match quality.",
-      "Quota exhaustion happened before a single pipeline run could complete.",
-      "Heavy browser dependencies (Playwright) made it slow and brittle to run."
+      "Cost scaled with the volume of jobs discovered, not with how many were actually worth pursuing.",
+      "Quota ran out before a single end-to-end run could finish, so it produced nothing.",
+      "Heavy dependencies (a full browser just to render a PDF) made it slow and brittle to even run.",
     ],
-    opportunity: "Instead of throwing a bigger model at the problem, redesign the workflow. Use deterministic code for deterministic work, and spend AI only where reasoning actually adds value."
+    opportunity: "The fix wasn't a bigger model — it was a workflow redesign: let cheap deterministic code eliminate the obvious mismatches, and spend AI only on the jobs where reasoning actually changes the decision.",
   },
-  technicalDiscovery: {
-    initialObservation: "API costs were entirely disproportionate to the number of viable applications being generated.",
-    investigation: "Pipeline profiling revealed that 90%+ of AI spend was wasted evaluating 'hard mismatches'—jobs requiring clearances, on-site presence, or junior experience.",
-    rootCauseAnalysis: "The architecture coupled discovery directly to deep evaluation. There was no triage layer. If a job was found, it was evaluated.",
-    validation: "I implemented a basic keyword exclusion script. It immediately dropped 60% of the volume at zero cost.",
-    finalInsight: "The pipeline needed an escalating series of gates: free deterministic filters first, cheap batched AI second, and expensive deep evaluation only for the survivors.",
-    evidence: [
-      { label: 'Initial AI Calls/Job', value: '4+' },
-      { label: 'Cost/Run', value: 'Exhausted' },
-      { label: 'Batched Triage', value: '50 jobs/call' },
-      { label: 'Cost Reduction', value: '95%+' }
-    ]
-  },
+  // Discovery is intentionally folded into Decision Log #1 below (lean
+  // Product IA — see Rizent/MoatDaily for the same pattern): the cost-
+  // debugging arc (90%+ waste on hard mismatches → keyword filter drops 60%
+  // at zero cost → escalating gates) IS that decision's reasoning, not a
+  // separate story. Nothing here is lost, just not repeated as its own tab.
+  discovery: [],
 
   decisionLog: [
     {
-      decision: 'Render resumes with Typst instead of the Playwright + HTML templating CareerOps used',
-      reason: 'PDF rendering needed to be fast, low-resource, and dependency-free for an open-source tool anyone can clone and run.',
-      alternatives: 'Keep CareerOps’ Playwright-and-HTML-templating approach.',
-      rejectedBecause: 'Playwright means a full browser dependency for every PDF render — heavy, slow, and one more thing to fail on a fresh clone.',
-      outcome: 'Zero LaTeX, browser, or system-font dependency in the resume pipeline.',
+      decision: 'Redesign the pipeline as escalating cost gates instead of full AI evaluation on every job',
+      reason: 'Most discovered jobs are hard mismatches (wrong clearance, on-site only, wrong seniority) that never needed full AI reasoning to rule out — that was the entire reason the prior tool exhausted its quota.',
+      alternatives: ['Keep running full per-job AI evaluation, just with a bigger/cheaper model.'],
+      rejectedBecause: ['A bigger model still costs money per job and does nothing to stop cost scaling linearly with discovery volume — the actual failure mode.'],
+      outcome: 'A free deterministic filter drops obvious mismatches at zero cost, a batched AI gate (50 jobs per call against a lean profile subset) triages the rest, and full evaluation only ever runs on survivors.',
+      impact: ['4+ AI calls per job under the old full-evaluation approach, down to a shared batched call for most jobs', '90%+ of prior AI spend was going to hard mismatches', '60% of volume dropped by the deterministic filter alone, at zero cost', '95%+ cost reduction end to end'],
+      tag: 'Cost Architecture',
     },
     {
-      decision: 'Batch jobs through a cheap AI gate rather than one full AI call per job',
-      reason: 'Most discovered jobs are hard mismatches that don’t need full evaluation reasoning.',
-      alternatives: 'Run full per-job AI evaluation on every discovered job, as CareerOps did.',
-      rejectedBecause: 'One AI call per job scales cost linearly with discovery volume regardless of match quality — exactly what exhausted the original quota.',
-      outcome: 'A free deterministic filter plus a batched 50-jobs-per-call AI gate triages before expensive evaluation ever runs.',
+      decision: 'Cache AI evaluations by job content, profile version, and prompt version',
+      reason: 'Re-running the same job against the same profile and prompt should never cost a second API call — but naive caching by job ID alone is fragile if a job posting is re-scraped or re-ranked.',
+      alternatives: ['No cache — accept the repeat cost.', 'Cache by job ID only.'],
+      rejectedBecause: ['Re-evaluating unchanged jobs on every run defeats the point of a cost-conscious pipeline.', "Job ID doesn't capture whether the profile or prompt changed since the cached answer was computed — a stale answer would silently ship."],
+      outcome: 'A content-addressed cache key (job content + profile version + prompt version) means no AI call repeats for an answer already computed, and a profile or prompt change correctly invalidates it.',
+      impact: ['Found and fixed a production bug where a cache hit carried a stale job ID that silently displaced that day’s own evaluation', 'Added the regression test that would have caught it'],
+      tag: 'Reliability',
     },
     {
-      decision: 'Move interview prep out of the daily pipeline to opt-in',
-      reason: 'Most discovered jobs never become an actual application, so pre-generating deep prep for all of them is wasted spend.',
-      alternatives: 'Generate interview prep inside the standard evaluation step, as CareerOps did.',
-      rejectedBecause: 'Interview prep is the single most expensive artifact in the pipeline; generating it by default multiplies cost for content that’s usually never read.',
-      outcome: 'On-demand, one command per job, and explicitly forbidden from recomputing the evaluation it expands on.',
+      decision: 'Move interview prep out of the daily pipeline to an opt-in, on-demand command',
+      reason: 'Interview prep is the single most expensive artifact the pipeline can generate, and most discovered jobs never become an actual application.',
+      alternatives: ['Generate interview prep automatically inside the standard evaluation step, as the prior tool did.'],
+      rejectedBecause: ['Generating the most expensive artifact by default multiplies cost for content that’s usually never read.'],
+      outcome: 'Interview prep runs as one explicit command per job, and is forbidden from recomputing the evaluation it expands on — it reads the cached verdict rather than re-deriving it.',
+      impact: ['Zero interview-prep spend on jobs that never reach the apply stage', 'KPI is cost per interview-worthy job, where selecting zero jobs on a given day is a correct outcome, not a failure'],
+      tag: 'Product Judgment',
     },
     {
-      decision: 'Build a custom orchestrator instead of using LangChain or LlamaIndex',
-      reason: 'Cost optimization required absolute, granular control over every token and API call.',
-      alternatives: 'LangChain, LlamaIndex, or AutoGen.',
-      rejectedBecause: 'Heavy LLM frameworks abstract away the actual API calls, making it nearly impossible to aggressively optimize caching and token usage.',
-      outcome: 'A lightweight, zero-framework orchestrator where every prompt, token, and cache hit is explicitly managed.',
-    }
+      decision: 'Add an anti-scripting guardrail after an agent faked the AI gate with keyword matching',
+      reason: 'An orchestrating agent was found short-circuiting the AI evaluation gate by keyword-matching job descriptions instead of actually reasoning over each one — passing/failing jobs without ever calling the model the gate exists to run.',
+      alternatives: ['Trust that the agent runs the AI step as instructed, with no check.'],
+      rejectedBecause: ['A pipeline whose most important quality gate can be silently bypassed by the same automation running it isn’t a gate — it just looks like one.'],
+      outcome: 'A standing rule now documents and enforces that every AI Gate keep/drop call must come from an actual model call, not a keyword-matching substitute, checked on every future run.',
+      impact: ['Closes a real trust gap between "the pipeline ran" and "the pipeline actually reasoned"'],
+      tag: 'Trust & Safety',
+    },
   ],
 
   rejectedDecisions: [
-    { question: 'Why not use Playwright for PDF generation?', answer: 'It requires a full browser dependency for every render — Typst compiles standalone, with no LaTeX, browser, or system-font dependency to install.' },
-    { question: 'Why not run one AI call per discovered job?', answer: 'That scales AI cost linearly with discovery volume; a free deterministic filter plus a batched gate removes most jobs before any AI spend.' },
-    { question: 'Why not use LangChain for the agent orchestration?', answer: 'Frameworks like LangChain add heavy abstractions. Optimizing API costs requires granular control over exactly what gets sent to the model and when.' },
+    { question: 'Why build a full hosted SaaS instead of a local-first CLI tool?', answer: 'A hosted service means holding other people’s resumes, job-board credentials, and API keys — real operational and trust liability for a solo-maintained open-source project. Local-first keeps every credential and every generated document on the user’s own machine.' },
+    { question: 'Why not auto-apply to jobs once they clear the AI gate?', answer: 'Auto-submitting applications removes the one step where a human should still sanity-check a tailored resume before it reaches an employer. CareerOS stops at generating the resume, cover letter, and digest — the send decision stays manual.' },
+    { question: 'Why not fine-tune a model on resume/job-match data instead of prompting a general model with a deterministic filter in front of it?', answer: 'Fine-tuning needs a training pipeline, hosting, and ongoing retraining cost — real infrastructure for a solo open-source tool. A deterministic pre-filter plus a well-scoped prompt against a general model gets most of the accuracy at a fraction of the operational cost.' },
   ],
 
   timeline: [
     { label: 'Problem', description: 'Previous AI workflows exhausted API quotas before completing a single job search run.' },
-    { label: 'v1.0', description: 'From-scratch Python rewrite: introduced deterministic filtering and batched AI gates.' },
-    { label: 'v1.2–1.3', description: 'Multi-provider discovery, parallel execution, and resilient credential rotation.' },
-    { label: 'v1.4–1.5', description: 'Typst-based PDF rendering engine; highly tailored resume generation.' },
-    { label: 'v1.6 — Current', description: 'Local-first mode for open-source distribution; 700+ automated tests passing.' },
+    { label: 'Triage Architecture', date: 'v1.0', description: 'From-scratch Python rewrite: a free deterministic filter plus a batched AI gate replace full-evaluation-on-everything.' },
+    { label: 'Resilient Discovery', date: 'v1.2–1.3', description: 'Expanded from one discovery source to multiple pluggable providers, running in parallel with automatic credential rotation so one dead key doesn’t stall a run.' },
+    { label: 'Dependency-Free Artifacts', date: 'v1.4–1.5', description: 'Typst-based rendering removes every LaTeX, browser, and system-font dependency from resume and cover-letter generation.' },
+    { label: 'Open-Source Distribution', date: 'v1.6 — Current', description: 'A zero-Google, local-first mode and 700+ automated tests make the project safe for anyone to clone and run unattended.' },
   ],
 
   architecture: {
@@ -117,14 +120,32 @@ const content: AppContent = {
     { label: 'Status', value: 'Active Development' },
   ],
 
+  // Full Lessons Learned tab folded away (lean Product IA) — its two
+  // sharpest, non-redundant principles surface instead as a compact block
+  // at the end of Overview. Nothing here is deleted, just relocated.
   lessons: [],
-  lessonsLearned: {
-    biggestLesson: "AI agents should eliminate complexity, not create it. The fastest fix wasn't a better model, it was removing unnecessary work.",
-    mistake: "Assuming that because AI *can* evaluate every job, it *should*. I initially treated AI as a zero-cost commodity.",
-    differently: "I would have built the content-addressed caching layer first, rather than bolting it on after burning through my first quota.",
-    principle: "Computational efficiency is a product decision, made at the workflow level, not an engineering afterthought.",
-    advice: "Don't let the magic of AI blind you to basic systems engineering. Escalate costs only when certainty increases."
-  },
+  keyLearnings: [
+    "AI agents should eliminate complexity, not create it. The fastest fix wasn't a better model, it was removing unnecessary work.",
+    "Computational efficiency is a product decision, made at the workflow level, not an engineering afterthought.",
+  ],
+
+  roadmap: [
+    {
+      whatsNext: 'Track real outcomes (applied → response → interview → offer) and calibrate scoring against them',
+      why: 'The scoring model and generated artifacts are currently tuned on judgment, not on measured conversion data — closing that loop would let the pipeline learn which matches actually convert, not just which ones look strong on paper.',
+      whyNotNow: 'Needs outcome data to exist first; the pipeline has been focused on getting discovery-to-artifact cost right before building the feedback loop on top of it.',
+    },
+    {
+      whatsNext: 'Migrate off Google Sheets as the data store, to SQLite',
+      why: 'Sheets-as-store is simple, inspectable, and needs no separate database to run — genuinely sufficient at current scale.',
+      whyNotNow: 'Deliberately deferred until Sheets actually hits a real scaling limit, rather than pre-optimizing for a load the tool isn’t under yet.',
+    },
+    {
+      whatsNext: 'Richer profile sections — adaptive framing per job, negotiation scripts',
+      why: 'Would let the generated resume/cover letter adapt tone and framing further per job, and extend the tool past the application stage into negotiation.',
+      whyNotNow: 'Kept out of v1 deliberately to stay lean — every added profile section is more surface area for the resume-truthfulness checks to guard.',
+    },
+  ],
 
   media: {
     heroVideo: null,

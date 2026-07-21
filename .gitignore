@@ -22,3 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# capture tooling has its own node_modules (should never be committed)
+puppeteer_capture/node_modules/
+
+# git-repair backups (created if a corrupted .git is ever swapped out)
+.git.broken-backup*/

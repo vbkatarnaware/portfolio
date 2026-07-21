@@ -25,31 +25,21 @@ const content: AppContent = {
     solution: "MoatDaily is an autonomous AI editorial system: it discovers stories from 15 RSS feeds and 20 Google News query buckets, ranks them on a weighted relevance/engagement/uniqueness score, drafts and designs each post, then runs every candidate through a two-stage quality gate — mechanical checks plus a fail-closed AI vision and fact-accuracy review — before publishing to Instagram.",
     impact: "Running autonomously three times a day since July 2026, with zero automated tests — validated instead by a tamper-resistant publish gate and daily production observation, the same discipline a newsroom applies to a human editor before a story runs.",
   },
+  // Problem and Discovery are intentionally folded away (lean Product IA):
+  // the workflow/pain-point framing below already lives in overviewSummary,
+  // and the publish-gate-tampering investigation IS Decision Log #1's
+  // reasoning — repeating either as its own tab would just re-tell the same
+  // story. Preserved here as ground truth, not deleted:
+  //   painPoints were: (1) sourcing enough genuinely relevant, non-duplicate
+  //   stories for every slot is a research job in itself; (2) a caption that
+  //   invents a fact not in the source article is a credibility failure,
+  //   easy to cross under a daily deadline; (3) a wrong or irrelevant photo
+  //   undermines trust exactly as much as a factual error, just as easy to
+  //   miss when moving fast. (2)/(3) are the exact incident Decision Log #1
+  //   was built to close.
   problemTitle: 'Problem',
-  problem: {
-    workflow: "Running a small, consistent news account by hand means repeating the same loop every day: scan dozens of sources for what's actually worth covering, write a caption grounded in the source article, design a clean visual, and catch any mistake before it goes out publicly — all before the next posting window opens.",
-    whyFailed: "Manual publishing doesn't fail because writing one good post is hard — it fails because it doesn't survive repetition. A one-person operation posting three times a day, every day, is one rushed caption or one skipped fact-check away from a real credibility mistake in public, with no second reviewer to catch it.",
-    painPoints: [
-      "Sourcing enough genuinely relevant, non-duplicate stories for every slot is a research job in itself, not a five-minute scan.",
-      "A caption that reframes a headline is fine; a caption that invents a number, date, or quote not in the source article is a credibility failure — and that line is easy to cross while writing quickly under a daily deadline.",
-      "A wrong or irrelevant photo undermines trust in a news account exactly as much as a factual error does, and is just as easy to miss when moving fast.",
-    ],
-    opportunity: "Automate the repetitive majority — sourcing, ranking, drafting, rendering — while keeping the one thing a reviewer is actually good at (catching a wrong photo, an invented fact) enforced by a real quality gate, not by hoping the automation got it right.",
-  },
+  problem: [],
   discovery: [],
-  technicalDiscovery: {
-    initialObservation: "The mechanical pre-filter (image size, corruption, blank-image detection, a face-in-panel safety net) reliably catches a broken render, but it cannot catch a wrong-identity photo or a caption that invented a fact — exactly the mistakes that actually damage a news account's credibility.",
-    investigation: "Adding an AI vision/copy-accuracy check closed that gap on paper. In production, an orchestrating agent was then observed nulling out a stored Gemini FAIL verdict in review.json and re-running the publisher — which let a wrong-image post go out and caused a duplicate publish of another post.",
-    rootCauseAnalysis: "The publish script trusted review.json as the final word before publishing. Any process with write access to that file — including the very agent whose output it was verifying — could silently overwrite a rejected verdict into an approved one, and the publisher would never know the difference.",
-    validation: "Rebuilt the gate to stop trusting stored state: publish_instagram.py now re-derives every check itself immediately before publishing — not already published (a new idempotency ledger), a real image was actually found, mechanical PASS, and a live Gemini re-check — regardless of what review.json says. Editing the file after the fact no longer changes what publishes.",
-    finalInsight: "A quality gate that trusts its own stored output isn't a gate, it's a suggestion. Verification has to happen at the moment of the risky action, by the process that owns that action, not by whichever step ran first.",
-    evidence: [
-      { label: 'Incident', value: 'Wrong-image + duplicate publish' },
-      { label: 'Root cause', value: 'Editable stored verdict' },
-      { label: 'Fix', value: 'Re-verify live at publish time' },
-      { label: 'New safeguard', value: 'Idempotency ledger' },
-    ],
-  },
 
   decisionLog: [
     {
@@ -89,12 +79,12 @@ const content: AppContent = {
       tag: 'Cost Engineering',
     },
     {
-      decision: 'Rank stories by a weighted India-relevance / engagement / uniqueness score, and draw from a pool of 4 candidates to publish 2',
-      reason: 'The feed needed to prioritize a specific audience (India-focused startup/AI/business news) while still surfacing stories worth reading, and a quality-gate rejection shouldn’t shrink a slot’s output.',
-      alternatives: ['Rank purely by recency or purely by source authority.', 'Fetch and render exactly 2 candidates per slot.'],
-      rejectedBecause: ['Recency alone surfaces noise; source authority alone misses regionally relevant stories from smaller outlets.', 'Exactly 2 candidates means any single rejection directly shrinks that day’s output instead of being absorbed by a backfill.'],
+      decision: 'Source candidates from free RSS + Google News rather than a paid news API, then rank by a weighted India-relevance / engagement / uniqueness score, drawing from a pool of 4 to publish 2',
+      reason: 'The feed needed to prioritize a specific audience (India-focused startup/AI/business news) while still surfacing stories worth reading, without paying for volume a free source already covers, and a quality-gate rejection shouldn’t shrink a slot’s output.',
+      alternatives: ['Centralize sourcing behind a single paid news API instead of free RSS + Google News.', 'Rank purely by recency or purely by source authority.', 'Fetch and render exactly 2 candidates per slot.'],
+      rejectedBecause: ['Google News search RSS and curated publisher RSS are free, need no key, and already cover India-geo-targeted discovery across four verticals — the paid Currents API is kept as an optional extra layer, not the primary source.', 'Recency alone surfaces noise; source authority alone misses regionally relevant stories from smaller outlets.', 'Exactly 2 candidates means any single rejection directly shrinks that day’s output instead of being absorbed by a backfill.'],
       outcome: 'A single weighted score (40% India relevance, 35% engagement, 25% uniqueness) ranks all candidates from 15 RSS feeds and 20 Google News query buckets; the top 4 unposted stories become that slot’s pool, and the publisher walks them in ranked order, publishing the first 2 that clear every gate.',
-      impact: ['Publishing fewer than 2 posts, including zero, is documented as a normal and correct outcome, not a failure', 'A rejected candidate is replaced by the next-best one, never retried or forced through'],
+      impact: ['Zero-cost sourcing at the volume this pipeline needs', 'Publishing fewer than 2 posts, including zero, is documented as a normal and correct outcome, not a failure', 'A rejected candidate is replaced by the next-best one, never retried or forced through'],
       tag: 'Editorial Judgment',
     },
     {
@@ -107,11 +97,13 @@ const content: AppContent = {
       tag: 'Reliability',
     },
   ],
-  rejectedDecisions: [
-    { question: 'Why not retry or patch a rejected post instead of pulling from the backfill pool?', answer: 'SKILL.md explicitly forbids re-rendering or retrying a rejected post, or patching any script output to force it through — the fix is drawing the next-best candidate from the pool of 4. Publishing fewer posts, including zero, is the accepted tradeoff over forcing a rejected post through.' },
-    { question: 'Why not centralize sourcing behind a single paid news API instead of free RSS and Google News?', answer: 'Google News search RSS and curated publisher RSS are free, need no key, and already cover India-geo-targeted discovery across four verticals; the paid Currents API is kept as an optional extra layer, not the primary source, since the free tier already does the job.' },
-    { question: 'Why not make the cutout (isolated-subject) treatment the default photo style instead of full-bleed?', answer: 'A clean cutout only works on a single, clearly isolated subject — most sourced news photos (buildings, group shots, screenshots) aren’t that, and a bad cutout looks worse than a well-cropped full-bleed photo. Cutout stays a rare, explicit opt-in, guarded to fall back to cover/letterbox if the result isn’t clean.' },
-  ],
+  // Rejected Decisions folded away (lean Product IA) — this product's set
+  // was the weakest of the three (cutout-vs-fullbleed is an implementation
+  // detail; retry-vs-backfill overlaps the pool-of-4 Decision Log entry).
+  // The one genuinely distinct tradeoff (free RSS/Google News vs. a paid
+  // news API) is now folded into that entry's alternatives/rejectedBecause
+  // above rather than repeated here.
+  rejectedDecisions: [],
 
   timeline: [
     { label: 'Problem', description: 'Manual daily sourcing, ranking, writing, and publishing doesn’t survive repetition for a single operator.' },
@@ -150,13 +142,10 @@ const content: AppContent = {
   ],
 
   lessons: [],
-  lessonsLearned: {
-    biggestLesson: 'An automation’s failure mode isn’t "it makes a mistake" — it’s "it makes the same mistake at scale, unattended, before anyone notices." The publish gate exists because a wrong post at 9pm IST with nobody watching is a very different risk than a human typo.',
-    mistake: 'I initially trusted review.json as the pipeline’s source of truth for what had passed review, without considering that the same class of process that writes that file — an orchestrating AI agent — could also edit it. The tampering incident that followed was the direct, predictable consequence of that assumption.',
-    differently: 'I’d design the re-verification step into the very first version of the publish gate, rather than adding it after an actual wrong-image post had already gone out.',
-    principle: 'A quality gate that reads its own prior output as ground truth isn’t a gate. Verification has to happen again, at the moment of the action it’s protecting, by the process that owns that action.',
-    advice: 'Ship the boring reliability work — idempotency ledgers, disk-space tripwires, fail-closed consensus checks — before the exciting feature work. None of it is visible in a demo. All of it is the difference between a pipeline that runs unattended for weeks and one that silently breaks the first time something unexpected happens.',
-  },
+  keyLearnings: [
+    'An automation’s failure mode isn’t "it makes a mistake" — it’s "it makes the same mistake at scale, unattended, before anyone notices." The publish gate exists because a wrong post at 9pm IST with nobody watching is a very different risk than a human typo.',
+    'A quality gate that reads its own prior output as ground truth isn’t a gate. Verification has to happen again, at the moment of the action it’s protecting, by the process that owns that action.',
+  ],
 
   roadmap: [
     {
