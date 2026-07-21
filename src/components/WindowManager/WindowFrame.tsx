@@ -90,23 +90,24 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
   // reachable below the toolbar, while still allowing the normal amount of
   // slack on every other edge.
   const cascadeOffset = (windowData.cascade || 0) * 30;
-  // Floored at the toolbar's height: on a short viewport, the raw
-  // centering formula (50vh - height/2) can land above the toolbar on its
-  // own, with no drag involved — the CSS "top" below applies the same
-  // floor via max(), so this has to match or the drag constraints and the
-  // resting position disagree about where "flush with the toolbar" is.
-  const baseTop = Math.max(
-    viewport.height / 2 - (windowData.defaultHeight || 500) / 2 + cascadeOffset,
-    TOOLBAR_HEIGHT_PX
-  );
+  const baseTop = viewport.height / 2 - (windowData.defaultHeight || 500) / 2 + cascadeOffset;
   const baseLeft = viewport.width / 2 - (windowData.defaultWidth || 800) / 2 + cascadeOffset;
+  // Minimum allowed y (drag offset from baseTop) so that baseTop + y is
+  // never above the toolbar. Applied three places: the live drag gesture's
+  // bounds, the value actually rendered every frame (clampedPositionY,
+  // below — this is what makes it self-healing against a position already
+  // stored too far up from an older build, not just new drags), and the
+  // value written back on drag end. All three must agree or the window
+  // snaps to a different spot the instant you start dragging it.
+  const minY = TOOLBAR_HEIGHT_PX - baseTop;
   const dragConstraints = typeof window !== 'undefined' ? {
-    top: -(baseTop - TOOLBAR_HEIGHT_PX),
+    top: minY,
     left: -(baseLeft + (windowData.defaultWidth || 800) - 120),
     right: viewport.width - baseLeft - 120,
     bottom: viewport.height - baseTop - 80
   } : undefined;
   const position = windowData.position ?? { x: 0, y: 0 };
+  const clampedPositionY = Math.max(position.y, minY);
 
   const isActive = windowData.zIndex === Math.max(...Object.values(windows).map(w => w.zIndex));
 
@@ -134,11 +135,14 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
             // jump), and it now survives a minimize/restore within the
             // session (it's just React state, so a page refresh resets it).
             x: windowData.isMaximized ? 0 : position.x,
-            y: windowData.isMaximized ? 0 : position.y,
+            y: windowData.isMaximized ? 0 : clampedPositionY,
           }}
           onDragEnd={(_e, info) => {
             if (windowData.isMaximized) return;
-            updatePosition(id, { x: position.x + info.offset.x, y: position.y + info.offset.y });
+            updatePosition(id, {
+              x: position.x + info.offset.x,
+              y: Math.max(clampedPositionY + info.offset.y, minY),
+            });
           }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -155,9 +159,10 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
             ...(!isMobile && windowData.isMaximized ? { top: TOOLBAR_HEIGHT } : {}),
             ...( !isMobile && !windowData.isMaximized ? {
               // Centered, then cascaded ~30px down-right per stacked window
-              // (real-macOS cascade) — baseTop/baseLeft (computed above,
-              // floored so the title bar can never start above the toolbar)
-              // is the single source of truth shared with dragConstraints.
+              // (real-macOS cascade). This is the raw, un-clamped position —
+              // clampedPositionY (in the animate y transform above) is what
+              // actually keeps the title bar below the toolbar, so it stays
+              // correct even against an already-out-of-range stored position.
               top: `${baseTop}px`,
               left: `${baseLeft}px`
             } : {})
