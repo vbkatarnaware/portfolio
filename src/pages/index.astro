@@ -2,6 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import { getImage } from 'astro:assets';
 import AppLayout from '../layouts/AppLayout';
+import TabSeoBlock from '../components/seo/TabSeoBlock.astro';
+import { tabSeo } from '../lib/seoMeta';
 import customWallpaper from '../assets/images/wallpaper4.png';
 
 const backgrounds = [customWallpaper];
@@ -22,27 +24,17 @@ const optimizedBackgrounds = await Promise.all(
 const backgroundMap = Object.fromEntries(
   optimizedBackgrounds.map((bg, index) => [`bg-${index + 1}`, bg.src])
 );
+
+const seo = tabSeo('home');
 ---
 
-<!-- 
-  Customize these values for your portfolio:
-  - title: Your name and role
-  - description: Brief description of your expertise
-  - canonical: Your website URL
-  - openGraph: Social media sharing metadata
--->
 <Layout
-  title='Vipul Katarnaware — Product Manager'
-  description='Vipul Katarnaware is a Product Manager with hands-on founder and enterprise experience, shipping 0-to-1 B2B SaaS and FinTech products and using AI as a working tool, not an identity.'
-  canonical='https://vipulkatarnaware.in'
-  openGraph={{
-    url: 'https://vipulkatarnaware.in',
-    title: 'Vipul Katarnaware — Product Manager',
-    description:
-      'Vipul Katarnaware is a Product Manager with hands-on founder and enterprise experience, shipping 0-to-1 B2B SaaS and FinTech products and using AI as a working tool, not an identity.',
-    site_name: 'Vipul Katarnaware',
-  }}
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  openGraph={seo.openGraph}
 >
+  <TabSeoBlock tab="home" />
   <AppLayout
     client:load
     initialBg={getRandomBackground()}

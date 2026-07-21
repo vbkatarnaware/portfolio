@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { KeyboardEvent } from 'react';
 import { BsGithub } from 'react-icons/bs';
 import { motion, useAnimation } from 'framer-motion';
 import finderImg from '../../assets/images/finder.png';
@@ -80,6 +81,16 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
     window.open('https://linkedin.com/in/vipul-katarnaware', '_blank');
   };
 
+  // Fire a div-based dock icon's click on Enter/Space, so the app icons
+  // (which stay <div>s to preserve their exact visual/animation behavior)
+  // are still keyboard-operable and exposed as buttons to assistive tech.
+  const activateOnKey = (e: KeyboardEvent, fn: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fn();
+    }
+  };
+
   const Tooltip = ({ text }: { text: string }) => (
     <div className='absolute -top-14 left-1/2 -translate-x-1/2'>
       <div className='relative px-3 py-1 bg-[#1d1d1f]/80 backdrop-blur-sm text-white text-sm rounded-lg whitespace-nowrap border border-px border-gray-600'>
@@ -116,6 +127,10 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={() => onOpenWindow('finder')}
+            onKeyDown={(e) => activateOnKey(e, () => onOpenWindow('finder'))}
+            role="button"
+            tabIndex={0}
+            aria-label="Open Finder"
             onMouseEnter={() => setHoveredIcon('finder')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -135,6 +150,10 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={() => onOpenWindow('qrapid')}
+            onKeyDown={(e) => activateOnKey(e, () => onOpenWindow('qrapid'))}
+            role="button"
+            tabIndex={0}
+            aria-label="Open QRapid case study"
             onMouseEnter={() => setHoveredIcon('qrapid')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer flex flex-col items-center'
@@ -153,6 +172,10 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={() => onOpenWindow('icici')}
+            onKeyDown={(e) => activateOnKey(e, () => onOpenWindow('icici'))}
+            role="button"
+            tabIndex={0}
+            aria-label="Open ICICI Bank case study"
             onMouseEnter={() => setHoveredIcon('icici')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -173,6 +196,10 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={() => onOpenWindow('careeros')}
+            onKeyDown={(e) => activateOnKey(e, () => onOpenWindow('careeros'))}
+            role="button"
+            tabIndex={0}
+            aria-label="Open CareerOS case study"
             onMouseEnter={() => setHoveredIcon('careeros')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -191,6 +218,10 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={() => onOpenWindow('rizent')}
+            onKeyDown={(e) => activateOnKey(e, () => onOpenWindow('rizent'))}
+            role="button"
+            tabIndex={0}
+            aria-label="Open Rizent AI case study"
             onMouseEnter={() => setHoveredIcon('rizent')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -209,6 +240,10 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={() => onOpenWindow('moatdaily')}
+            onKeyDown={(e) => activateOnKey(e, () => onOpenWindow('moatdaily'))}
+            role="button"
+            tabIndex={0}
+            aria-label="Open MoatDaily case study"
             onMouseEnter={() => setHoveredIcon('moatdaily')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -229,6 +264,7 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={handleLinkedinClick}
+            aria-label="View LinkedIn profile"
             onMouseEnter={() => setHoveredIcon('linkedin')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -246,12 +282,13 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={handleGithubClick}
+            aria-label="View GitHub profile"
             onMouseEnter={() => setHoveredIcon('github')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
           >
             <div className='w-14 h-14 bg-gradient-to-t from-[#2b2b2b] to-[#1c1c1e] border border-white/10 rounded-xl flex items-center justify-center shadow-lg'>
-              <BsGithub size={40} className='text-gray-100' />
+              <BsGithub size={40} aria-hidden="true" className='text-gray-100' />
             </div>
             {hoveredIcon === 'github' && <Tooltip text='My GitHub' />}
           </motion.button>
@@ -263,6 +300,7 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={handleEmailClick}
+            aria-label="Email me"
             onMouseEnter={() => setHoveredIcon('email')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'
@@ -280,6 +318,7 @@ export default function DesktopDock({ onOpenWindow, hidden }: DesktopDockProps) 
             whileHover="hover"
             whileTap="tap"
             onClick={handleCalendarClick}
+            aria-label="Book a call"
             onMouseEnter={() => setHoveredIcon('calendar')}
             onMouseLeave={() => setHoveredIcon(null)}
             className='relative cursor-pointer'

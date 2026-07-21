@@ -1,0 +1,185 @@
+---
+import type { TabKey } from '../../lib/seoMeta';
+import { TAB_META } from '../../lib/seoMeta';
+
+interface Props {
+  tab: TabKey;
+}
+
+const { tab } = Astro.props;
+const meta = TAB_META[tab];
+---
+
+<!--
+  Server-rendered content parity for the six Finder routes. The interactive
+  desktop (AppLayout, client:load) visually covers this once hydrated, but its
+  window content is client-rendered and therefore invisible to crawlers, AI
+  search, and ATS parsers that don't execute JS. This block gives every route
+  real, indexable semantic HTML using only already-approved on-site copy.
+  aria-hidden keeps it out of the screen-reader tree (AT users get the live
+  interactive app instead), while HTML-parsing crawlers still read it.
+-->
+<section class="sr-content" aria-hidden="true">
+  <h1>{meta.title}</h1>
+  <p>{meta.description}</p>
+
+  {tab === 'home' && (
+    <>
+      <h2>Vipul Katarnaware — Product Manager</h2>
+      <p>Product Manager · B2B SaaS · FinTech · AI Products. Navi Mumbai, India.</p>
+      <p>Product Manager with hands-on founder and enterprise experience. I validate problems with users before building, ship end to end, and use AI as a working tool for product and GTM execution — not a substitute for customer-facing decision making.</p>
+      <p>Founder of QRapid, ex-ICICI Bank, and builder of the AI-native products CareerOS, Rizent, and MoatDaily.</p>
+    </>
+  )}
+
+  {tab === 'about' && (
+    <>
+      <h2>About Vipul Katarnaware</h2>
+      <p>Product Manager · B2B SaaS · FinTech · AI Products.</p>
+      <p>Product Manager with hands-on founder and enterprise experience. I validate problems with users before building, ship end to end, and use AI as a working tool for product and GTM execution — not a substitute for customer-facing decision making.</p>
+      <p>At QRapid, I interviewed diners and restaurant owners to find why the QR menu wasn't converting, then made the sequencing calls that grew it into a restaurant platform: 26 paying partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions. At ICICI Bank, I owned the Business Rules Engine deciding credit eligibility and underwriting for millions of loan and credit card applications a year, and evaluated an external geospatial data vendor that lifted campaign approval quality by an estimated 15%.</p>
+      <p>I build AI-native tools of my own — CareerOS, Rizent, and MoatDaily — to prove the same product philosophy holds outside a single company: take a complex operational workflow, understand the people doing it, simplify it, and automate only the repetitive part.</p>
+    </>
+  )}
+
+  {tab === 'resume' && (
+    <>
+      <h2>Summary</h2>
+      <p>Product Manager who leads with customer discovery: interviewed diners and restaurant owners to find why QRapid's QR menu wasn't converting, then made the sequencing calls that grew it into a restaurant platform with 26 paying partners and $1.45M+ (₹12.05 Cr+) in processed transactions. Founded and ran QRapid end to end while separately owning enterprise-scale execution at ICICI Bank, where a Business Rules Engine decision affects millions of loan and credit card applications a year. Uses AI to move faster on execution while keeping customer discovery and product judgment human-led.</p>
+
+      <h2>Experience</h2>
+      <section>
+        <h3>QRapid — Product Lead &amp; Founder, VJTI TBI Incubated</h3>
+        <p>Sep 2024 – Present · Mumbai, India</p>
+        <ul>
+          <li>Owned QRapid's restaurant management system end to end, from QR menu through ordering, POS, and billing, shipped as a web application; led a team of up to 10 across engineering, restaurant onboarding, customer support, and go-to-market, growing the platform to 26 paying restaurant partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions across 1,99,640 paid bills.</li>
+          <li>Defined inbound support-call rate as QRapid's product-health metric and drove it from all 10 of 10 partners calling twice a week at launch to 1-2 of 10 calling once a month.</li>
+          <li>Partner activation stalled at 20% until customer interviews revealed prospects only switched POS software when their current subscription neared expiry; retimed outreach to that window, lifting activation conversion to 80% and cutting partner activation time by 30%.</li>
+          <li>Ran QCash as an internal 0-to-1 experiment inside QRapid, a cross-merchant loyalty currency that drew interest from 55 restaurants and reached 40 organic users in its first month at a 12.5% repeat-visit rate.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>ICICI Bank — Product Manager: Policy Manager, Retail Assets and Lending Systems</h3>
+        <p>Jul 2023 – Aug 2024 · Mumbai, India</p>
+        <ul>
+          <li>Owned the Business Rules Engine deciding credit eligibility, underwriting, ledger workflows, and financial transaction flows for millions of applications a year, shipping cross-functional policy changes with Risk, Engineering, and Analytics.</li>
+          <li>Evaluated GeoIQ, an external geospatial intelligence vendor, as a richer address-level input to lending policy; wrote the BRD, aligned Risk, Engineering, Analytics, Compliance, and the vendor team, and led UAT before production rollout, improving campaign approval quality by an estimated 15% with no increase in default rate.</li>
+          <li>Specified and shipped major new rule sets on the Business Rules Engine for credit card and personal loan decisioning, covering eligibility, underwriting, and pricing logic evaluated across millions of applications a year.</li>
+        </ul>
+      </section>
+
+      <h2>Selected Products</h2>
+      <section>
+        <h3>CareerOS — careeros.codes</h3>
+        <p>Workflow redesign for the modern job search, using AI only where it earns its cost. An MIT-licensed, from-scratch Python rewrite backed by 700+ automated tests.</p>
+      </section>
+      <section>
+        <h3>Rizent AI — rizent.me</h3>
+        <p>Investor outreach for founders, run end to end by an AI co-founder. Solo-built as a 30,000+ line TypeScript monorepo across 71 Postgres migrations. Private beta.</p>
+      </section>
+      <section>
+        <h3>MoatDaily</h3>
+        <p>An autonomous AI editorial system that discovers, ranks, writes, and publishes business news, running three times a day behind a fail-closed AI quality gate.</p>
+      </section>
+
+      <h2>Skills</h2>
+      <ul>
+        <li>Product: Product Strategy, Discovery, Roadmapping, Prioritization, PRDs / BRDs, Stakeholder Management, User Research, Experimentation</li>
+        <li>Growth: GTM Strategy, Activation &amp; Retention, KPI Design, Product-Led Growth (PLG)</li>
+        <li>AI &amp; Automation: AI Product Strategy, Agentic Workflows, n8n, OpenAI API, Claude API</li>
+        <li>FinTech: Business Rules Engine (BRE), Credit Decisioning</li>
+        <li>Analytics: SQL</li>
+      </ul>
+
+      <h2>Education</h2>
+      <ul>
+        <li>B.Tech, Veermata Jijabai Technological Institute (VJTI), Mumbai — 2019–2023</li>
+      </ul>
+
+      <p><a href="/Master_Product_Manager_Resume.pdf">Download full resume (PDF)</a></p>
+    </>
+  )}
+
+  {tab === 'experience' && (
+    <>
+      <h2>Experience</h2>
+      <section>
+        <h3>QRapid — Product Lead · Founder</h3>
+        <p>Sep 2024 – Present</p>
+        <ul>
+          <li>Owned QRapid's restaurant management system end to end — QR menu, ordering, POS, and billing, shipped as a web application — leading a team of up to 10 across engineering, onboarding, support, and go-to-market.</li>
+          <li>Grew the platform to 26 paying restaurant partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions across 1,99,640 paid bills, with churn under 5%.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>ICICI Bank — Product Manager (Policy)</h3>
+        <p>Jul 2023 – Aug 2024</p>
+        <ul>
+          <li>Owned the Business Rules Engine governing credit eligibility, underwriting, and ledger flows for millions of applications annually, shipping cross-functional policy changes with Risk, Engineering, and Analytics.</li>
+          <li>Evaluated GeoIQ, an external geospatial intelligence vendor, as a richer address-level input, raising campaign approval quality by an estimated 15% with no increase in default rate.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>Kaagjaat — Product Lead · Founder</h3>
+        <p>Jul 2022 – Jun 2023</p>
+        <ul>
+          <li>Bootstrapped a legal-documentation venture from zero to 50+ paying clients across Maharashtra as a solo operator, building intake, delivery, and support from scratch.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>The Yarn Bazaar — Market Research Intern</h3>
+        <p>Jun 2022 – Aug 2022</p>
+        <ul>
+          <li>Designed and deployed automated data-collection pipelines, saving 2+ weeks of manual labor and increasing team throughput by an estimated 40%.</li>
+        </ul>
+      </section>
+    </>
+  )}
+
+  {tab === 'contact' && (
+    <>
+      <h2>Contact Vipul Katarnaware</h2>
+      <ul>
+        <li>Email: <a href="mailto:vbkatarnaware@gmail.com">vbkatarnaware@gmail.com</a></li>
+        <li>LinkedIn: <a href="https://linkedin.com/in/vipul-katarnaware">linkedin.com/in/vipul-katarnaware</a></li>
+        <li>GitHub: <a href="https://github.com/vbkatarnaware">github.com/vbkatarnaware</a></li>
+        <li>Location: Navi Mumbai, India</li>
+        <li><a href="/Master_Product_Manager_Resume.pdf">Download resume (PDF)</a></li>
+      </ul>
+    </>
+  )}
+
+  {tab === 'products' && (
+    <>
+      <h2>Products built by Vipul Katarnaware</h2>
+      <section>
+        <h3>CareerOS</h3>
+        <p>Workflow redesign for the modern job search, using AI only where it earns its cost.</p>
+      </section>
+      <section>
+        <h3>Rizent AI</h3>
+        <p>Investor outreach for founders, run end to end by an AI co-founder. Private beta.</p>
+      </section>
+      <section>
+        <h3>MoatDaily</h3>
+        <p>An AI newsroom that discovers, ranks, writes, and publishes business news autonomously — Instagram is just where it ships.</p>
+      </section>
+    </>
+  )}
+</section>
+
+<style>
+  /* Present in the DOM for any client that doesn't render the interactive
+     layer; sits beneath the hydrated desktop for sighted, JS-enabled users. */
+  .sr-content {
+    position: absolute;
+    inset: 0;
+    max-width: 70ch;
+    margin: 0 auto;
+    padding: 2rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    z-index: 0;
+    overflow: hidden;
+  }
+</style>

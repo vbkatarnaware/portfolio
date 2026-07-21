@@ -1,11 +1,37 @@
 ---
-import type { AppContent } from '../../types/app';
+import type {
+  AppContent,
+  ProblemDefinition,
+  ArchitectureDetails,
+} from '../../types/app';
 
 interface Props {
   content: AppContent;
 }
 
 const { content } = Astro.props;
+
+// A section field may be a non-empty array OR a populated structured object
+// (ProblemDefinition, ArchitectureDetails, …). `.length` is `undefined` on an
+// object, so a plain `field?.length` guard silently hides every structured
+// section — this mirrors the same helper the interactive shell uses
+// (AppShell.tsx) so the crawler-visible block never disagrees with what a
+// sighted, JS-enabled visitor sees.
+function hasData(value: unknown): boolean {
+  if (value == null) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === 'object') return Object.keys(value).length > 0;
+  return Boolean(value);
+}
+
+const isProblemArray = Array.isArray(content.problem);
+const problemObj = (!isProblemArray ? content.problem : null) as ProblemDefinition | null;
+
+const isArchArray = Array.isArray(content.architecture);
+const archObj = (content.architecture && !isArchArray
+  ? content.architecture
+  : null) as ArchitectureDetails | null;
+const archSteps = isArchArray ? (content.architecture as { label: string }[]) : null;
 ---
 
 <!--
@@ -14,54 +40,140 @@ const { content } = Astro.props;
   HTML is what crawlers, AI search, and ATS parsers actually read, since the
   desktop's window content is otherwise invisible to them (client-rendered).
   Sourced from the same content.ts module the React shell uses — single
-  source of truth, never duplicated by hand.
+  source of truth, never duplicated by hand. Every field the interactive
+  shell can show is exposed here in truthful, already-approved copy.
 -->
-<article class="sr-content">
+<article class="sr-content" aria-hidden="true">
   <h1>{content.name}</h1>
   <p>{content.tagline}</p>
+  {content.role && <p>{content.role}{content.dates ? ` · ${content.dates}` : ''}{content.location ? ` · ${content.location}` : ''}</p>}
 
   <h2>Overview</h2>
-  {content.overview.map((p) => <p>{p}</p>)}
+  {hasData(content.overview) && content.overview.map((p) => <p>{p}</p>)}
+  {content.overviewSummary && (
+    <dl>
+      <dt>The Problem</dt>
+      <dd>{content.overviewSummary.problem}</dd>
+      <dt>The Solution</dt>
+      <dd>{content.overviewSummary.solution}</dd>
+      <dt>The Impact</dt>
+      <dd>{content.overviewSummary.impact}</dd>
+    </dl>
+  )}
 
-  {content.problem?.length > 0 && (
+  {hasData(content.problem) && (
     <>
       <h2>{content.problemTitle}</h2>
-      {content.problem.map((p) => <p>{p}</p>)}
+      {isProblemArray
+        ? (content.problem as string[]).map((p) => <p>{p}</p>)
+        : problemObj && (
+            <>
+              <p>{problemObj.workflow}</p>
+              <p>{problemObj.whyFailed}</p>
+              {hasData(problemObj.painPoints) && (
+                <ul>
+                  {problemObj.painPoints.map((pp) => <li>{pp}</li>)}
+                </ul>
+              )}
+              <p>{problemObj.opportunity}</p>
+            </>
+          )}
     </>
   )}
 
-  {content.discovery?.length > 0 && (
+  {hasData(content.roleCards) && (
+    <>
+      <h2>Responsibilities</h2>
+      <ul>
+        {content.roleCards!.map((r) => <li>{r}</li>)}
+      </ul>
+    </>
+  )}
+
+  {hasData(content.discovery) && (
     <>
       <h2>Discovery &amp; Decisions</h2>
       {content.discovery.map((p) => <p>{p}</p>)}
     </>
   )}
 
-  {content.decisionLog?.length > 0 && (
+  {content.customerResearch && (
+    <>
+      <h2>Customer Research</h2>
+      <p>{content.customerResearch.hero.title}</p>
+      <p>{content.customerResearch.hero.description}</p>
+      {hasData(content.customerResearch.biggestDiscoveries) && (
+        <ul>
+          {content.customerResearch.biggestDiscoveries.map((d) => (
+            <li><strong>{d.title}:</strong> {d.description} ({d.influencedDecision})</li>
+          ))}
+        </ul>
+      )}
+      {hasData(content.customerResearch.personas) && (
+        <>
+          <h3>Target Personas</h3>
+          {content.customerResearch.personas.map((persona) => (
+            <section>
+              <h4>{persona.role}</h4>
+              {hasData(persona.painPoints) && (
+                <ul>{persona.painPoints.map((pp) => <li>{pp}</li>)}</ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
+    </>
+  )}
+
+  {content.technicalDiscovery && (
+    <>
+      <h2>Technical Discovery</h2>
+      <p>{content.technicalDiscovery.initialObservation}</p>
+      <p>{content.technicalDiscovery.investigation}</p>
+      <p>{content.technicalDiscovery.rootCauseAnalysis}</p>
+      <p>{content.technicalDiscovery.validation}</p>
+      <p>{content.technicalDiscovery.finalInsight}</p>
+    </>
+  )}
+
+  {hasData(content.decisionLog) && (
     <>
       <h2>Decision Log</h2>
       {content.decisionLog.map((d) => (
         <section>
           <h3>{d.decision}</h3>
-          <p><strong>Reason:</strong> {d.reason}</p>
-          <p><strong>Alternatives considered:</strong> {d.alternatives}</p>
-          <p><strong>Rejected because:</strong> {d.rejectedBecause}</p>
+          {d.summary && <p>{d.summary}</p>}
+          <p><strong>Reason:</strong> {Array.isArray(d.reason) ? d.reason.join(' ') : d.reason}</p>
+          {hasData(d.alternatives) && (
+            <p><strong>Alternatives considered:</strong> {d.alternatives.join('; ')}</p>
+          )}
+          {hasData(d.rejectedBecause) && (
+            <p><strong>Rejected because:</strong> {d.rejectedBecause.join('; ')}</p>
+          )}
           <p><strong>Outcome:</strong> {d.outcome}</p>
+          {hasData(d.impact) && (
+            <p><strong>Impact:</strong> {d.impact.join('; ')}</p>
+          )}
         </section>
       ))}
     </>
   )}
 
-  {content.rejectedDecisions?.length > 0 && (
+  {hasData(content.rejectedDecisions) && (
     <>
       <h2>Rejected Decisions</h2>
-      {content.rejectedDecisions.map((r) => (
-        <p><strong>{r.question}</strong> {r.answer}</p>
-      ))}
+      <dl>
+        {content.rejectedDecisions.map((r) => (
+          <>
+            <dt>{r.question}</dt>
+            <dd>{r.answer}</dd>
+          </>
+        ))}
+      </dl>
     </>
   )}
 
-  {content.timeline?.length > 0 && (
+  {hasData(content.timeline) && (
     <>
       <h2>Timeline</h2>
       <ul>
@@ -72,16 +184,65 @@ const { content } = Astro.props;
     </>
   )}
 
-  {content.roadmap?.length > 0 && (
+  {hasData(content.architecture) && (
     <>
-      <h2>Roadmap</h2>
-      {content.roadmap.map((r) => (
-        <p><strong>{r.whatsNext}</strong> — Why: {r.why} Why not now: {r.whyNotNow}</p>
-      ))}
+      <h2>Architecture</h2>
+      {archObj ? (
+        <>
+          <p>{archObj.overview}</p>
+          {hasData(archObj.diagramSteps) && (
+            <ol>{archObj.diagramSteps.map((s) => <li>{s.label}</li>)}</ol>
+          )}
+          {hasData(archObj.designPrinciples) && (
+            <ul>{archObj.designPrinciples.map((p) => <li>{p}</li>)}</ul>
+          )}
+          <p>{archObj.whyThisArchitecture}</p>
+          {hasData(archObj.majorTradeoffs) && (
+            <dl>
+              {archObj.majorTradeoffs.map((t) => (
+                <>
+                  <dt>{t.tradeoff}</dt>
+                  <dd>{t.reason}</dd>
+                </>
+              ))}
+            </dl>
+          )}
+        </>
+      ) : archSteps && (
+        <ol>{archSteps.map((s) => <li>{s.label}</li>)}</ol>
+      )}
     </>
   )}
 
-  {content.highlights?.length > 0 && (
+  {hasData(content.crossFunctional) && (
+    <>
+      <h2>Cross-functional Leadership</h2>
+      <ul>{content.crossFunctional!.map((c) => <li>{c}</li>)}</ul>
+    </>
+  )}
+
+  {hasData(content.decisionSystems) && (
+    <>
+      <h2>Decision Systems</h2>
+      <ol>{content.decisionSystems!.map((s) => <li>{s.label}</li>)}</ol>
+    </>
+  )}
+
+  {hasData(content.roadmap) && (
+    <>
+      <h2>Roadmap</h2>
+      <dl>
+        {content.roadmap!.map((r) => (
+          <>
+            <dt>{r.whatsNext}</dt>
+            <dd>Why: {r.why} Why not now: {r.whyNotNow}</dd>
+          </>
+        ))}
+      </dl>
+    </>
+  )}
+
+  {hasData(content.highlights) && (
     <>
       <h2>Highlights</h2>
       <dl>
@@ -95,11 +256,11 @@ const { content } = Astro.props;
     </>
   )}
 
-  {content.impact?.length > 0 && (
+  {hasData(content.impact) && (
     <>
       <h2>Impact</h2>
       <dl>
-        {content.impact.map((i) => (
+        {content.impact!.map((i) => (
           <>
             <dt>{i.label}</dt>
             <dd>{i.value}</dd>
@@ -109,11 +270,38 @@ const { content } = Astro.props;
     </>
   )}
 
-  {content.lessons?.length > 0 && (
+  {content.lessonsLearned && (
+    <>
+      <h2>Lessons Learned</h2>
+      <dl>
+        <dt>Biggest lesson</dt>
+        <dd>{content.lessonsLearned.biggestLesson}</dd>
+        <dt>Mistake</dt>
+        <dd>{content.lessonsLearned.mistake}</dd>
+        <dt>What I'd do differently</dt>
+        <dd>{content.lessonsLearned.differently}</dd>
+        <dt>Principle</dt>
+        <dd>{content.lessonsLearned.principle}</dd>
+        <dt>Advice</dt>
+        <dd>{content.lessonsLearned.advice}</dd>
+      </dl>
+    </>
+  )}
+
+  {hasData(content.lessons) && (
     <>
       <h2>Lessons Learned</h2>
       <ul>
         {content.lessons.map((l) => <li>{l}</li>)}
+      </ul>
+    </>
+  )}
+
+  {hasData(content.keyLearnings) && (
+    <>
+      <h2>Key Learnings</h2>
+      <ul>
+        {content.keyLearnings!.map((l) => <li>{l}</li>)}
       </ul>
     </>
   )}

@@ -89,9 +89,10 @@ export default function Lightbox({ images, currentIndex, isOpen, onClose, onNavi
           {/* Controls - rendered after content so they sit on top */}
           <button
             onClick={(e) => { e.stopPropagation(); onClose(); }}
+            aria-label="Close image viewer"
             className="absolute top-4 right-4 md:top-6 md:right-6 p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors z-[9999]"
           >
-            <X size={24} />
+            <X size={24} aria-hidden="true" />
           </button>
 
           {images.length > 1 && (
@@ -101,18 +102,20 @@ export default function Lightbox({ images, currentIndex, isOpen, onClose, onNavi
                   e.stopPropagation();
                   onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1);
                 }}
+                aria-label="Previous image"
                 className="absolute left-4 md:left-6 p-3 text-white/50 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors z-[9999]"
               >
-                <ChevronLeft size={28} />
+                <ChevronLeft size={28} aria-hidden="true" />
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0);
                 }}
+                aria-label="Next image"
                 className="absolute right-4 md:right-6 p-3 text-white/50 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors z-[9999]"
               >
-                <ChevronRight size={28} />
+                <ChevronRight size={28} aria-hidden="true" />
               </button>
             </>
           )}

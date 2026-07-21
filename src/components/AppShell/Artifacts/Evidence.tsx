@@ -17,6 +17,7 @@ const InteractivePrototypes = lazy(() => import('./InteractivePrototypes'));
 
 interface EvidenceProps {
   media: AppMedia;
+  appName?: string;
 }
 
 // Permanent section on every app that has a `media` object at all (Workstream
@@ -25,7 +26,7 @@ interface EvidenceProps {
 // asset or an elegant placeholder, so the IA stays stable while assets land
 // incrementally. Adding a future screenshot/diagram/PDF/dashboard requires
 // editing only the app's content.ts, never a component.
-export default function Evidence({ media }: EvidenceProps) {
+export default function Evidence({ media, appName }: EvidenceProps) {
   const fallback = <PlaceholderCard icon={Video} label="Loading" note="" />;
   return (
     <div className="space-y-8">
@@ -51,7 +52,7 @@ export default function Evidence({ media }: EvidenceProps) {
       {media.architectureDiagram !== undefined && (
         <section>
           <h3 className="text-[13px] font-semibold text-white/50 uppercase tracking-wider mb-3">Architecture Diagram</h3>
-          <Suspense fallback={fallback}><ArchitectureDiagramSlot diagramUrl={media.architectureDiagram} /></Suspense>
+          <Suspense fallback={fallback}><ArchitectureDiagramSlot diagramUrl={media.architectureDiagram} appName={appName} /></Suspense>
         </section>
       )}
 

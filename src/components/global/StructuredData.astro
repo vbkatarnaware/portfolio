@@ -7,22 +7,91 @@ interface Props {
 
 const { app } = Astro.props;
 
+const SITE = 'https://vipulkatarnaware.in';
+
+// QRapid is Vipul's current company (founder), so it's represented both as the
+// Person's worksFor and as a standalone Organization node.
+const qrapidOrg = {
+  '@type': 'Organization',
+  '@id': `${SITE}#qrapid`,
+  name: 'QRapid',
+  description: 'Restaurant operating system for independent restaurants — table-side ordering, POS, and billing.',
+  founder: { '@type': 'Person', name: 'Vipul Katarnaware' },
+};
+
 const person = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': `${SITE}#person`,
   name: 'Vipul Katarnaware',
   jobTitle: 'Product Manager',
-  url: 'https://vipulkatarnaware.in',
+  description:
+    'Product Manager across B2B SaaS, FinTech, and AI products, with hands-on founder and enterprise experience.',
+  url: SITE,
   email: 'mailto:vbkatarnaware@gmail.com',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Navi Mumbai',
     addressCountry: 'IN',
   },
+  worksFor: qrapidOrg,
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Veermata Jijabai Technological Institute (VJTI), Mumbai',
+  },
+  knowsAbout: [
+    'Product Management',
+    'Product Strategy',
+    'AI Products',
+    'Agentic AI',
+    'Workflow Automation',
+    'B2B SaaS',
+    'FinTech',
+    'Platform Product Management',
+    'Zero-to-One Product Development',
+    'Go-to-Market Strategy',
+    'Product Discovery',
+    'User Research',
+    'Experimentation',
+    'Product Analytics',
+    'Business Rules Engine',
+    'Credit Decisioning',
+  ],
   sameAs: [
     'https://linkedin.com/in/vipul-katarnaware',
     'https://github.com/vbkatarnaware',
   ],
+};
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE}#website`,
+  url: SITE,
+  name: 'Vipul Katarnaware',
+  description:
+    'Portfolio of Vipul Katarnaware — Product Manager in B2B SaaS, FinTech, and AI products.',
+  author: { '@id': `${SITE}#person` },
+  inLanguage: 'en',
+};
+
+// Map the app section route slug to a human breadcrumb label.
+const sectionParam = Astro.params.section as string | undefined;
+const SECTION_LABELS: Record<string, string> = {
+  overview: 'Overview',
+  problem: 'Problem',
+  discovery: 'Discovery',
+  decisions: 'Decision Log',
+  rejected: 'Rejected Decisions',
+  timeline: 'Timeline',
+  architecture: 'Architecture',
+  'cross-functional': 'Cross-functional',
+  'decision-systems': 'Decision Systems',
+  highlights: 'Highlights',
+  demo: 'Demo',
+  evidence: 'Evidence',
+  lessons: 'Lessons Learned',
+  roadmap: 'Roadmap',
 };
 
 const appNode = app
@@ -33,7 +102,8 @@ const appNode = app
         name: app.name,
         description: app.tagline,
         applicationCategory: 'BusinessApplication',
-        author: { '@type': 'Person', name: 'Vipul Katarnaware' },
+        operatingSystem: 'Web',
+        author: { '@id': `${SITE}#person` },
         ...(app.externalUrl ? { url: app.externalUrl } : {}),
         ...(app.githubUrl ? { sameAs: [app.githubUrl] } : {}),
       }
@@ -43,10 +113,48 @@ const appNode = app
         roleName: app.role,
         startDate: app.dates?.split('–')[0]?.trim(),
         description: app.tagline,
-        member: { '@type': 'Person', name: 'Vipul Katarnaware' },
+        member: { '@id': `${SITE}#person` },
       }
   : null;
+
+// Breadcrumb for app pages: Home > [App] > [Section?]
+const breadcrumb = app
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: app.name,
+          item: `${SITE}/${app.id}`,
+        },
+        ...(sectionParam && SECTION_LABELS[sectionParam]
+          ? [{ '@type': 'ListItem', position: 3, name: SECTION_LABELS[sectionParam] }]
+          : []),
+      ],
+    }
+  : null;
+
+// FAQPage from an app's Rejected Decisions (question/answer pairs) — a natural
+// Q&A fit that helps answer engines surface "why did you not do X" reasoning.
+const faqNode =
+  app && app.rejectedDecisions && app.rejectedDecisions.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: app.rejectedDecisions.map((r) => ({
+          '@type': 'Question',
+          name: r.question,
+          acceptedAnswer: { '@type': 'Answer', text: r.answer },
+        })),
+      }
+    : null;
+
+const nodes = [person, website, appNode, breadcrumb, faqNode].filter(Boolean);
 ---
 
-<script type="application/ld+json" set:html={JSON.stringify(person)} />
-{appNode && <script type="application/ld+json" set:html={JSON.stringify(appNode)} />}
+{nodes.map((node) => (
+  <script type="application/ld+json" set:html={JSON.stringify(node)} />
+))}

@@ -30,9 +30,9 @@ function DiscoveryRow({ discovery }: { discovery: { title: string; description: 
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.04] transition-colors text-left focus:outline-none"
       >
-        <h4 className="text-[14.5px] font-medium text-white/90 leading-snug flex-1 pr-4">
+        <h3 className="text-[14.5px] font-medium text-white/90 leading-snug flex-1 pr-4">
           {discovery.title}
-        </h4>
+        </h3>
         <div className="flex items-center shrink-0">
           <ChevronRight
             size={16}
@@ -156,7 +156,7 @@ export default function CustomerResearch({ content }: CustomerResearchProps) {
             <div key={idx} className="space-y-3">
               <div className="flex items-center gap-2 px-1">
                 <Target size={18} className="text-white/40" />
-                <h4 className="text-[18px] font-semibold text-white/90 tracking-tight">{persona.role}</h4>
+                <h3 className="text-[18px] font-semibold text-white/90 tracking-tight">{persona.role}</h3>
               </div>
 
               <div className="bg-white/[0.03] border border-white/[0.05] rounded-xl shadow-sm overflow-hidden">

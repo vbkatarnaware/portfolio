@@ -2,6 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import { getImage } from 'astro:assets';
 import AppLayout from '../layouts/AppLayout';
+import TabSeoBlock from '../components/seo/TabSeoBlock.astro';
+import { tabSeo } from '../lib/seoMeta';
+import type { TabKey } from '../lib/seoMeta';
 import customWallpaper from '../assets/images/wallpaper4.png';
 
 export function getStaticPaths() {
@@ -13,6 +16,8 @@ export function getStaticPaths() {
     { params: { tab: 'products' } }
   ];
 }
+
+const { tab } = Astro.params;
 
 const backgrounds = [customWallpaper];
 
@@ -32,20 +37,17 @@ const optimizedBackgrounds = await Promise.all(
 const backgroundMap = Object.fromEntries(
   optimizedBackgrounds.map((bg, index) => [`bg-${index + 1}`, bg.src])
 );
+
+const seo = tabSeo(tab as TabKey);
 ---
 
 <Layout
-  title='Vipul Katarnaware — Product Manager'
-  description='Vipul Katarnaware is a Product Manager with hands-on founder and enterprise experience, shipping 0-to-1 B2B SaaS and FinTech products and using AI as a working tool, not an identity.'
-  canonical='https://vipulkatarnaware.in'
-  openGraph={{
-    url: 'https://vipulkatarnaware.in',
-    title: 'Vipul Katarnaware — Product Manager',
-    description:
-      'Vipul Katarnaware is a Product Manager with hands-on founder and enterprise experience, shipping 0-to-1 B2B SaaS and FinTech products and using AI as a working tool, not an identity.',
-    site_name: 'Vipul Katarnaware',
-  }}
+  title={seo.title}
+  description={seo.description}
+  canonical={seo.canonical}
+  openGraph={seo.openGraph}
 >
+  <TabSeoBlock tab={tab as TabKey} />
   <AppLayout
     client:load
     initialBg={getRandomBackground()}

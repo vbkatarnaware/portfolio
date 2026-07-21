@@ -20,7 +20,17 @@ export default defineConfig({
   integrations: [
     react(), // Enables React components
     sitemap({
-      // Generates sitemap
+      // Every app section sub-page (e.g. /careeros/decisions) canonicalizes to
+      // its base app route (/careeros), so listing all ~14 sections per app in
+      // the sitemap contradicts those canonical tags. Keep only the canonical
+      // set: home, the five Finder tabs, and the five base app routes.
+      filter: (page) => {
+        const path = new URL(page).pathname.replace(/\/$/, '');
+        const segments = path.split('/').filter(Boolean);
+        // Depth 0 (home) and depth 1 (/about, /careeros, …) are canonical;
+        // depth 2+ (/careeros/decisions) is a non-canonical section page.
+        return segments.length <= 1;
+      },
       serialize: (item) => {
         const url = item.url.endsWith('/') ? item.url.slice(0, -1) : item.url;
         return { ...item, url };

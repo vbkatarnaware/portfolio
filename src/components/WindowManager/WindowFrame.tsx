@@ -193,23 +193,26 @@ export default function WindowFrame({ id, children }: WindowFrameProps) {
           >
             {/* Traffic Lights */}
             <div className="flex gap-2 absolute left-4 z-50">
-              <button 
+              <button
                 onClick={(e) => { e.stopPropagation(); closeWindow(id); }}
+                aria-label={`Close ${windowData.title}`}
                 className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] flex items-center justify-center group"
               >
-                <X size={8} className="text-black/50 opacity-0 group-hover:opacity-100" />
+                <X size={8} aria-hidden="true" className="text-black/50 opacity-0 group-hover:opacity-100" />
               </button>
-              <button 
+              <button
                 onClick={(e) => { e.stopPropagation(); toggleMinimize(id); }}
+                aria-label={`Minimize ${windowData.title}`}
                 className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] flex items-center justify-center group"
               >
-                <Minus size={8} className="text-black/50 opacity-0 group-hover:opacity-100" />
+                <Minus size={8} aria-hidden="true" className="text-black/50 opacity-0 group-hover:opacity-100" />
               </button>
-              <button 
+              <button
                 onClick={(e) => { e.stopPropagation(); toggleMaximize(id); }}
+                aria-label={windowData.isMaximized ? `Restore ${windowData.title}` : `Maximize ${windowData.title}`}
                 className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] flex items-center justify-center group"
               >
-                <Maximize2 size={8} className="text-black/50 opacity-0 group-hover:opacity-100" />
+                <Maximize2 size={8} aria-hidden="true" className="text-black/50 opacity-0 group-hover:opacity-100" />
               </button>
             </div>
             

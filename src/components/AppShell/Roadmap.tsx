@@ -17,7 +17,7 @@ export default function Roadmap({ items }: RoadmapProps) {
         {items.map((item) => (
           <div key={item.whatsNext} className="space-y-4">
             <h3 className="text-[16px] font-semibold text-white/90">{item.whatsNext}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <dl className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               <div className="space-y-1.5">
                 <dt className="text-[11px] font-semibold text-white/40 uppercase tracking-wider">Why</dt>
                 <dd className="text-[14.5px] text-white/80 leading-relaxed">{item.why}</dd>
@@ -26,7 +26,7 @@ export default function Roadmap({ items }: RoadmapProps) {
                 <dt className="text-[11px] font-semibold text-white/40 uppercase tracking-wider">Why Not Now</dt>
                 <dd className="text-[14.5px] text-white/80 leading-relaxed">{item.whyNotNow}</dd>
               </div>
-            </div>
+            </dl>
           </div>
         ))}
       </div>

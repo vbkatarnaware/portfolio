@@ -12,7 +12,7 @@ export default function ExperienceView() {
       <div className="space-y-10">
         <div className="relative pl-6 border-l border-white/15">
           <div className="absolute w-2.5 h-2.5 bg-white rounded-full -left-[5.5px] top-1.5 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-          <h3 className="text-[16px] font-semibold text-white tracking-tight">QRapid</h3>
+          <h2 className="text-[16px] font-semibold text-white tracking-tight">QRapid</h2>
           <p className="text-white/50 text-[13px] mb-3 font-medium">Product Lead · Founder <span className="opacity-50 mx-1">|</span> Sep 2024 – Present</p>
           <ul className="text-white/70 leading-[1.6] space-y-2 list-none">
             <li className="relative before:content-[''] before:absolute before:-left-4 before:top-2.5 before:w-1 before:h-1 before:bg-white/30 before:rounded-full">
@@ -32,7 +32,7 @@ export default function ExperienceView() {
 
         <div className="relative pl-6 border-l border-white/15">
           <div className="absolute w-2 h-2 bg-white/40 rounded-full -left-[4px] top-1.5" />
-          <h3 className="text-[16px] font-semibold text-white tracking-tight">ICICI Bank</h3>
+          <h2 className="text-[16px] font-semibold text-white tracking-tight">ICICI Bank</h2>
           <p className="text-white/50 text-[13px] mb-3 font-medium">Product Manager (Policy) <span className="opacity-50 mx-1">|</span> Jul 2023 – Aug 2024</p>
           <ul className="text-white/70 leading-[1.6] space-y-2 list-none">
             <li className="relative before:content-[''] before:absolute before:-left-4 before:top-2.5 before:w-1 before:h-1 before:bg-white/30 before:rounded-full">
@@ -46,7 +46,7 @@ export default function ExperienceView() {
 
         <div className="relative pl-6 border-l border-white/15">
           <div className="absolute w-2 h-2 bg-white/40 rounded-full -left-[4px] top-1.5" />
-          <h3 className="text-[16px] font-semibold text-white tracking-tight">Kaagjaat</h3>
+          <h2 className="text-[16px] font-semibold text-white tracking-tight">Kaagjaat</h2>
           <p className="text-white/50 text-[13px] mb-3 font-medium">Product Lead · Founder <span className="opacity-50 mx-1">|</span> Jul 2022 – Jun 2023</p>
           <ul className="text-white/70 leading-[1.6] space-y-2 list-none">
             <li className="relative before:content-[''] before:absolute before:-left-4 before:top-2.5 before:w-1 before:h-1 before:bg-white/30 before:rounded-full">
@@ -60,7 +60,7 @@ export default function ExperienceView() {
 
         <div className="relative pl-6 border-l border-white/15">
           <div className="absolute w-2 h-2 bg-white/40 rounded-full -left-[4px] top-1.5" />
-          <h3 className="text-[16px] font-semibold text-white tracking-tight">The Yarn Bazaar</h3>
+          <h2 className="text-[16px] font-semibold text-white tracking-tight">The Yarn Bazaar</h2>
           <p className="text-white/50 text-[13px] mb-3 font-medium">Market Research Intern <span className="opacity-50 mx-1">|</span> Jun 2022 – Aug 2022</p>
           <ul className="text-white/70 leading-[1.6] space-y-2 list-none">
             <li className="relative before:content-[''] before:absolute before:-left-4 before:top-2.5 before:w-1 before:h-1 before:bg-white/30 before:rounded-full">

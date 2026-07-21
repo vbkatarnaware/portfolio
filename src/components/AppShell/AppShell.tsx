@@ -147,7 +147,7 @@ export default function AppShell({ appId, content }: AppShellProps) {
           {activeId === 'cross-functional' && <CrossFunctionalGraph paragraphs={content.crossFunctional} />}
           {activeId === 'decision-systems' && <ArchDiagram steps={content.decisionSystems ?? []} title="Decision Systems" />}
           {activeId === 'demo' && content.media && <Demo videoUrl={content.media.heroVideo} />}
-          {activeId === 'evidence' && content.media && <Evidence media={content.media} />}
+          {activeId === 'evidence' && content.media && <Evidence media={content.media} appName={content.name} />}
           {activeId === 'lessons' && <LessonsLearned content={content} />}
           {activeId === 'roadmap' && <Roadmap items={content.roadmap ?? []} />}
           

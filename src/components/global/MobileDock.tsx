@@ -80,6 +80,15 @@ export default function MobileDock({ onOpenWindow, hidden }: MobileDockProps) {
             variants={dockItemVariants}
             whileTap="tap"
             onClick={() => onOpenWindow(item.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onOpenWindow(item.id);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open ${item.label}`}
             animate={item.controls}
             className='flex flex-col items-center cursor-pointer gap-[5px] relative shrink-0'
           >
@@ -105,6 +114,7 @@ export default function MobileDock({ onOpenWindow, hidden }: MobileDockProps) {
           variants={dockItemVariants}
           whileTap="tap"
           onClick={handleEmailClick}
+          aria-label="Email me"
           className='flex flex-col items-center cursor-pointer gap-[5px] shrink-0'
         >
           <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>

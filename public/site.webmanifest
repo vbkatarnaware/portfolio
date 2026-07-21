@@ -1,0 +1,21 @@
+{
+  "name": "Vipul Katarnaware — Product Manager",
+  "short_name": "Vipul K.",
+  "description": "Portfolio of Vipul Katarnaware — Product Manager in B2B SaaS, FinTech, and AI products.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0058d0",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ]
+}
