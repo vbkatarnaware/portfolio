@@ -52,10 +52,11 @@ const meta = TAB_META[tab];
         <h3>QRapid — Product Lead &amp; Founder, VJTI TBI Incubated</h3>
         <p>Sep 2024 – Present · Mumbai, India</p>
         <ul>
-          <li>Owned QRapid's restaurant management system end to end, from QR menu through ordering, POS, and billing, shipped as a web application; led a team of up to 10 across engineering, restaurant onboarding, customer support, and go-to-market, growing the platform to 26 paying restaurant partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions across 1,99,640 paid bills.</li>
-          <li>Defined inbound support-call rate as QRapid's product-health metric and drove it from all 10 of 10 partners calling twice a week at launch to 1-2 of 10 calling once a month.</li>
+          <li>Owned QRapid's restaurant management system end to end, from QR menu through ordering, POS, and billing, shipped as a web application; led a team of up to 10 across engineering, restaurant onboarding, customer support, and go-to-market, growing the platform to 26 paying restaurant partners, 10,000+ registered diners, and $1.45M+ (₹12.05 Cr+) in processed transactions across 1,99,640 paid bills at a ₹604 average bill value.</li>
+          <li>Launched with a QR menu alone and found scans running well below forecast; interviewed diners and restaurant owners instead of treating it as a marketing problem, and learned that a diner holding a physical menu would only pull out a phone if scanning delivered something the menu could not.</li>
+          <li>Defined inbound support-call rate as QRapid's product-health metric, since restaurant operators rarely file feature requests but call the moment service stops, and tracked it weekly alongside feature-request volume; drove it from all 10 of 10 partners calling twice a week at launch to 1-2 of 10 calling once a month by stabilizing critical features and uptime, testing properly, and rolling out through a partner feedback loop.</li>
           <li>Partner activation stalled at 20% until customer interviews revealed prospects only switched POS software when their current subscription neared expiry; retimed outreach to that window, lifting activation conversion to 80% and cutting partner activation time by 30%.</li>
-          <li>Ran QCash as an internal 0-to-1 experiment inside QRapid, a cross-merchant loyalty currency that drew interest from 55 restaurants and reached 40 organic users in its first month at a 12.5% repeat-visit rate.</li>
+          <li>Ran QCash as an internal 0-to-1 experiment inside QRapid, a cross-merchant loyalty currency whose points belonged to the diner rather than to any single restaurant and could be redeemed across the partner network; the MVP drew interest from 55 restaurants and reached 40 organic users in its first month at a 12.5% repeat-visit rate, shipped as a native iOS and Android app, with no paid acquisition and no payment gateway, validating demand before deliberately deferring commercialization until the RMS reaches full operational stability.</li>
         </ul>
       </section>
       <section>
@@ -63,7 +64,8 @@ const meta = TAB_META[tab];
         <p>Jul 2023 – Aug 2024 · Mumbai, India</p>
         <ul>
           <li>Owned the Business Rules Engine deciding credit eligibility, underwriting, ledger workflows, and financial transaction flows for millions of applications a year, shipping cross-functional policy changes with Risk, Engineering, and Analytics.</li>
-          <li>Evaluated GeoIQ, an external geospatial intelligence vendor, as a richer address-level input to lending policy; wrote the BRD, aligned Risk, Engineering, Analytics, Compliance, and the vendor team, and led UAT before production rollout, improving campaign approval quality by an estimated 15% with no increase in default rate.</li>
+          <li>Traced weak pre-approval targeting to one coarse input rather than the decisioning logic: the engine scored an applicant's area on an internal 5-point location rating, but in Mumbai high-rise housing and low-income settlements sit within a few hundred meters, so applicants with very different economic profiles received the same location score.</li>
+          <li>Evaluated GeoIQ, an external geospatial intelligence vendor, as a richer address-level input to lending policy; wrote the BRD, aligned Risk, Engineering, Analytics, Compliance, and the vendor team, and led UAT before production rollout, improving campaign approval quality by an estimated 15% with no increase in default rate and lifting eligibility 10-15% for qualified applicants whose addresses had been scored too coarsely (self-reported, not independently audited).</li>
           <li>Specified and shipped major new rule sets on the Business Rules Engine for credit card and personal loan decisioning, covering eligibility, underwriting, and pricing logic evaluated across millions of applications a year.</li>
         </ul>
       </section>
@@ -71,15 +73,20 @@ const meta = TAB_META[tab];
       <h2>Selected Products</h2>
       <section>
         <h3>CareerOS — careeros.codes</h3>
-        <p>Workflow redesign for the modern job search, using AI only where it earns its cost. An MIT-licensed, from-scratch Python rewrite backed by 700+ automated tests.</p>
+        <p>Workflow redesign for the modern job search, using AI only where it earns its cost.</p>
+        <ul>
+          <li>Rebuilt CareerOps, an open-source AI job-search agent that exhausted a Claude Pro quota 2-3 times without completing a single pipeline, into CareerOS: an MIT-licensed, from-scratch Python rewrite backed by 700+ automated tests, with roughly as much test code as product code.</li>
+          <li>Cut pipeline cost through workflow redesign rather than a bigger model: a free deterministic filter and a batched AI gate, 50 jobs per call against a lean profile subset, triage jobs before full evaluation runs only on survivors, backed by a cache keyed on job content, profile version, and prompt version so no AI call repeats for an answer already computed.</li>
+          <li>Moved the deep interview-prep report out of the daily pipeline to an opt-in, on-demand command and forbade it from recomputing the evaluation it expands on, because most discovered jobs never become an actual application; defined the pipeline's KPI as cost per interview-worthy job, where selecting zero jobs on a given day is a correct outcome.</li>
+        </ul>
       </section>
       <section>
         <h3>Rizent AI — rizent.me</h3>
-        <p>Investor outreach for founders, run end to end by an AI co-founder. Solo-built as a 30,000+ line TypeScript monorepo across 71 Postgres migrations. Private beta.</p>
-      </section>
-      <section>
-        <h3>MoatDaily</h3>
-        <p>An autonomous AI editorial system that discovers, ranks, writes, and publishes business news, running three times a day behind a fail-closed AI quality gate.</p>
+        <p>Investor outreach for founders, run end to end by an AI co-founder. Private beta.</p>
+        <ul>
+          <li>Solo-built Rizent, a private-beta AI investor-outreach platform for founders, as a 30,000+ line TypeScript monorepo, Next.js, Express, a BullMQ worker, and Postgres across 71 migrations, covering pitch-deck ingestion, AI investor match-scoring, Gmail outreach with scheduled follow-ups, reply-intent detection, and Google Calendar meeting booking behind a founder approval gate.</li>
+          <li>Designed a governed memory layer that classifies stored facts as static or dynamic with an expiry policy, so when an investor asks about revenue or runway and the stored figure has gone stale, the agent escalates to the founder over a Telegram bot instead of answering, rather than letting the AI invent a financial number it cannot source.</li>
+        </ul>
       </section>
 
       <h2>Skills</h2>
@@ -93,7 +100,9 @@ const meta = TAB_META[tab];
 
       <h2>Education</h2>
       <ul>
-        <li>B.Tech, Veermata Jijabai Technological Institute (VJTI), Mumbai — 2019–2023</li>
+        <li>B.Tech, Veermata Jijabai Technological Institute (VJTI), Mumbai — 7.0 CPI, 2019–2023</li>
+        <li>HSC, V.G. Vaze College of Science, Arts and Commerce — 73%, 2016–2018</li>
+        <li>SSC, Little Flower English Convent School — 87%, 2015–2016</li>
       </ul>
 
       <p><a href="/Master_Product_Manager_Resume.pdf">Download full resume (PDF)</a></p>

@@ -109,16 +109,20 @@ export default function MobileDock({ onOpenWindow, hidden }: MobileDockProps) {
           </motion.div>
         ))}
 
-        {/* Contact */}
+        {/* Contact — no aria-label: the visible "Contact" span below already
+            gives this button an accessible name, and a label diverging from
+            it (e.g. "Email me") is flagged as a label/name mismatch since a
+            screen-reader user hears one thing while sighted users read
+            another. The icon is decorative (alt="") since the text already
+            names it. */}
         <motion.button
           variants={dockItemVariants}
           whileTap="tap"
           onClick={handleEmailClick}
-          aria-label="Email me"
           className='flex flex-col items-center cursor-pointer gap-[5px] shrink-0'
         >
           <div className='w-[54px] h-[54px] rounded-[14px] flex items-center justify-center shadow-lg overflow-hidden'>
-            <img src={mailImg.src} alt='Contact' className='w-full h-full object-cover' />
+            <img src={mailImg.src} alt='' className='w-full h-full object-cover' />
           </div>
           <span className="text-[11px] font-medium text-white/90 tracking-wide">Contact</span>
         </motion.button>

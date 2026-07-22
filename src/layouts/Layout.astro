@@ -10,6 +10,8 @@ interface Props {
   openGraph?: Record<string, any>;
   /** Pass an app's content module to add its JSON-LD node (Person is always emitted). */
   structuredDataApp?: AppContent;
+  /** True only for pages that should never be indexed (e.g. 404). */
+  noindex?: boolean;
 }
 ---
 
@@ -23,6 +25,7 @@ interface Props {
       description={Astro.props.description}
       canonical={Astro.props.canonical}
       openGraph={Astro.props.openGraph}
+      noindex={Astro.props.noindex}
     />
     <StructuredData app={Astro.props.structuredDataApp} />
   </head>

@@ -24,6 +24,7 @@ const backgrounds = await Promise.all([
   description={Astro.props.description ||
     'Vipul Katarnaware is a Product Manager based in Navi Mumbai, India, with hands-on founder and enterprise experience across B2B SaaS, FinTech, and AI products.'}
   canonical={Astro.props.canonical || 'https://vipulkatarnaware.in'}
+  noindex={Astro.props.noindex}
   openGraph={{
     type: 'website',
     url: Astro.props.openGraph?.url || 'https://vipulkatarnaware.in',
@@ -33,7 +34,11 @@ const backgrounds = await Promise.all([
       'Vipul Katarnaware is a Product Manager based in Navi Mumbai, India, with hands-on founder and enterprise experience across B2B SaaS, FinTech, and AI products.',
     images: [
       {
-        url: 'https://vipulkatarnaware.in/apple-touch-icon.png',
+        // favicon.png is the actual 512x512 asset — apple-touch-icon.png is
+        // only 180x180, so declaring 512x512 against it would mismatch the
+        // real file and risk a stretched/broken social-preview card on
+        // platforms that trust the declared size without re-measuring.
+        url: 'https://vipulkatarnaware.in/favicon.png',
         width: 512,
         height: 512,
         alt: 'Vipul Katarnaware — Product Manager',

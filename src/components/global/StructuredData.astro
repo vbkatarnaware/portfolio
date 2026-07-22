@@ -152,9 +152,23 @@ const faqNode =
       }
     : null;
 
-const nodes = [person, website, appNode, breadcrumb, faqNode].filter(Boolean);
+// A single @graph document, not one <script> tag per node. The nodes above
+// cross-reference each other by @id (e.g. WebSite.author -> Person, via
+// {"@id": "...#person"}) — that only resolves reliably when every node lives
+// in the SAME JSON-LD document. Separate <script> tags are independent
+// documents to most parsers, so a bare @id reference across them can go
+// unresolved. @graph is schema.org's own documented pattern for exactly this:
+// one shared @context, many linked nodes.
+const nodes = [person, website, appNode, breadcrumb, faqNode].filter(
+  (n): n is NonNullable<typeof n> => n !== null
+);
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': nodes.map((node) => {
+    const { '@context': _drop, ...rest } = node as Record<string, unknown>;
+    return rest;
+  }),
+};
 ---
 
-{nodes.map((node) => (
-  <script type="application/ld+json" set:html={JSON.stringify(node)} />
-))}
+<script type="application/ld+json" set:html={JSON.stringify(graph)} />
